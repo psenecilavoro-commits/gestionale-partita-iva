@@ -1,0 +1,18 @@
+# Credenziali: mai pubblicare i Secrets di Streamlit
+.streamlit/secrets.toml
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+
+# Sistema e editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
