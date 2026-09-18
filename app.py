@@ -4,6 +4,7 @@ import streamlit as st
 from supabase import create_client
 
 from auth import current_user, get_client, sign_in, sign_out
+from database import create_fiscal_year, get_fiscal_year
 
 st.set_page_config(page_title="Gestionale Partita IVA", page_icon="📊", layout="wide")
 
@@ -45,31 +46,54 @@ with st.sidebar:
         st.rerun()
 
 st.success("Accesso a Supabase riuscito.")
-st.info("Prima di inserire dati fiscali, verifichiamo i permessi del database.")
 
-if st.button("Verifica accesso al database", type="primary"):
-    # Lettura limitata, senza visualizzare né modificare dati esistenti.
-    try:
-        get_client().table("fiscal_years").select("id").limit(1).execute()
-    except Exception:
-        st.error("Accesso autenticato: verifica non riuscita. Nessun dato è stato modificato.")
-    else:
-        st.success("Accesso autenticato: lettura consentita.")
+st.subheader("Anno fiscale")
+st.write("Iniziamo creando soltanto l'anno 2027. Non inseriamo ancora importi o parametri fiscali.")
+try:
+    fiscal_year = get_fiscal_year(get_client(), 2027)
+except Exception:
+    st.error("Impossibile leggere l'anno fiscale dal database. Nessuna modifica effettuata.")
+    st.stop()
 
-    # Un client NUOVO, privo di login, deve ricevere un errore di permessi.
-    # Una risposta vuota ma riuscita non dimostra che i privilegi siano negati.
-    try:
-        anonymous_client = create_client(
-            st.secrets["SUPABASE_URL"],
-            st.secrets["SUPABASE_PUBLISHABLE_KEY"],
-        )
-        anonymous_client.table("fiscal_years").select("id").limit(1).execute()
-    except Exception as exc:
-        if str(getattr(exc, "code", "")) == "42501":
-            st.success("Accesso anonimo: lettura negata per mancanza di permessi.")
+if fiscal_year is None:
+    if st.button("Crea anno fiscale 2027", type="primary"):
+        try:
+            create_fiscal_year(get_client(), 2027)
+        except Exception:
+            # Anche in caso di clic ripetuti/creazione concorrente, ricontrolla lo stato.
+            try:
+                already_created = get_fiscal_year(get_client(), 2027)
+            except Exception:
+                already_created = None
+            if already_created is not None:
+                st.rerun()
+            st.error("Non è stato possibile creare l'anno fiscale. Non ripetere il clic: comunicami questo messaggio.")
         else:
-            st.warning("Accesso anonimo: verifica non conclusiva. Riporta soltanto questo messaggio.")
-    else:
-        st.warning("Accesso anonimo: richiesta accettata. Non inserire ancora dati fiscali.")
+            st.rerun()
+else:
+    st.success(f"Anno {fiscal_year['fiscal_year']} presente · stato: {fiscal_year['status']}.")
 
-st.caption("Questa verifica è in sola lettura. Non prova ancora l'isolamento tra utenti diversi.")
+with st.expander("Diagnostica dei permessi (sola lettura)"):
+    if st.button("Verifica accesso al database"):
+        try:
+            get_client().table("fiscal_years").select("id").limit(1).execute()
+        except Exception:
+            st.error("Accesso autenticato: verifica non riuscita. Nessun dato è stato modificato.")
+        else:
+            st.success("Accesso autenticato: lettura consentita.")
+
+        try:
+            anonymous_client = create_client(
+                st.secrets["SUPABASE_URL"],
+                st.secrets["SUPABASE_PUBLISHABLE_KEY"],
+            )
+            anonymous_client.table("fiscal_years").select("id").limit(1).execute()
+        except Exception as exc:
+            if str(getattr(exc, "code", "")) == "42501":
+                st.success("Accesso anonimo: lettura negata per mancanza di permessi.")
+            else:
+                st.warning("Accesso anonimo: verifica non conclusiva. Riporta soltanto questo messaggio.")
+        else:
+            st.warning("Accesso anonimo: richiesta accettata. Non inserire ancora dati fiscali.")
+
+st.caption("L'isolamento dei dati tra utenti diversi non è ancora stato testato.")
