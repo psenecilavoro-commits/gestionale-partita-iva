@@ -15,7 +15,6 @@ from fatturato import euro
 CENT = Decimal("0.01")
 NOTA_CATEGORIA_TEST = "Parametri di confronto dal foglio; verificare prima dell'uso reale."
 
-# Un passo alla volta: per ora solo due voci semplici del foglio Costi.
 # Le voci collegate al veicolo arriveranno dalla scheda Auto, senza duplicazioni.
 VOCI_TEST = (
     {
@@ -37,6 +36,16 @@ VOCI_TEST = (
         "cost_deductible_rate": "0.8",
         "notes": "DATI DI PROVA - costo Bollo dal foglio originale",
         "confronto": "IVA 0,00 €; costo netto 340,97 €; quota deducibile 272,78 €.",
+    },
+    {
+        "code": "assicurazione",
+        "name": "Assicurazione",
+        "gross": "1060.86",
+        "vat_rate": "0",
+        "vat_deductible_rate": "0",
+        "cost_deductible_rate": "0.8",
+        "notes": "DATI DI PROVA - costo Assicurazione dal foglio originale",
+        "confronto": "IVA 0,00 €; costo netto 1.060,86 €; quota deducibile 848,69 €.",
     },
 )
 
