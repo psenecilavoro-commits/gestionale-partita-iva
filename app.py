@@ -5,6 +5,7 @@ from supabase import create_client
 
 from auth import current_user, get_client, sign_in, sign_out
 from auto import mostra_auto
+from auto_limiti import mostra_limiti_auto
 from costi import mostra_costi
 from database import create_fiscal_year, get_fiscal_year
 from fatturato import mostra_fatturato
@@ -164,6 +165,7 @@ with scheda_costi:
 
 with scheda_auto:
     mostra_auto(client, fiscal_year)
+    mostra_limiti_auto(client, fiscal_year)
 
 with scheda_accantonamenti:
     st.info("Tabella accantonamenti in preparazione. Nessun calcolo o parametro è ancora attivo qui.")
