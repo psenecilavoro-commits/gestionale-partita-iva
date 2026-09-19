@@ -5,6 +5,7 @@ from supabase import create_client
 
 from auth import current_user, get_client, sign_in, sign_out
 from database import create_fiscal_year, get_fiscal_year
+from fatturato import mostra_fatturato
 from mandanti import aggiungi_mandante, elenco_mandanti
 
 st.set_page_config(page_title="Gestionale Partita IVA", page_icon="📊", layout="wide")
@@ -76,7 +77,7 @@ else:
 if fiscal_year is not None:
     st.divider()
     st.subheader("Fatturato · Mandanti")
-    st.caption("Prima registriamo le mandanti. Non vengono ancora importate le provvigioni dal foglio originale.")
+    st.caption("Le mandanti sono anagrafiche; gli importi fatturati si registrano nella sezione successiva.")
     try:
         mandanti = elenco_mandanti(get_client())
     except Exception:
@@ -136,6 +137,8 @@ if fiscal_year is not None:
     else:
         st.info("L'anno fiscale è chiuso: non è possibile aggiungere mandanti da questa schermata.")
 
+    mostra_fatturato(get_client(), fiscal_year, mandanti)
+
 with st.expander("Diagnostica dei permessi (sola lettura)"):
     if st.button("Verifica accesso al database"):
         try:
@@ -159,4 +162,4 @@ with st.expander("Diagnostica dei permessi (sola lettura)"):
         else:
             st.warning("Accesso anonimo: richiesta accettata. Non inserire ancora dati fiscali.")
 
-st.caption("Verificato l'isolamento in lettura dell'anno fiscale tra due utenti; le altre tabelle non sono ancora state testate.")
+st.caption("Verificato l'isolamento in lettura dell'anno fiscale tra due utenti; le altre tabelle non sono ancora state testate separatamente.")
