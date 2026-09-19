@@ -5,6 +5,7 @@ from supabase import create_client
 
 from auth import current_user, get_client, sign_in, sign_out
 from database import create_fiscal_year, get_fiscal_year
+from mandanti import aggiungi_mandante, elenco_mandanti
 
 st.set_page_config(page_title="Gestionale Partita IVA", page_icon="📊", layout="wide")
 
@@ -48,7 +49,6 @@ with st.sidebar:
 st.success("Accesso a Supabase riuscito.")
 
 st.subheader("Anno fiscale")
-st.write("Iniziamo creando soltanto l'anno 2027. Non inseriamo ancora importi o parametri fiscali.")
 try:
     fiscal_year = get_fiscal_year(get_client(), 2027)
 except Exception:
@@ -56,11 +56,11 @@ except Exception:
     st.stop()
 
 if fiscal_year is None:
+    st.write("Crea l'anno 2027 per iniziare. Non saranno inseriti importi o parametri fiscali.")
     if st.button("Crea anno fiscale 2027", type="primary"):
         try:
             create_fiscal_year(get_client(), 2027)
         except Exception:
-            # Anche in caso di clic ripetuti/creazione concorrente, ricontrolla lo stato.
             try:
                 already_created = get_fiscal_year(get_client(), 2027)
             except Exception:
@@ -72,6 +72,69 @@ if fiscal_year is None:
             st.rerun()
 else:
     st.success(f"Anno {fiscal_year['fiscal_year']} presente · stato: {fiscal_year['status']}.")
+
+if fiscal_year is not None:
+    st.divider()
+    st.subheader("Fatturato · Mandanti")
+    st.caption("Prima registriamo le mandanti. Non vengono ancora importate le provvigioni dal foglio originale.")
+    try:
+        mandanti = elenco_mandanti(get_client())
+    except Exception:
+        st.error("Impossibile leggere le mandanti. Nessuna modifica effettuata.")
+        st.stop()
+
+    if mandanti:
+        st.dataframe(
+            [
+                {
+                    "Mandante": item["name"],
+                    "Rapporto Enasarco": item["enasarco_relationship"],
+                    "Stato": "Attiva" if item["active"] else "Non attiva",
+                }
+                for item in mandanti
+            ],
+            hide_index=True,
+            use_container_width=True,
+        )
+    else:
+        st.info("Non hai ancora registrato alcuna mandante.")
+
+    if fiscal_year["status"] == "open":
+        scelta = st.selectbox(
+            "Nome della mandante",
+            [
+                "Innovagroup Caino",
+                "Innovagroup Borgo",
+                "Innovagroup Erbe",
+                "Innovagroup Fontanella",
+                "Altra mandante (inserimento manuale)",
+            ],
+        )
+        with st.form("nuova_mandante"):
+            nome_personalizzato = (
+                st.text_input("Nome della nuova mandante")
+                if scelta == "Altra mandante (inserimento manuale)"
+                else ""
+            )
+            rapporto = st.selectbox(
+                "Tipo di rapporto Enasarco",
+                ["plurimandatario", "monomandatario"],
+                help="Controlla il tipo di rapporto prima di salvare.",
+            )
+            salva = st.form_submit_button("Aggiungi mandante", type="primary")
+
+        if salva:
+            nome = nome_personalizzato if scelta == "Altra mandante (inserimento manuale)" else scelta
+            try:
+                aggiungi_mandante(get_client(), nome, rapporto)
+            except ValueError as exc:
+                st.warning(str(exc))
+            except Exception:
+                st.error("Salvataggio non confermato. Controlla l'elenco prima di riprovare.")
+            else:
+                st.rerun()
+    else:
+        st.info("L'anno fiscale è chiuso: non è possibile aggiungere mandanti da questa schermata.")
 
 with st.expander("Diagnostica dei permessi (sola lettura)"):
     if st.button("Verifica accesso al database"):
@@ -96,4 +159,4 @@ with st.expander("Diagnostica dei permessi (sola lettura)"):
         else:
             st.warning("Accesso anonimo: richiesta accettata. Non inserire ancora dati fiscali.")
 
-st.caption("L'isolamento dei dati tra utenti diversi non è ancora stato testato.")
+st.caption("Verificato l'isolamento in lettura dell'anno fiscale tra due utenti; le altre tabelle non sono ancora state testate.")
