@@ -4,6 +4,7 @@ import streamlit as st
 from supabase import create_client
 
 from auth import current_user, get_client, sign_in, sign_out
+from costi import mostra_costi
 from database import create_fiscal_year, get_fiscal_year
 from fatturato import mostra_fatturato
 from mandanti import aggiungi_mandante, elenco_mandanti
@@ -138,6 +139,7 @@ if fiscal_year is not None:
         st.info("L'anno fiscale è chiuso: non è possibile aggiungere mandanti da questa schermata.")
 
     mostra_fatturato(get_client(), fiscal_year, mandanti)
+    mostra_costi(get_client(), fiscal_year)
 
 with st.expander("Diagnostica dei permessi (sola lettura)"):
     if st.button("Verifica accesso al database"):
