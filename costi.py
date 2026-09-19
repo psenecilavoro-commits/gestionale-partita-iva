@@ -1,8 +1,8 @@
-"""Primo confronto costi: riga Commercialista del foglio originale.
+"""Confronto dei costi annuali di prova con il foglio originale.
 
-Solo simulazione con dati TEST espliciti. Stime annuali separate dai costi
-realmente sostenuti; aliquote usate qui sono quelle del foglio di prova,
-NON una conferma del trattamento fiscale applicabile nel 2027.
+Le percentuali qui riportate riproducono ESCLUSIVAMENTE i parametri
+presenti nel foglio di test; non sono una verifica fiscale per il 2027.
+Le righe sono stime annuali di prova, non fatture o spese effettivamente pagate.
 """
 
 from decimal import Decimal, ROUND_HALF_UP
@@ -12,21 +12,45 @@ from supabase import Client
 
 from fatturato import euro
 
-CODICE = "commercialista"
-NOTA_TEST = "DATI DI PROVA - costo Commercialista dal foglio originale"
 CENT = Decimal("0.01")
+NOTA_CATEGORIA_TEST = "Parametri di confronto dal foglio; verificare prima dell'uso reale."
+
+# Un passo alla volta: per ora solo due voci semplici del foglio Costi.
+# Le voci collegate al veicolo arriveranno dalla scheda Auto, senza duplicazioni.
+VOCI_TEST = (
+    {
+        "code": "commercialista",
+        "name": "Commercialista",
+        "gross": "3000.00",
+        "vat_rate": "0.22",
+        "vat_deductible_rate": "1",
+        "cost_deductible_rate": "1",
+        "notes": "DATI DI PROVA - costo Commercialista dal foglio originale",
+        "confronto": "IVA 540,98 €; costo netto e deducibile 2.459,02 €.",
+    },
+    {
+        "code": "bollo",
+        "name": "Bollo",
+        "gross": "340.97",
+        "vat_rate": "0",
+        "vat_deductible_rate": "0",
+        "cost_deductible_rate": "0.8",
+        "notes": "DATI DI PROVA - costo Bollo dal foglio originale",
+        "confronto": "IVA 0,00 €; costo netto 340,97 €; quota deducibile 272,78 €.",
+    },
+)
 
 
 def _euro_arrotondato(importo: Decimal) -> str:
     return euro(importo.quantize(CENT, rounding=ROUND_HALF_UP))
 
 
-def _leggi_categoria(client: Client, anno_id: str) -> dict | None:
+def _leggi_categoria(client: Client, anno_id: str, codice: str) -> dict | None:
     risposta = (
         client.table("cost_categories")
         .select("id,name,vat_rate,vat_deductible_rate,cost_deductible_rate,deductible_limit,notes")
         .eq("fiscal_year_id", anno_id)
-        .eq("code", CODICE)
+        .eq("code", codice)
         .limit(1)
         .execute()
     )
@@ -45,47 +69,47 @@ def _leggi_stima(client: Client, anno_id: str, categoria_id: str) -> dict | None
     return risposta.data[0] if risposta.data else None
 
 
-def _crea_prova(client: Client, anno_id: str) -> None:
-    """Ripetibile anche se il primo inserimento ha creato solo la categoria."""
-    categoria = _leggi_categoria(client, anno_id)
+def _crea_prova(client: Client, anno_id: str, voce: dict) -> None:
+    """Riprende anche un eventuale inserimento interrotto dopo la categoria."""
+    categoria = _leggi_categoria(client, anno_id, voce["code"])
     if categoria is None:
         risposta = client.table("cost_categories").insert({
             "fiscal_year_id": anno_id,
-            "code": CODICE,
-            "name": "Commercialista",
-            "vat_rate": "0.22",
-            "vat_deductible_rate": "1",
-            "cost_deductible_rate": "1",
-            "notes": "Parametri di confronto dal foglio; verificare prima dell'uso reale.",
+            "code": voce["code"],
+            "name": voce["name"],
+            "vat_rate": voce["vat_rate"],
+            "vat_deductible_rate": voce["vat_deductible_rate"],
+            "cost_deductible_rate": voce["cost_deductible_rate"],
+            "notes": NOTA_CATEGORIA_TEST,
         }).execute()
         if len(risposta.data or []) != 1:
             raise RuntimeError("Creazione categoria non confermata")
         categoria = risposta.data[0]
-    elif categoria.get("notes") != "Parametri di confronto dal foglio; verificare prima dell'uso reale.":
-        raise ValueError("Categoria Commercialista già configurata: non sovrascrivo le sue impostazioni.")
+    elif categoria.get("notes") != NOTA_CATEGORIA_TEST:
+        raise ValueError(f"La categoria {voce['name']} è già configurata: non la sovrascrivo.")
 
     if _leggi_stima(client, anno_id, categoria["id"]) is not None:
-        raise ValueError("È già presente un costo Commercialista: non lo sovrascrivo.")
+        raise ValueError(f"Esiste già un costo {voce['name']}: non lo sovrascrivo.")
     risposta = client.table("annual_cost_estimates").insert({
         "fiscal_year_id": anno_id,
         "category_id": categoria["id"],
-        "estimated_gross_amount": "3000.00",
+        "estimated_gross_amount": voce["gross"],
         "amount_includes_vat": True,
-        "notes": NOTA_TEST,
+        "notes": voce["notes"],
     }).execute()
     if len(risposta.data or []) != 1:
         raise RuntimeError("Creazione stima non confermata")
 
 
-def _elimina_stima_test(client: Client, anno_id: str, stima: dict) -> None:
-    if stima.get("notes") != NOTA_TEST:
-        raise ValueError("Eliminazione consentita qui solo per il dato di prova originale.")
+def _elimina_stima_test(client: Client, anno_id: str, stima: dict, nota: str) -> None:
+    if stima.get("notes") != nota:
+        raise ValueError("Eliminazione consentita qui soltanto per il dato di prova originale.")
     risposta = (
         client.table("annual_cost_estimates")
         .delete()
         .eq("id", stima["id"])
         .eq("fiscal_year_id", anno_id)
-        .eq("notes", NOTA_TEST)
+        .eq("notes", nota)
         .execute()
     )
     if len(risposta.data or []) != 1:
@@ -98,7 +122,7 @@ def _calcola(gross: Decimal, categoria: dict, include_iva: bool) -> tuple[Decima
     percentuale_costo = Decimal(str(categoria["cost_deductible_rate"]))
     iva = gross * aliquota / (Decimal("1") + aliquota) if include_iva else Decimal("0")
     iva_detraibile = iva * percentuale_iva
-    # L'IVA non detraibile resta parte del costo. L'importo è lordo e IVA inclusa.
+    # L'IVA non detraibile resta nel costo. Il lordo in questo test include l'IVA.
     costo_effettivo = gross - iva_detraibile
     deducibile = costo_effettivo * percentuale_costo
     limite = categoria.get("deductible_limit")
@@ -108,52 +132,81 @@ def _calcola(gross: Decimal, categoria: dict, include_iva: bool) -> tuple[Decima
 
 
 def mostra_costi(client: Client, anno: dict) -> None:
-    st.divider()
-    st.subheader("Costi · confronto iniziale")
-    st.caption("Primo esempio: Commercialista. La stima annuale è separata dalle spese effettive.")
+    st.subheader("Costi · confronto con il foglio")
+    st.caption(
+        "Importi annuali di prova, non spese effettive. I parametri del foglio servono "
+        "al confronto matematico e saranno verificati prima dell'uso reale."
+    )
     try:
-        categoria = _leggi_categoria(client, anno["id"])
-        stima = _leggi_stima(client, anno["id"], categoria["id"]) if categoria else None
+        voci = []
+        for voce in VOCI_TEST:
+            categoria = _leggi_categoria(client, anno["id"], voce["code"])
+            stima = _leggi_stima(client, anno["id"], categoria["id"]) if categoria else None
+            voci.append((voce, categoria, stima))
     except Exception:
         st.error("Impossibile leggere i costi: nessun dato modificato.")
         return
 
-    if stima is None:
-        st.info("Non è ancora presente il costo annuale Commercialista.")
-        if anno["status"] == "open":
-            st.caption("Dati del foglio di prova: 3.000 € IVA inclusa; IVA 22%; IVA detraibile 100%; costo deducibile 100%. Parametri di test da verificare prima dell'uso reale.")
-            if st.button("Carica costo di prova Commercialista"):
+    if any(stima and stima.get("notes") == voce["notes"] for voce, _, stima in voci):
+        st.warning("DATI DI PROVA PRESENTI: questi costi non rappresentano spese reali.")
+
+    risultati = []
+    for voce, categoria, stima in voci:
+        if not stima:
+            continue
+        lordo = Decimal(str(stima["estimated_gross_amount"]))
+        iva, iva_detraibile, costo, deducibile = _calcola(
+            lordo, categoria, bool(stima["amount_includes_vat"])
+        )
+        risultati.append({
+            "Categoria": categoria["name"],
+            "Totale IVA compresa": _euro_arrotondato(lordo),
+            "IVA scorporata": _euro_arrotondato(iva),
+            "IVA detraibile": _euro_arrotondato(iva_detraibile),
+            "Costo al netto dell'IVA detraibile": _euro_arrotondato(costo),
+            "Costo deducibile": _euro_arrotondato(deducibile),
+            "Origine": "TEST" if stima.get("notes") == voce["notes"] else "Altro",
+        })
+
+    if risultati:
+        st.dataframe(risultati, hide_index=True, use_container_width=True)
+    else:
+        st.info("Non sono ancora presenti costi annuali di prova.")
+
+    for voce, _categoria, stima in voci:
+        if stima and stima.get("notes") == voce["notes"]:
+            st.caption(f"Confronto {voce['name']} nel foglio: {voce['confronto']}")
+
+    if anno["status"] != "open":
+        st.info("Anno chiuso: costi in sola lettura.")
+        return
+
+    for voce, _categoria, stima in voci:
+        if stima is None:
+            st.write(f"**{voce['name']}**: nessun importo annuale registrato.")
+            if st.button(f"Carica costo di prova {voce['name']}", key=f"costo_carica_{voce['code']}"):
                 try:
-                    _crea_prova(client, anno["id"])
+                    _crea_prova(client, anno["id"], voce)
                 except ValueError as exc:
                     st.warning(str(exc))
                 except Exception:
-                    st.error("Caricamento non confermato. Aggiorna la pagina e verifica la sezione prima di riprovare.")
+                    st.error("Caricamento non confermato. Aggiorna la pagina e controlla prima di riprovare.")
                 else:
                     st.rerun()
-        return
-
-    lordo = Decimal(str(stima["estimated_gross_amount"]))
-    iva, iva_detraibile, costo, deducibile = _calcola(lordo, categoria, bool(stima["amount_includes_vat"]))
-    if stima.get("notes") == NOTA_TEST:
-        st.warning("DATI DI PROVA: costo Commercialista, non rappresenta una spesa reale.")
-    st.dataframe([{
-        "Categoria": categoria["name"],
-        "Totale IVA compresa": _euro_arrotondato(lordo),
-        "IVA scorporata": _euro_arrotondato(iva),
-        "IVA detraibile": _euro_arrotondato(iva_detraibile),
-        "Costo al netto dell'IVA detraibile": _euro_arrotondato(costo),
-        "Costo deducibile": _euro_arrotondato(deducibile),
-    }], hide_index=True, use_container_width=True)
-    st.caption("Confronto con la riga Commercialista del foglio: IVA 540,98 €; netto e deducibile 2.459,02 €. Le aliquote sono quelle del foglio, non parametri fiscali definitivi per il 2027.")
-
-    if anno["status"] == "open" and stima.get("notes") == NOTA_TEST:
-        with st.expander("Elimina il costo di prova Commercialista"):
-            conferma = st.checkbox("Confermo che voglio eliminare il costo di prova")
-            if st.button("Elimina costo di prova", disabled=not conferma):
-                try:
-                    _elimina_stima_test(client, anno["id"], stima)
-                except Exception:
-                    st.error("Eliminazione non confermata. Controlla la sezione prima di riprovare.")
-                else:
-                    st.rerun()
+        elif stima.get("notes") == voce["notes"]:
+            with st.expander(f"Elimina il costo di prova {voce['name']}"):
+                conferma = st.checkbox(
+                    f"Confermo l'eliminazione del costo di prova {voce['name']}",
+                    key=f"costo_conferma_{voce['code']}",
+                )
+                if st.button(
+                    f"Elimina costo di prova {voce['name']}",
+                    key=f"costo_elimina_{voce['code']}",
+                    disabled=not conferma,
+                ):
+                    try:
+                        _elimina_stima_test(client, anno["id"], stima, voce["notes"])
+                    except Exception:
+                        st.error("Eliminazione non confermata. Controlla la tabella prima di riprovare.")
+                    else:
+                        st.rerun()
