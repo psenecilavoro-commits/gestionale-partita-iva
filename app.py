@@ -15,7 +15,7 @@ st.title("Gestionale Partita IVA")
 st.caption("Versione iniziale · applicazione desktop")
 
 try:
-    get_client()
+    client = get_client()
 except Exception:
     st.error("Collegamento a Supabase non disponibile. Controlla i Secrets dell'app su Streamlit.")
     st.stop()
@@ -48,11 +48,9 @@ with st.sidebar:
         sign_out()
         st.rerun()
 
-st.success("Accesso a Supabase riuscito.")
-
 st.subheader("Anno fiscale")
 try:
-    fiscal_year = get_fiscal_year(get_client(), 2027)
+    fiscal_year = get_fiscal_year(client, 2027)
 except Exception:
     st.error("Impossibile leggere l'anno fiscale dal database. Nessuna modifica effettuata.")
     st.stop()
@@ -61,10 +59,10 @@ if fiscal_year is None:
     st.write("Crea l'anno 2027 per iniziare. Non saranno inseriti importi o parametri fiscali.")
     if st.button("Crea anno fiscale 2027", type="primary"):
         try:
-            create_fiscal_year(get_client(), 2027)
+            create_fiscal_year(client, 2027)
         except Exception:
             try:
-                already_created = get_fiscal_year(get_client(), 2027)
+                already_created = get_fiscal_year(client, 2027)
             except Exception:
                 already_created = None
             if already_created is not None:
@@ -72,15 +70,35 @@ if fiscal_year is None:
             st.error("Non è stato possibile creare l'anno fiscale. Non ripetere il clic: comunicami questo messaggio.")
         else:
             st.rerun()
-else:
-    st.success(f"Anno {fiscal_year['fiscal_year']} presente · stato: {fiscal_year['status']}.")
+    st.stop()
 
-if fiscal_year is not None:
-    st.divider()
-    st.subheader("Fatturato · Mandanti")
-    st.caption("Le mandanti sono anagrafiche; gli importi fatturati si registrano nella sezione successiva.")
+st.success(f"Anno {fiscal_year['fiscal_year']} presente · stato: {fiscal_year['status']}.")
+
+# Costi è la seconda scheda, come richiesto. Le altre mantengono i nomi
+# delle sezioni del foglio di riferimento e saranno sviluppate per gradi.
+(
+    scheda_fatturato,
+    scheda_costi,
+    scheda_auto,
+    scheda_accantonamenti,
+    scheda_conto_economico,
+    scheda_imposte,
+    scheda_detrazioni,
+) = st.tabs([
+    "Fatturato",
+    "Costi",
+    "Auto",
+    "Tabella accantonamenti",
+    "Conto economico",
+    "Imposte",
+    "Detrazioni e deduzioni",
+])
+
+with scheda_fatturato:
+    st.subheader("Mandanti")
+    st.caption("Le mandanti sono anagrafiche; gli importi fatturati si registrano qui sotto.")
     try:
-        mandanti = elenco_mandanti(get_client())
+        mandanti = elenco_mandanti(client)
     except Exception:
         st.error("Impossibile leggere le mandanti. Nessuna modifica effettuata.")
         st.stop()
@@ -128,7 +146,7 @@ if fiscal_year is not None:
         if salva:
             nome = nome_personalizzato if scelta == "Altra mandante (inserimento manuale)" else scelta
             try:
-                aggiungi_mandante(get_client(), nome, rapporto)
+                aggiungi_mandante(client, nome, rapporto)
             except ValueError as exc:
                 st.warning(str(exc))
             except Exception:
@@ -138,30 +156,47 @@ if fiscal_year is not None:
     else:
         st.info("L'anno fiscale è chiuso: non è possibile aggiungere mandanti da questa schermata.")
 
-    mostra_fatturato(get_client(), fiscal_year, mandanti)
-    mostra_costi(get_client(), fiscal_year)
+    mostra_fatturato(client, fiscal_year, mandanti)
 
-with st.expander("Diagnostica dei permessi (sola lettura)"):
-    if st.button("Verifica accesso al database"):
-        try:
-            get_client().table("fiscal_years").select("id").limit(1).execute()
-        except Exception:
-            st.error("Accesso autenticato: verifica non riuscita. Nessun dato è stato modificato.")
-        else:
-            st.success("Accesso autenticato: lettura consentita.")
+with scheda_costi:
+    mostra_costi(client, fiscal_year)
 
-        try:
-            anonymous_client = create_client(
-                st.secrets["SUPABASE_URL"],
-                st.secrets["SUPABASE_PUBLISHABLE_KEY"],
-            )
-            anonymous_client.table("fiscal_years").select("id").limit(1).execute()
-        except Exception as exc:
-            if str(getattr(exc, "code", "")) == "42501":
-                st.success("Accesso anonimo: lettura negata per mancanza di permessi.")
+with scheda_auto:
+    st.info("Sezione Auto in preparazione: percorrenza, carburante, autostrada e rate auto saranno gestiti qui.")
+
+with scheda_accantonamenti:
+    st.info("Tabella accantonamenti in preparazione. Nessun calcolo o parametro è ancora attivo qui.")
+
+with scheda_conto_economico:
+    st.info("Conto economico in preparazione. I risultati fiscali completi non sono ancora disponibili.")
+
+with scheda_imposte:
+    st.info("Imposte in preparazione. I parametri fiscali 2027 non sono ancora stati configurati.")
+
+with scheda_detrazioni:
+    st.info("Detrazioni e deduzioni in preparazione. Nessun importo è ancora stato registrato qui.")
+
+with st.sidebar:
+    with st.expander("Diagnostica dei permessi (sola lettura)"):
+        if st.button("Verifica accesso al database"):
+            try:
+                client.table("fiscal_years").select("id").limit(1).execute()
+            except Exception:
+                st.error("Accesso autenticato: verifica non riuscita. Nessun dato è stato modificato.")
             else:
-                st.warning("Accesso anonimo: verifica non conclusiva. Riporta soltanto questo messaggio.")
-        else:
-            st.warning("Accesso anonimo: richiesta accettata. Non inserire ancora dati fiscali.")
+                st.success("Accesso autenticato: lettura consentita.")
 
-st.caption("Verificato l'isolamento in lettura dell'anno fiscale tra due utenti; le altre tabelle non sono ancora state testate separatamente.")
+            try:
+                anonymous_client = create_client(
+                    st.secrets["SUPABASE_URL"],
+                    st.secrets["SUPABASE_PUBLISHABLE_KEY"],
+                )
+                anonymous_client.table("fiscal_years").select("id").limit(1).execute()
+            except Exception as exc:
+                if str(getattr(exc, "code", "")) == "42501":
+                    st.success("Accesso anonimo: lettura negata per mancanza di permessi.")
+                else:
+                    st.warning("Accesso anonimo: verifica non conclusiva. Riporta soltanto questo messaggio.")
+            else:
+                st.warning("Accesso anonimo: richiesta accettata. Non inserire ancora dati fiscali.")
+    st.caption("Verificato l'isolamento in lettura dell'anno fiscale fra due utenti; altre tabelle non ancora testate separatamente.")
