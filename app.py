@@ -12,6 +12,7 @@ from auto_autostrada import mostra_autostrada
 from auto_carburante import mostra_carburante
 from auto_limiti import mostra_limiti_auto
 from auto_rate import mostra_rate
+from conto_economico import mostra_conto_economico
 from costi_tabella import mostra_tabella_costi
 from database import create_fiscal_year, get_fiscal_year
 from sanitarie_unificate import mostra_detrazioni_unificate
@@ -190,7 +191,7 @@ with scheda_accantonamenti:
     mostra_accantonamenti(client, fiscal_year)
 
 with scheda_conto_economico:
-    st.info("Conto economico in preparazione. I risultati fiscali completi non sono ancora disponibili.")
+    mostra_conto_economico(client, fiscal_year)
 
 with scheda_imposte:
     mostra_imposte(client, fiscal_year)
