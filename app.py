@@ -5,16 +5,14 @@ from supabase import create_client
 
 from auth import current_user, get_client, sign_in, sign_out
 from auto import mostra_auto
-from auto_autostrada import mostra_autostrada, mostra_autostrada_nei_costi
-from auto_carburante import mostra_carburante, mostra_carburante_nei_costi
+from auto_autostrada import mostra_autostrada
+from auto_carburante import mostra_carburante
 from auto_limiti import mostra_limiti_auto
 from auto_rate import mostra_rate
-from costi import mostra_costi
-from costi_manutenzione import mostra_manutenzione
+from costi_tabella import mostra_tabella_costi
 from database import create_fiscal_year, get_fiscal_year
 from fatturato import mostra_fatturato
 from mandanti import aggiungi_mandante, elenco_mandanti
-from riepilogo_costi import mostra_riepilogo_costi
 
 st.set_page_config(page_title="Gestionale Partita IVA", page_icon="📊", layout="wide")
 
@@ -166,11 +164,7 @@ with scheda_fatturato:
     mostra_fatturato(client, fiscal_year, mandanti)
 
 with scheda_costi:
-    mostra_costi(client, fiscal_year)
-    mostra_carburante_nei_costi(client, fiscal_year)
-    mostra_autostrada_nei_costi(client, fiscal_year)
-    mostra_manutenzione(client, fiscal_year)
-    mostra_riepilogo_costi(client, fiscal_year)
+    mostra_tabella_costi(client, fiscal_year)
 
 with scheda_auto:
     mostra_auto(client, fiscal_year)
@@ -197,7 +191,7 @@ with st.sidebar:
             try:
                 client.table("fiscal_years").select("id").limit(1).execute()
             except Exception:
-                st.error("Accesso autenticato: verifica non riuscita. Nessun dato è stato modificato.")
+                st.error("Accesso autenticato: verifica non riuscita. Nessun dato modificato.")
             else:
                 st.success("Accesso autenticato: lettura consentita.")
 
