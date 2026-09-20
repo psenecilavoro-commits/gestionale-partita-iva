@@ -18,6 +18,7 @@ from detrazioni_deduzioni import mostra_detrazioni_deduzioni
 from fatturato import mostra_fatturato
 from imposte_parametri import mostra_imposte
 from mandanti import aggiungi_mandante, elenco_mandanti
+from sanitarie_documenti import mostra_caricamento
 
 st.set_page_config(page_title="Gestionale Partita IVA", page_icon="📊", layout="wide")
 
@@ -196,6 +197,7 @@ with scheda_imposte:
     mostra_imposte(client, fiscal_year)
 
 with scheda_detrazioni:
+    mostra_caricamento(client, fiscal_year)
     mostra_detrazioni_deduzioni(client, fiscal_year)
 
 with st.sidebar:
