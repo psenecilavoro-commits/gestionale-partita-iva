@@ -3,6 +3,7 @@
 import streamlit as st
 from supabase import create_client
 
+from accantonamenti import mostra_accantonamenti
 from auth import current_user, get_client, sign_in, sign_out
 from auto import mostra_auto
 from auto_autostrada import mostra_autostrada
@@ -174,7 +175,7 @@ with scheda_auto:
     mostra_rate(client, fiscal_year)
 
 with scheda_accantonamenti:
-    st.info("Tabella accantonamenti in preparazione. Nessun calcolo o parametro è ancora attivo qui.")
+    mostra_accantonamenti(client, fiscal_year)
 
 with scheda_conto_economico:
     st.info("Conto economico in preparazione. I risultati fiscali completi non sono ancora disponibili.")
@@ -191,7 +192,7 @@ with st.sidebar:
             try:
                 client.table("fiscal_years").select("id").limit(1).execute()
             except Exception:
-                st.error("Accesso autenticato: verifica non riuscita. Nessun dato modificato.")
+                st.error("Accesso autenticato: verifica non riuscita. Nessun dato è stato modificato.")
             else:
                 st.success("Accesso autenticato: lettura consentita.")
 
