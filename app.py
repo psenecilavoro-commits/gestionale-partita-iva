@@ -13,6 +13,7 @@ from auto_rate import mostra_rate
 from costi_tabella import mostra_tabella_costi
 from database import create_fiscal_year, get_fiscal_year
 from fatturato import mostra_fatturato
+from imposte_parametri import mostra_imposte
 from mandanti import aggiungi_mandante, elenco_mandanti
 
 st.set_page_config(page_title="Gestionale Partita IVA", page_icon="📊", layout="wide")
@@ -181,7 +182,7 @@ with scheda_conto_economico:
     st.info("Conto economico in preparazione. I risultati fiscali completi non sono ancora disponibili.")
 
 with scheda_imposte:
-    st.info("Imposte in preparazione. I parametri fiscali 2027 non sono ancora stati configurati.")
+    mostra_imposte(client, fiscal_year)
 
 with scheda_detrazioni:
     st.info("Detrazioni e deduzioni in preparazione. Nessun importo è ancora stato registrato qui.")
@@ -192,7 +193,7 @@ with st.sidebar:
             try:
                 client.table("fiscal_years").select("id").limit(1).execute()
             except Exception:
-                st.error("Accesso autenticato: verifica non riuscita. Nessun dato è stato modificato.")
+                st.error("Accesso autenticato: lettura non riuscita. Nessun dato è stato modificato.")
             else:
                 st.success("Accesso autenticato: lettura consentita.")
 
