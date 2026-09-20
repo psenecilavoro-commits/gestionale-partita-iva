@@ -8,10 +8,13 @@ from auto import mostra_auto
 from auto_autostrada import mostra_autostrada, mostra_autostrada_nei_costi
 from auto_carburante import mostra_carburante, mostra_carburante_nei_costi
 from auto_limiti import mostra_limiti_auto
+from auto_rate import mostra_rate
 from costi import mostra_costi
+from costi_manutenzione import mostra_manutenzione
 from database import create_fiscal_year, get_fiscal_year
 from fatturato import mostra_fatturato
 from mandanti import aggiungi_mandante, elenco_mandanti
+from riepilogo_costi import mostra_riepilogo_costi
 
 st.set_page_config(page_title="Gestionale Partita IVA", page_icon="📊", layout="wide")
 
@@ -166,12 +169,15 @@ with scheda_costi:
     mostra_costi(client, fiscal_year)
     mostra_carburante_nei_costi(client, fiscal_year)
     mostra_autostrada_nei_costi(client, fiscal_year)
+    mostra_manutenzione(client, fiscal_year)
+    mostra_riepilogo_costi(client, fiscal_year)
 
 with scheda_auto:
     mostra_auto(client, fiscal_year)
     mostra_limiti_auto(client, fiscal_year)
     mostra_carburante(client, fiscal_year)
     mostra_autostrada(client, fiscal_year)
+    mostra_rate(client, fiscal_year)
 
 with scheda_accantonamenti:
     st.info("Tabella accantonamenti in preparazione. Nessun calcolo o parametro è ancora attivo qui.")
