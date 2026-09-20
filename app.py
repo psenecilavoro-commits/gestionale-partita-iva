@@ -1,5 +1,7 @@
 """Punto di ingresso del Gestionale Partita IVA."""
 
+from datetime import date
+
 import streamlit as st
 from supabase import create_client
 
@@ -57,20 +59,28 @@ with st.sidebar:
         st.rerun()
 
 st.subheader("Anno fiscale")
+# La scelta dell'anno e' necessaria per mostrare la rata corretta senza
+# aggiornare o eliminare record storici. Nel 2026 resta selezionato il 2027;
+# dagli anni successivi si propone l'anno corrente, modificabile dall'utente.
+anni = list(range(2027, 2051))
+anno_corrente = min(max(date.today().year, 2027), anni[-1])
+anno_selezionato = st.selectbox("Anno da visualizzare", anni,
+                               index=anni.index(anno_corrente), key="anno_fiscale_selezionato")
 try:
-    fiscal_year = get_fiscal_year(client, 2027)
+    fiscal_year = get_fiscal_year(client, anno_selezionato)
 except Exception:
     st.error("Impossibile leggere l'anno fiscale dal database. Nessuna modifica effettuata.")
     st.stop()
 
 if fiscal_year is None:
-    st.write("Crea l'anno 2027 per iniziare. Non saranno inseriti importi o parametri fiscali.")
-    if st.button("Crea anno fiscale 2027", type="primary"):
+    st.write(f"L'anno {anno_selezionato} non è ancora presente. "
+             "Puoi crearlo per registrare i dati di quell'anno; le detrazioni pluriennali già salvate resteranno disponibili.")
+    if st.button(f"Crea anno fiscale {anno_selezionato}", type="primary"):
         try:
-            create_fiscal_year(client, 2027)
+            create_fiscal_year(client, anno_selezionato)
         except Exception:
             try:
-                already_created = get_fiscal_year(client, 2027)
+                already_created = get_fiscal_year(client, anno_selezionato)
             except Exception:
                 already_created = None
             if already_created is not None:
@@ -82,8 +92,8 @@ if fiscal_year is None:
 
 st.success(f"Anno {fiscal_year['fiscal_year']} presente · stato: {fiscal_year['status']}.")
 
-# Costi è la seconda scheda, come richiesto. Le altre mantengono i nomi
-# delle sezioni del foglio di riferimento e saranno sviluppate per gradi.
+# Costi e' la seconda scheda, come richiesto. Le altre sezioni mantengono
+# i nomi del foglio di riferimento.
 (
     scheda_fatturato,
     scheda_costi,
