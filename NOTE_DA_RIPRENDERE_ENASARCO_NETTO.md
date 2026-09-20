@@ -1,19 +1,22 @@
-# Da riprendere prima di completare Imposte e Tabella accantonamenti
+# Vincoli di progetto: fatturato, Enasarco, netto e formule
 
-Stato: **decisione funzionale sospesa — non implementare automaticamente una formula del netto**.
+## Chiarimento esplicito dell'utente (20 settembre 2026) — PREVALE sulle note precedenti
 
-## Precisazione dell'utente (20 settembre 2026)
+**L'Enasarco NON deve essere sottratto dal fatturato.** La precedente nota secondo cui in Fatturato si dovrebbe registrare «fatturato meno Enasarco» era un'interpretazione errata e NON va implementata. L'utente ha chiarito che l'Enasarco viene trattenuto a monte nel flusso di pagamento/fatturazione, ma non deve ridurre il valore denominato FATTURATO nel gestionale. Mantenere distinti fatturato, trattenuta Enasarco e incasso/disponibilità effettivi; non inventare una formula che li confonda.
 
-- Per il suo rapporto commerciale, la quota Enasarco a suo carico viene trattenuta a monte al momento della fatturazione. Esempio fornito dall'utente: provvigioni di riferimento 10.000 € e trattenuta Enasarco 850 €; l'importo da registrare nella sua operatività è 9.150 € (10.000 − 850). **850 € è un esempio dell'utente, non una percentuale da applicare indistintamente.**
-- Nella scheda **Fatturato**, l'utente desidera registrare l'importo al netto della trattenuta Enasarco, secondo la modalità descritta. Evitare di detrarre una seconda volta l'Enasarco da quello stesso importo nei riepiloghi di disponibilità.
-- La **Tabella accantonamenti** serve principalmente per annotare il **netto mensile disponibile**, non solo la differenza tra un importo di fatturato e gli accantonamenti. Nel foglio originale l'utente inseriva manualmente il NETTO proprio perché il dato non si ricavava direttamente dalle colonne già compilate.
-- La precedente implementazione della Tabella accantonamenti mostra una differenza `provvigioni - accantonato` con avviso che non è netto fiscale: **non chiamarla netto disponibile o netto fiscale** e non trattarla come risultato definitivo.
+**Per tutte le formule dell'app il riferimento funzionale è SEMPRE il foglio originale** «calcoli partita iva pietro 2027» (Google Sheet ID `1-FsiHFWzuEWmRbASdeSrowjIE73U5-GanDJkn5tEzAE`), da consultare in sola lettura prima di sviluppare ciascun calcolo. Riprodurre fedelmente le formule, i riferimenti fra schede, le celle manuali e gli arrotondamenti per i test; se un'ipotesi del foglio è incerta o un parametro fiscale 2027 non è verificato, segnalare esplicitamente e non sostituire tacitamente la formula con un'altra. Non scrivere nel foglio.
 
-## Verifiche progettuali prima dell'implementazione
+## Riferimenti effettivamente riscontrati nel foglio
 
-1. Concordare con l'utente il significato preciso e le fonti di ciascun importo: provvigioni contrattuali, trattenuta Enasarco a suo carico, importo indicato in fattura, imponibile IVA, IVA esposta e pagamento incassato. Non presumere che tutti coincidano o che la trattenuta modifichi automaticamente l'imponibile IVA/fiscale.
-2. Esaminare insieme la scheda **Imposte** e verificare come viene già calcolato Enasarco, per evitare conteggi doppi o mancanti in Fatturato, Conto economico e accantonamenti.
-3. Definire se il NETTO mensile sia un campo manuale modificabile come nel foglio, un calcolo con rettifica manuale, o entrambi; distinguerlo dalla disponibilità bancaria e dal netto annuo fiscale.
-4. Tenere separate le registrazioni di prova dalle registrazioni reali; confermare il trattamento fiscale e contributivo aggiornato prima di attivare calcoli automatici definitivi.
+- `Fatturato!B41` = `SUM(17:17)` e vale 115.200 € nel test. `Conto economico!B1` = `Fatturato!B41`: il fatturato viene riportato per intero, senza sottrarre Enasarco.
+- `Fatturato!B19/E19/H19/K19`: le quote Enasarco sono calcolate *separatamente* sulle stime delle rispettive mandanti usando l'aliquota 0,085 e il massimale di riferimento nel foglio. `Imposte!E4` somma quelle quote (5.206,845 € nel test).
+- Il foglio usa `Imposte!E4` in `Conto economico!B8` (`=B1-Costi!F14-Imposte!E4`) e `Conto economico!B9` (`=B1-Costi!F14-Imposte!E4-Imposte!B3-Imposte!B5-'Detrazioni e deduzioni'!I3`). Ciò riguarda le *basi di calcolo* del foglio, non è un'istruzione per diminuire il campo FATTURATO. L'effettiva correttezza fiscale e i parametri 2027 dovranno essere verificati prima di usare le formule come risultati definitivi.
+- `Tabella accantonamenti!C2` usa `=B2-D2-J2`, ma la colonna B «PROVV. NETTE» è inserita manualmente nel foglio e non coincide automaticamente con il fatturato. Non chiamare netto la differenza attuale `fatturato - accantonato` dell'app.
 
-**Nessuna modifica ai dati o alle formule applicative viene richiesta da questa nota.**
+## Da riprendere quando completiamo Imposte e Tabella accantonamenti
+
+1. Distinguere provvigioni/fatturato, Enasarco personale, fattura, IVA, incasso e disponibilità senza deduzioni doppie. Per l'esempio esplicativo dell'utente, 10.000 € e trattenuta 850 € sono importi illustrativi e NON una regola generale o una formula del fatturato.
+2. Concordare come alimentare il valore mensile «PROVV. NETTE» (nel foglio compilato a mano), il netto mensile e l'accantonato; non inventare un automatismo prima di conoscere la provenienza dei dati.
+3. Confrontare ogni calcolo dell'app con le formule e i risultati del foglio originale, conservando la distinzione fra test e dati reali. Verificare separatamente aliquote, massimali e trattamento contributivo/fiscale 2027.
+
+Questa nota non modifica né i dati presenti né i calcoli attualmente attivi nell'app.
