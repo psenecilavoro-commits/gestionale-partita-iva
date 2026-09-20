@@ -11,6 +11,7 @@ import streamlit as st
 from supabase import Client
 
 from fatturato import euro
+from imposte_enasarco import mostra_confronto_enasarco
 
 D = Decimal
 # Valori letti dal foglio originale dell'utente: NON confermati per l'anno 2027.
@@ -116,12 +117,12 @@ def _modifica(client: Client, anno_id: str, riga: dict, valore: Decimal) -> None
 def mostra_imposte(client: Client, anno: dict) -> None:
     st.subheader("Imposte · preparazione parametri")
     st.warning(
-        "VALORI DEL FOGLIO, NON VERIFICATI PER IL 2027. Nessuna imposta, "
-        "liquidazione IVA, quota Enasarco o disponibilità netta viene ancora calcolata."
+        "VALORI DEL FOGLIO, NON VERIFICATI PER IL 2027. Nessuna imposta dovuta, "
+        "liquidazione IVA, trattenuta Enasarco effettiva o disponibilità netta viene ancora calcolata."
     )
     st.info(
         "Nel tuo flusso la quota Enasarco personale è già trattenuta a monte. "
-        "Perciò NON viene sottratta di nuovo dagli importi registrati in Fatturato. "
+        "Perciò NON viene sottratta dagli importi registrati in Fatturato. "
         "Distingueremo in seguito provvigioni di riferimento, trattenuta, "
         "importo della fattura e imponibile IVA: il foglio da solo non basta a identificarli."
     )
@@ -196,8 +197,9 @@ def mostra_imposte(client: Client, anno: dict) -> None:
                         st.rerun()
     if anno["status"] != "open":
         st.info("Anno chiuso: parametri in sola lettura.")
+    mostra_confronto_enasarco(client, anno, presenti)
     st.caption(
-        "Da completare prima dei calcoli: base Enasarco e importi realmente trattenuti; "
+        "Da completare prima dei calcoli fiscali definitivi: base Enasarco e importi realmente trattenuti; "
         "parametri 2027 confermati; contributi effettivamente versati; deduzioni e detrazioni; "
         "date e documenti per la liquidazione IVA. Il netto mensile della Tabella accantonamenti resta sospeso."
     )
