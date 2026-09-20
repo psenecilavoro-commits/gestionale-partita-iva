@@ -12,6 +12,7 @@ from supabase import Client
 
 from fatturato import euro
 from imposte_enasarco import mostra_confronto_enasarco
+from imposte_inps import mostra_confronto_inps
 
 D = Decimal
 # Valori letti dal foglio originale dell'utente: NON confermati per l'anno 2027.
@@ -198,6 +199,7 @@ def mostra_imposte(client: Client, anno: dict) -> None:
     if anno["status"] != "open":
         st.info("Anno chiuso: parametri in sola lettura.")
     mostra_confronto_enasarco(client, anno, presenti)
+    mostra_confronto_inps(client, anno, presenti)
     st.caption(
         "Da completare prima dei calcoli fiscali definitivi: base Enasarco e importi realmente trattenuti; "
         "parametri 2027 confermati; contributi effettivamente versati; deduzioni e detrazioni; "
