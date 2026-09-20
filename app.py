@@ -12,6 +12,7 @@ from auto_limiti import mostra_limiti_auto
 from auto_rate import mostra_rate
 from costi_tabella import mostra_tabella_costi
 from database import create_fiscal_year, get_fiscal_year
+from detrazioni_deduzioni import mostra_detrazioni_deduzioni
 from fatturato import mostra_fatturato
 from imposte_parametri import mostra_imposte
 from mandanti import aggiungi_mandante, elenco_mandanti
@@ -185,7 +186,7 @@ with scheda_imposte:
     mostra_imposte(client, fiscal_year)
 
 with scheda_detrazioni:
-    st.info("Detrazioni e deduzioni in preparazione. Nessun importo è ancora stato registrato qui.")
+    mostra_detrazioni_deduzioni(client, fiscal_year)
 
 with st.sidebar:
     with st.expander("Diagnostica dei permessi (sola lettura)"):
