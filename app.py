@@ -6,6 +6,7 @@ import streamlit as st
 from supabase import create_client
 
 from accantonamenti import mostra_accantonamenti
+from accantonamenti_confronto import mostra_confronto_accantonamenti
 from auth import current_user, get_client, sign_in, sign_out
 from auto import mostra_auto
 from auto_autostrada import mostra_autostrada
@@ -190,6 +191,7 @@ with scheda_auto:
 
 with scheda_accantonamenti:
     mostra_accantonamenti(client, fiscal_year)
+    mostra_confronto_accantonamenti(client, fiscal_year)
 
 with scheda_conto_economico:
     mostra_conto_economico(client, fiscal_year)
@@ -207,7 +209,7 @@ with st.sidebar:
             try:
                 client.table("fiscal_years").select("id").limit(1).execute()
             except Exception:
-                st.error("Accesso autenticato: lettura non riuscita. Nessuna modifica è stata effettuata.")
+                st.error("Accesso autenticato: lettura non riuscita. Nessun dato modificato.")
             else:
                 st.success("Accesso autenticato: lettura consentita.")
 
