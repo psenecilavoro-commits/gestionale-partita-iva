@@ -5,7 +5,7 @@ from datetime import date
 import streamlit as st
 from supabase import create_client
 
-from accantonamenti import mostra_accantonamenti
+from accantonamenti_completi import mostra_accantonamenti
 from accantonamenti_confronto import mostra_confronto_accantonamenti
 from auth import current_user, get_client, sign_in, sign_out
 from auto import mostra_auto
@@ -209,7 +209,7 @@ with st.sidebar:
             try:
                 client.table("fiscal_years").select("id").limit(1).execute()
             except Exception:
-                st.error("Accesso autenticato: lettura non riuscita. Nessun dato modificato.")
+                st.error("Accesso autenticato: lettura non riuscita. Nessuna modifica è stata effettuata.")
             else:
                 st.success("Accesso autenticato: lettura consentita.")
 
