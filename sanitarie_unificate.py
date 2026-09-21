@@ -13,7 +13,7 @@ from supabase import Client
 
 import detrazioni_deduzioni as dd
 import sanitarie_documenti as sd
-from contributi_versati import e_contributo, mostra_contributi_versati
+from contributi_versati import e_contributo
 from fatturato import euro
 
 D = Decimal
@@ -251,7 +251,7 @@ def mostra_detrazioni_unificate(client: Client, anno: dict) -> None:
     if deduzioni:
         st.dataframe([{
             "Causale": r["description"],
-            "Importo inserito": dd._formato(D(str(r["amount"]))),
+            "Importo inserito": dd._formato(D(str(r["amount"])),
             "Data pagamento": r.get("payment_date") or "—",
             "Stato": "Da verificare fiscalmente",
         } for r in deduzioni], hide_index=True, use_container_width=True)
@@ -264,9 +264,8 @@ def mostra_detrazioni_unificate(client: Client, anno: dict) -> None:
         dd._modifica_deduzione(client, anno, deduzioni)
     else:
         st.info("Anno fiscale chiuso: deduzioni in sola lettura.")
-    mostra_contributi_versati(client, anno)
 
     st.divider()
-    with st.expander("5 · Apri l'anteprima del foglio originale (sola lettura)"):
+    with st.expander("4 · Apri l'anteprima del foglio originale (sola lettura)"):
         dd._anteprima_foglio()
     st.caption("Prima del collegamento alle imposte verificheremo spettanza, limiti e pagamenti.")
