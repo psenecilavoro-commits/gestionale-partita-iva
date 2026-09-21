@@ -13,6 +13,7 @@ from auto_carburante import mostra_carburante
 from auto_limiti import mostra_limiti_auto
 from auto_rate import mostra_rate
 from conto_economico import mostra_conto_economico
+from contributi_versati import mostra_contributi_versati
 from costi_tabella import mostra_tabella_costi
 from database import create_fiscal_year, get_fiscal_year
 from sanitarie_unificate import mostra_detrazioni_unificate
@@ -195,6 +196,7 @@ with scheda_conto_economico:
 
 with scheda_imposte:
     mostra_imposte(client, fiscal_year)
+    mostra_contributi_versati(client, fiscal_year)
 
 with scheda_detrazioni:
     mostra_detrazioni_unificate(client, fiscal_year)
