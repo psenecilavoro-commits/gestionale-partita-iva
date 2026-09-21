@@ -51,9 +51,15 @@ def importo_valido(testo: str) -> Decimal:
 def riepilogo(mandanti: list[dict], righe: list[dict]) -> tuple[list[dict], Decimal, Decimal | None]:
     """Calcolo puro: un mese con importo zero conta come mese compilato."""
     per_mandante = {item["id"]: [] for item in mandanti}
+    presenti = set()
     for riga in righe:
-        if riga["principal_id"] in per_mandante:
-            per_mandante[riga["principal_id"]].append(Decimal(str(riga["amount"])))
+        chiave = (riga["principal_id"], int(riga["month"]))
+        valore = Decimal(str(riga["amount"]))
+        if (chiave in presenti or chiave[0] not in per_mandante or not 1 <= chiave[1] <= 12
+                or not valore.is_finite() or valore < 0):
+            raise ValueError("Fatturato duplicato, non valido o mandante non disponibile.")
+        presenti.add(chiave)
+        per_mandante[riga["principal_id"]].append(valore)
     risultati = []
     totale = Decimal("0")
     stima_totale = Decimal("0")
@@ -75,14 +81,8 @@ def riepilogo(mandanti: list[dict], righe: list[dict]) -> tuple[list[dict], Deci
 
 
 def leggi_fatturato(client: Client, anno_id: str) -> list[dict]:
-    risposta = (
-        client.table("monthly_revenues")
-        .select("id,principal_id,month,amount,notes")
-        .eq("fiscal_year_id", anno_id)
-        .order("month")
-        .execute()
-    )
-    return risposta.data or []
+    from registri import leggi_tutti
+    return leggi_tutti(client, "monthly_revenues", "id,principal_id,month,amount,notes", fiscal_year_id=anno_id)
 
 
 def salva_fatturato(
@@ -147,7 +147,7 @@ def carica_esempio(client: Client, anno_id: str, mandanti: list[dict]) -> None:
 
 def mostra_fatturato(client: Client, anno: dict, mandanti: list[dict]) -> None:
     st.divider()
-    st.subheader("Fatturato registrato · 2027")
+    st.subheader(f"Fatturato registrato · {anno['fiscal_year']}")
     st.caption("Importi fatturati, IVA esclusa. La stima è calcolata automaticamente: non si inseriscono previsioni.")
     if not mandanti:
         st.info("Aggiungi prima una mandante.")
@@ -180,7 +180,7 @@ def mostra_fatturato(client: Client, anno: dict, mandanti: list[dict]) -> None:
                 totale_mese += valore
         riga["Totale mese"] = euro(totale_mese) if any(int(r["month"]) == mese for r in righe) else "—"
         tabella.append(riga)
-    st.dataframe(tabella, hide_index=True, use_container_width=True)
+    st.dataframe(tabella, hide_index=True, width="stretch")
     st.markdown("**Riepilogo per mandante**")
     st.dataframe(
         [{
@@ -188,7 +188,7 @@ def mostra_fatturato(client: Client, anno: dict, mandanti: list[dict]) -> None:
             "Fatturato": euro(dato["totale"]),
             "Media mesi compilati": euro(dato["media"].quantize(CENT, rounding=ROUND_HALF_UP)) if dato["media"] is not None else "—",
             "Stima annua": euro(dato["stima"].quantize(CENT, rounding=ROUND_HALF_UP)) if dato["stima"] is not None else "—",
-        } for dato in risultati], hide_index=True, use_container_width=True,
+        } for dato in risultati], hide_index=True, width="stretch",
     )
     if len(righe) == 4 and all(r.get("notes") == NOTA_TEST and int(r["month"]) == 1 for r in righe):
         st.info("Confronto con il foglio originale: fatturato gennaio **9.600,00 €**; stima annua **115.200,00 €**. Sono importi di prova; il conto economico completo sarà confrontabile solo dopo aver configurato anche costi, contributi e imposte.")

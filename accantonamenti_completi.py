@@ -144,7 +144,7 @@ def mostra_accantonamenti(client: Client, anno: dict) -> None:
     except (ValueError, ArithmeticError):
         st.error("La tabella contiene mesi duplicati o importi non validi. Nessun dato modificato.")
         return
-    st.dataframe(tabella, hide_index=True, use_container_width=True)
+    st.dataframe(tabella, hide_index=True, width="stretch")
     c1, c2, c3 = st.columns(3)
     c1.metric("Provvigioni nette inserite", euro(totale_nette) if nette_disponibili else "—")
     c2.metric("Accantonamenti annotati", euro(totale_riserve))

@@ -126,7 +126,7 @@ def mostra_riepilogo_costi(client: Client, anno: dict) -> None:
         "IVA scorporata": _euro_arrotondato(r["IVA"]),
         "Costo netto": _euro_arrotondato(r["Netto"]),
         "Quota deducibile": _euro_arrotondato(r["Deducibile"]),
-    } for r in righe], hide_index=True, use_container_width=True)
+    } for r in righe], hide_index=True, width="stretch")
     if mancanti:
         return
     totali = [sum((r[chiave] for r in righe), Decimal("0"))
@@ -137,7 +137,7 @@ def mostra_riepilogo_costi(client: Client, anno: dict) -> None:
         "IVA scorporata": _euro_arrotondato(totali[1]),
         "Netto": _euro_arrotondato(totali[2]),
         "Deducibile": _euro_arrotondato(totali[3]),
-    }], hide_index=True, use_container_width=True)
+    }], hide_index=True, width="stretch")
     attesi = (Decimal("15941.83"), Decimal("2621.97"),
               Decimal("13319.86"), Decimal("10047.95"))
     if all(val.quantize(Decimal("0.01")) == atteso for val, atteso in zip(totali, attesi)):

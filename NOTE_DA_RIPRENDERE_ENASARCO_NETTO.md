@@ -20,3 +20,7 @@
 3. Confrontare ogni calcolo dell'app con le formule e i risultati del foglio originale, conservando la distinzione fra test e dati reali. Verificare separatamente aliquote, massimali e trattamento contributivo/fiscale 2027.
 
 Questa nota non modifica né i dati presenti né i calcoli attualmente attivi nell'app.
+
+## Aggiornamento strutturazione Codex — 21 settembre 2026
+
+Foglio riletto in sola lettura. Confermata anche `Tabella accantonamenti!E16 = E17-H18`: H18 (avanzo A.P.) ora è un input esplicito dello scenario. Il confronto letterale del Conto economico resta invariato; la variante sulle registrazioni applica separatamente il totale INPS pagato nell'anno (incluso A.P. una sola volta), Enasarco documentato e pensione entro un limite manuale di scenario. Il fatturato resta integrale. Nessuna aliquota o deduzione 2027 è stata promossa a regola fiscale verificata. Vedere stato e handover per prerequisiti SQL non applicati e limiti del collaudo.

@@ -49,22 +49,13 @@ def _importo(valore):
 
 
 def _leggi(client, anno_id):
-    categorie = (client.table("cost_categories")
-                 .select("id,code,name,vat_rate,vat_deductible_rate,cost_deductible_rate,deductible_limit,notes")
-                 .eq("fiscal_year_id", anno_id).execute()).data or []
-    stime = (client.table("annual_cost_estimates")
-             .select("id,category_id,estimated_gross_amount,amount_includes_vat,notes")
-             .eq("fiscal_year_id", anno_id).execute()).data or []
-    spese = (client.table("costs")
-             .select("id,category_id,vehicle_id,expense_date,description,gross_amount,amount_includes_vat,vat_rate,vat_deductible_rate,cost_deductible_rate,notes")
-             .eq("fiscal_year_id", anno_id).order("expense_date").execute()).data or []
-    veicoli = (client.table("vehicles").select("id,label").order("label").execute()).data or []
-    impostazioni = (client.table("vehicle_year_settings")
-                    .select("vehicle_id,annual_km_limit,excess_km_penalty,notes")
-                    .eq("fiscal_year_id", anno_id).execute()).data or []
-    km = (client.table("vehicle_monthly")
-          .select("vehicle_id,month,distance_km,notes")
-          .eq("fiscal_year_id", anno_id).execute()).data or []
+    from registri import leggi_tutti
+    categorie = leggi_tutti(client, "cost_categories", fiscal_year_id=anno_id)
+    stime = leggi_tutti(client, "annual_cost_estimates", fiscal_year_id=anno_id)
+    spese = leggi_tutti(client, "costs", fiscal_year_id=anno_id)
+    veicoli = leggi_tutti(client, "vehicles")
+    impostazioni = leggi_tutti(client, "vehicle_year_settings", fiscal_year_id=anno_id)
+    km = leggi_tutti(client, "vehicle_monthly", fiscal_year_id=anno_id)
     return ({c["code"]: c for c in categorie},
             {s["category_id"]: s for s in stime}, spese, veicoli, impostazioni, km)
 
@@ -190,10 +181,15 @@ def _tabella(categorie, stime, spese, impostazioni, km):
 
 
 def _nuova(client, anno, codice, importo, quando=None, veicolo_id=None, descrizione=""):
+    from registri import anno_aperto
+    from struttura_calcoli import data_anno
+    anno_aperto(client, anno)
     valore = _importo(importo)
     tipo = CONFIG[codice][2]
     if tipo == "mensile" and (not veicolo_id or quando is None):
         raise ValueError("Seleziona un veicolo e una data.")
+    if tipo == "mensile":
+        data_anno(quando, int(anno["fiscal_year"]))
     categoria = _crea_categoria(client, anno["id"], codice)
     if tipo == "annuale":
         if (client.table("annual_cost_estimates").select("id").eq("fiscal_year_id", anno["id"])
@@ -219,6 +215,11 @@ def _nuova(client, anno, codice, importo, quando=None, veicolo_id=None, descrizi
 
 
 def _modifica(client, anno, categoria, riga, tipo, importo, quando=None, descrizione=""):
+    from registri import anno_aperto
+    from struttura_calcoli import data_anno
+    anno_aperto(client, anno)
+    if tipo == "mensile":
+        data_anno(quando, int(anno["fiscal_year"]))
     valore = _importo(importo)
     tabella = "annual_cost_estimates" if tipo == "annuale" else "costs"
     dati = {"estimated_gross_amount" if tipo == "annuale" else "gross_amount": str(valore)}
@@ -232,6 +233,8 @@ def _modifica(client, anno, categoria, riga, tipo, importo, quando=None, descriz
 
 
 def _elimina(client, anno, categoria, riga, tipo):
+    from registri import anno_aperto
+    anno_aperto(client, anno)
     tabella = "annual_cost_estimates" if tipo == "annuale" else "costs"
     risposta = (client.table(tabella).delete().eq("id", riga["id"])
                .eq("fiscal_year_id", anno["id"]).eq("category_id", categoria["id"]).execute())
@@ -253,7 +256,7 @@ def mostra_tabella_costi(client: Client, anno: dict) -> None:
         st.warning("Sono presenti DATI DI PROVA: non rappresentano spese reali.")
     if "MANUALE" in origini:
         st.info("I nuovi importi usano per ora i parametri del foglio originale, non verificati per il 2027.")
-    st.dataframe(tabella, hide_index=True, use_container_width=True)
+    st.dataframe(tabella, hide_index=True, width="stretch")
     if incompleti:
         st.caption("I totali fiscali sono sospesi per voci da verificare: " + ", ".join(sorted(incompleti)) + ".")
     st.caption("* Rate auto: quota deducibile calcolata SOLO sui dati di prova con la formula del foglio. "
@@ -268,7 +271,7 @@ def mostra_tabella_costi(client: Client, anno: dict) -> None:
     for inizio in range(0, len(aggiungibili), 4):
         colonne = st.columns(4)
         for colonna, voce in zip(colonne, aggiungibili[inizio:inizio + 4]):
-            if colonna.button("＋ " + voce[1], key="costi_aggiungi_" + voce[0], use_container_width=True):
+            if colonna.button("＋ " + voce[1], key="costi_aggiungi_" + voce[0], width="stretch"):
                 st.session_state["costi_voce_aggiungi"] = voce[0]
     codice = st.session_state.get("costi_voce_aggiungi")
     if codice in CONFIG and CONFIG[codice][2] != "calcolata":

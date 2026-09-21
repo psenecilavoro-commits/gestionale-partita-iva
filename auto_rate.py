@@ -37,11 +37,8 @@ def _categoria(client: Client, anno_id: str) -> dict | None:
 
 
 def _rate(client: Client, anno_id: str, categoria_id: str) -> list[dict]:
-    r = (client.table("costs")
-         .select("id,vehicle_id,expense_date,gross_amount,amount_includes_vat,notes")
-         .eq("fiscal_year_id", anno_id).eq("category_id", categoria_id)
-         .order("expense_date").execute())
-    return r.data or []
+    from registri import leggi_tutti
+    return leggi_tutti(client, "costs", fiscal_year_id=anno_id, category_id=categoria_id)
 
 
 def _carica(client: Client, anno_id: str, veicolo_id: str) -> None:
@@ -102,7 +99,7 @@ def mostra_rate(client: Client, anno: dict) -> None:
         {"Mese": MESI[m - 1], "Rate lorde": _euro(importi_per_mese[m])
          if m in importi_per_mese else "—"}
         for m in range(1, 13)
-    ], hide_index=True, use_container_width=True)
+    ], hide_index=True, width="stretch")
     if any(r.get("notes") == NOTA_TEST for r in righe_veicolo):
         st.warning("RATE DI PROVA: importi e date non corrispondono a rate reali.")
     if anno["status"] != "open":

@@ -150,7 +150,7 @@ def mostra_imposte(client: Client, anno: dict) -> None:
             if codice in presenti else "Non caricato",
             "Riferimento": cella,
         } for codice, descrizione, valore, unita, cella in voci],
-            hide_index=True, use_container_width=True)
+            hide_index=True, width="stretch")
         if nome_gruppo == "INPS":
             st.caption(
                 "Nel foglio il massimale 122.295 € è esplicitamente indicato come "

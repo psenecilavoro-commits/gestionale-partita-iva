@@ -138,7 +138,7 @@ def mostra_confronto_inps(client: Client, anno: dict, presenti: dict) -> None:
         {"Passaggio": "2 · INPS eccedente del foglio", "Importo": euro(eccedente.quantize(CENT, rounding=ROUND_HALF_UP)), "Foglio": "Imposte!B6"},
         {"Passaggio": "INPS fisso del foglio", "Importo": euro(p["inps_fisso_foglio"].quantize(CENT, rounding=ROUND_HALF_UP)), "Foglio": "Imposte!B5"},
         {"Passaggio": "3 · INPS complessivo del foglio", "Importo": euro(totale.quantize(CENT, rounding=ROUND_HALF_UP)), "Foglio": "Conto economico!B10"},
-    ], hide_index=True, use_container_width=True)
+    ], hide_index=True, width="stretch")
     st.caption("L'Enasarco NON riduce il fatturato registrato: è sottratto soltanto nella specifica "
                "formula dell'imponibile INPS, esattamente come nel foglio. Nessun doppio conteggio.")
     if all(p[k] == v for k, v in (

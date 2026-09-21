@@ -139,12 +139,12 @@ def mostra_quadro_mensile(client: Client, anno: dict) -> None:
         return
     if any(r.get("notes") == NOTA_TEST for r in fatturati):
         st.warning("Attenzione: il fatturato contiene dati di PROVA; non usare i risultati per versamenti.")
-    st.dataframe(tabella, hide_index=True, use_container_width=True)
+    st.dataframe(tabella, hide_index=True, width="stretch")
     st.caption("La presenza di documenti per un mese non ne attesta la completezza; "
                "un campo vuoto NON equivale a zero. Il saldo IVA effettivo richiede "
                "le fatture emesse, i crediti riportati, rettifiche e verifica del commercialista.")
     with st.expander("Controlli mese per mese", expanded=False):
-        st.dataframe(controlli, hide_index=True, use_container_width=True)
+        st.dataframe(controlli, hide_index=True, width="stretch")
     st.markdown("#### Esporta le registrazioni per controllo")
     c1, c2, c3 = st.columns(3)
     c1.download_button("Scarica quadro mensile CSV", _csv_bytes(tabella),

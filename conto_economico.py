@@ -184,7 +184,7 @@ def mostra_conto_economico(client: Client, anno: dict) -> None:
     st.dataframe([{"Voce": nome, "Valore": _valuta(valori[cella]),
                    "Cella": f"Conto economico!{cella}", "Formula / origine": origine}
                   for cella, nome, origine in riferimenti], hide_index=True,
-                 use_container_width=True)
+                 width="stretch")
     c1, c2 = st.columns(2)
     c1.metric("Netto annuo TEORICO · confronto", _valuta(valori["B18"]))
     c2.metric("Media teorica su 12 mesi", _valuta(valori["B19"]))

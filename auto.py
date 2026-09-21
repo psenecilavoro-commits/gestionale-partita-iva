@@ -17,20 +17,13 @@ NOME_TEST = "Veicolo di prova (foglio originale)"
 
 
 def _veicoli(client: Client) -> list[dict]:
-    risposta = client.table("vehicles").select("id,label,notes").order("label").execute()
-    return risposta.data or []
+    from registri import leggi_tutti
+    return leggi_tutti(client, "vehicles")
 
 
 def _chilometri(client: Client, anno_id: str, veicolo_id: str) -> list[dict]:
-    risposta = (
-        client.table("vehicle_monthly")
-        .select("id,month,distance_km,notes")
-        .eq("fiscal_year_id", anno_id)
-        .eq("vehicle_id", veicolo_id)
-        .order("month")
-        .execute()
-    )
-    return risposta.data or []
+    from registri import leggi_tutti
+    return leggi_tutti(client, "vehicle_monthly", fiscal_year_id=anno_id, vehicle_id=veicolo_id)
 
 
 def _km_validi(testo: str) -> Decimal:
@@ -56,7 +49,7 @@ def _formato_km(valore: Decimal) -> str:
 
 def mostra_auto(client: Client, anno: dict) -> None:
     st.subheader("Auto · percorrenza")
-    st.caption("Partiamo dai chilometri mensili. Carburante, autostrada, rate e penali saranno aggiunti successivamente.")
+    st.caption("Chilometri mensili registrati e proiezione annuale. Carburante, autostrada, rate e limiti sono nelle sezioni seguenti.")
     try:
         veicoli = _veicoli(client)
     except Exception:
@@ -108,7 +101,7 @@ def mostra_auto(client: Client, anno: dict) -> None:
          "Chilometri": _formato_km(Decimal(str(indice[mese]["distance_km"]))) if mese in indice else "—",
          "Origine": "TEST" if mese in indice and indice[mese].get("notes") == NOTA_KM_TEST else ("Registrato" if mese in indice else "—")}
         for mese in range(1, 13)
-    ], hide_index=True, use_container_width=True)
+    ], hide_index=True, width="stretch")
 
     if anno["status"] != "open":
         st.info("Anno chiuso: percorrenza in sola lettura.")
