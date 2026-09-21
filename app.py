@@ -17,12 +17,14 @@ from conto_economico import mostra_conto_economico
 from contributi_versati import mostra_contributi_versati
 from costi_tabella import mostra_tabella_costi
 from database import create_fiscal_year, get_fiscal_year
+from fatture_acquisto_xml import mostra_importa_xml_acquisti
 from fatture_provvigioni import mostra_carica_fatture
 from sanitarie_unificate import mostra_detrazioni_unificate
 from fatturato import mostra_fatturato
 from imposte_parametri import mostra_imposte
 from iva_anteprima import mostra_anteprima_iva
 from mandanti import aggiungi_mandante, elenco_mandanti
+from quadro_mensile import mostra_quadro_mensile
 
 st.set_page_config(page_title="Gestionale Partita IVA", page_icon="📊", layout="wide")
 
@@ -196,6 +198,8 @@ with scheda_accantonamenti:
     mostra_carica_fatture(client, fiscal_year)
     mostra_confronto_accantonamenti(client, fiscal_year)
     mostra_anteprima_iva(client, fiscal_year)
+    mostra_importa_xml_acquisti(client, fiscal_year)
+    mostra_quadro_mensile(client, fiscal_year)
 
 with scheda_conto_economico:
     mostra_conto_economico(client, fiscal_year)
