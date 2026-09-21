@@ -1,7 +1,7 @@
 """Tabella accantonamenti con PROVV. NETTE manuali e persistenti.
 
 La quota netta è distinta dal fatturato e dagli accantonamenti. Non assume
-che la differenza sia denaro disponibile: la liquidazione IVA è da sviluppare.
+che la differenza sia denaro disponibile: i prospetti IVA restano da validare.
 La nuova tabella Supabase è descritta in SQL_PROVVIGIONI_NETTE.sql.
 """
 from decimal import Decimal
@@ -153,7 +153,7 @@ def mostra_accantonamenti(client: Client, anno: dict) -> None:
                "La differenza è PRIMA dell'IVA dovuta e non rappresenta il netto disponibile. "
                "Un mese vuoto non equivale a zero; annotare un accantonamento non sposta denaro.")
     st.info("Il NETTO del foglio (provvigioni nette − accantonato − IVA dovuta) "
-            "sarà calcolato solo dopo la gestione delle liquidazioni IVA per periodo.")
+            "è mostrato nel quadro mensile solo come ipotesi del foglio. I prospetti IVA documentali sono separati e da verificare.")
     if anno["status"] != "open":
         st.info("Anno chiuso: dati in sola lettura.")
         return

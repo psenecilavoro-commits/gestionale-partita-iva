@@ -159,4 +159,4 @@ def mostra_confronto_inps(client: Client, anno: dict, presenti: dict) -> None:
         else:
             st.warning("I tre risultati non coincidono con il foglio di prova: controlla le voci a monte.")
     st.caption("Il massimale INPS 122.295 € è provvisorio nel foglio (2026), non confermato per il 2027. "
-               "Il netto mensile e i contributi effettivamente pagati restano da sviluppare.")
+               "I contributi effettivamente pagati hanno un registro separato; il netto del foglio resta un'ipotesi.")

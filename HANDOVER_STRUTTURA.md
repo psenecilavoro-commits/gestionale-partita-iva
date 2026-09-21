@@ -16,11 +16,11 @@ Il riferimento letto è [calcoli partita iva pietro 2027](https://docs.google.co
 
 ## Test e limiti delle prove
 
-Ambiente locale Windows, Python 3.12, Streamlit 1.64.0 e Supabase Python 2.31.0. Suite unittest/AppTest, compilazione e controllo dipendenze vengono eseguiti realmente prima della consegna. I client AppTest sono finti: nessuna rete e nessuna credenziale reale.
+Ambiente locale Windows, Python 3.12, Streamlit 1.64.0 e Supabase Python 2.31.0. Esito locale del 21/09/2026: **29 test unittest/AppTest superati**, compileall senza errori, pip check senza dipendenze incompatibili e git diff --check superato. I client AppTest sono finti: nessuna rete e nessuna credenziale reale.
 
 I test di regressione confrontano tutte le celle numeriche prodotte dal Conto economico con la fixture del foglio, arrotondando soltanto alla presentazione. Ulteriori casi: mesi vuoti/zero/duplicati, Enasarco distinto, H18, contributi A.P. per cassa, fondo limitato, perdita senza imposta negativa nella variante, IVA note di credito, periodi sovrapposti, date future, XML non sicuri, CSV, paginazione oltre 1.000 righe, logout/cambio anno e chiavi privilegiate.
 
-La CI aggiunge PostgreSQL 17 temporaneo: schema minimo di contratto, doppia applicazione SQL, guardia progetto, isolamento A/B/anon, anno chiuso, versioni e vincoli. Il risultato remoto va consultato nel workflow della PR. Locale: PostgreSQL/psql/Docker non disponibili, quindi il test SQL non è dichiarato eseguito localmente.
+La CI aggiunge PostgreSQL 17 temporaneo: schema minimo di contratto, doppia applicazione SQL, guardia progetto, isolamento A/B/anon, anno chiuso, versioni e vincoli. **Esecuzione remota superata** sul commit c828d25: [workflow PR](https://github.com/psenecilavoro-commits/gestionale-partita-iva/actions/runs/35620740302), incluso lo step SQL. Locale: PostgreSQL/psql/Docker non disponibili, quindi il test SQL è stato eseguito in CI, non localmente. Questo non attesta lo schema Supabase reale.
 
 ## Attivazione nel progetto corretto
 

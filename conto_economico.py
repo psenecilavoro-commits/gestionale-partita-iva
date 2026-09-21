@@ -100,7 +100,7 @@ def mostra_conto_economico(client: Client, anno: dict) -> None:
         ricavi = leggi_fatturato(client, anno["id"])
         if not mandanti or not ricavi or any(r.get("notes") != NOTA_TEST for r in ricavi):
             st.info("Confronto sospeso: occorrono solo i ricavi etichettati come dati di prova. "
-                    "La futura versione per i dati reali avrà un calcolo distinto.")
+                    "Le registrazioni effettive hanno uno scenario distinto nella sezione precedente.")
             return
         dati_mandanti, _totale_registrato, fatturato = riepilogo(mandanti, ricavi)
         if fatturato is None or any(r["mesi"] == 0 for r in dati_mandanti):

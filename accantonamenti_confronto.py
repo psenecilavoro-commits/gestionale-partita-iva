@@ -181,5 +181,5 @@ def mostra_confronto_accantonamenti(client: Client, anno: dict) -> None:
     if obiettivo < gia:
         st.warning("Nel confronto quanto già accantonato supera l'obiettivo: la quota residua "
                    "può essere negativa. Non è un ordine di disinvestimento o rimborso.")
-    st.caption("Le colonne IVA dovuta e PROVV. NETTE saranno collegate solo quando avremo "
-               "dati di fattura e un campo dedicato per le provvigioni nette manuali.")
+    st.caption("Le provvigioni nette manuali, il quadro mensile e i prospetti IVA documentali "
+               "sono nelle rispettive sezioni; questo confronto non li sovrascrive.")
