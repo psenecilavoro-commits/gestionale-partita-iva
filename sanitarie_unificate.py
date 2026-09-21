@@ -13,6 +13,7 @@ from supabase import Client
 
 import detrazioni_deduzioni as dd
 import sanitarie_documenti as sd
+from contributi_versati import e_contributo, mostra_contributi_versati
 from fatturato import euro
 
 D = Decimal
@@ -169,6 +170,9 @@ def mostra_detrazioni_unificate(client: Client, anno: dict) -> None:
     except Exception:
         st.error("Impossibile leggere detrazioni e deduzioni. Nessun dato modificato.")
         return
+    # I contributi hanno una propria sezione e NON sono sommati alle deduzioni
+    # generiche: evita doppioni quando collegheremo i versamenti all'IRPEF.
+    deduzioni = [r for r in deduzioni if not e_contributo(r)]
 
     st.markdown(f"### 1 · Spese sanitarie · {anno_num}")
     totale_sanitario = manuali + documenti
@@ -260,7 +264,9 @@ def mostra_detrazioni_unificate(client: Client, anno: dict) -> None:
         dd._modifica_deduzione(client, anno, deduzioni)
     else:
         st.info("Anno fiscale chiuso: deduzioni in sola lettura.")
+    mostra_contributi_versati(client, anno)
+
     st.divider()
-    with st.expander("4 · Apri l'anteprima del foglio originale (sola lettura)"):
+    with st.expander("5 · Apri l'anteprima del foglio originale (sola lettura)"):
         dd._anteprima_foglio()
     st.caption("Prima del collegamento alle imposte verificheremo spettanza, limiti e pagamenti.")
