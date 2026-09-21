@@ -45,9 +45,9 @@ def periodo_fattura(riga: dict) -> tuple[int, int]:
         operazione, ricezione, registrazione
     )
     if riga.get("anticipate"):
-        if anticipabile or (anno_possibile, mese_possibile) == (registrazione.year, registrazione.month):
-            return anno_possibile, mese_possibile
-        raise ValueError("L'anticipo non è applicabile alle date indicate.")
+        if not anticipabile:
+            raise ValueError("L'anticipo non è applicabile alle date indicate: togli la spunta.")
+        return anno_possibile, mese_possibile
     return registrazione.year, registrazione.month
 
 
