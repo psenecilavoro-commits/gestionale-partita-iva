@@ -10,12 +10,13 @@ import base64
 import json
 
 _CLIENT_KEY = "_partita_iva_supabase_client"
+_AUTHENTICATED_KEY = "_partita_iva_authenticated"
 
 
 def reset_fiscal_inputs():
     """Non riutilizzare importi e conferme del precedente anno fiscale."""
     for key in list(st.session_state):
-        if key not in (_CLIENT_KEY, "anno_fiscale_selezionato"):
+        if key not in (_CLIENT_KEY, _AUTHENTICATED_KEY, "anno_fiscale_selezionato"):
             del st.session_state[key]
 
 
@@ -50,11 +51,19 @@ def current_user():
     if client is None:
         return None
     try:
-        result = client.auth.get_user()
-        return result.user
+        # Senza sessione siamo nel modulo login: non cancellarne i widget
+        # prima che Streamlit possa elaborare il pulsante di invio.
+        if client.auth.get_session() is not None:
+            result = client.auth.get_user()
+            if result.user is not None:
+                st.session_state[_AUTHENTICATED_KEY] = True
+                return result.user
     except Exception:
+        pass
+    # Elimina i dati privati solo quando viene persa una sessione autenticata.
+    if st.session_state.get(_AUTHENTICATED_KEY):
         st.session_state.clear()
-        return None
+    return None
 
 
 def sign_in(email: str, password: str) -> None:
@@ -64,6 +73,7 @@ def sign_in(email: str, password: str) -> None:
     )
     if result.session is None or result.user is None:
         raise ValueError("Accesso non confermato")
+    st.session_state[_AUTHENTICATED_KEY] = True
 
 
 def sign_out() -> None:
