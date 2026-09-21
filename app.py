@@ -7,7 +7,7 @@ from supabase import create_client
 
 from accantonamenti_completi import mostra_accantonamenti
 from accantonamenti_confronto import mostra_confronto_accantonamenti
-from auth import current_user, get_client, sign_in, sign_out
+from auth import current_user, get_client, sign_in, sign_out, reset_fiscal_inputs
 from auto import mostra_auto
 from auto_autostrada import mostra_autostrada
 from auto_carburante import mostra_carburante
@@ -25,6 +25,9 @@ from imposte_parametri import mostra_imposte
 from iva_anteprima import mostra_anteprima_iva
 from mandanti import aggiungi_mandante, elenco_mandanti
 from quadro_mensile import mostra_quadro_mensile
+from struttura_ui import (mostra_vendite, mostra_periodi_iva, mostra_pensione,
+                          mostra_conto_registrato, mostra_riconciliazione)
+from registrazioni_reali import mostra_veicoli_reali, mostra_costi_reali
 
 st.set_page_config(page_title="Gestionale Partita IVA", page_icon="📊", layout="wide")
 
@@ -72,7 +75,8 @@ st.subheader("Anno fiscale")
 anni = list(range(2027, 2051))
 anno_corrente = min(max(date.today().year, 2027), anni[-1])
 anno_selezionato = st.selectbox("Anno da visualizzare", anni,
-                               index=anni.index(anno_corrente), key="anno_fiscale_selezionato")
+                               index=anni.index(anno_corrente), key="anno_fiscale_selezionato",
+                               on_change=reset_fiscal_inputs)
 try:
     fiscal_year = get_fiscal_year(client, anno_selezionato)
 except Exception:
@@ -139,7 +143,7 @@ with scheda_fatturato:
                 for item in mandanti
             ],
             hide_index=True,
-            use_container_width=True,
+            width="stretch",
         )
     else:
         st.info("Non hai ancora registrato alcuna mandante.")
@@ -182,11 +186,15 @@ with scheda_fatturato:
         st.info("L'anno fiscale è chiuso: non è possibile aggiungere mandanti da questa schermata.")
 
     mostra_fatturato(client, fiscal_year, mandanti)
+    mostra_vendite(client, fiscal_year)
 
 with scheda_costi:
     mostra_tabella_costi(client, fiscal_year)
+    mostra_costi_reali(client, fiscal_year)
+    mostra_riconciliazione(client, fiscal_year)
 
 with scheda_auto:
+    mostra_veicoli_reali(client, fiscal_year)
     mostra_auto(client, fiscal_year)
     mostra_limiti_auto(client, fiscal_year)
     mostra_carburante(client, fiscal_year)
@@ -200,8 +208,10 @@ with scheda_accantonamenti:
     mostra_anteprima_iva(client, fiscal_year)
     mostra_importa_xml_acquisti(client, fiscal_year)
     mostra_quadro_mensile(client, fiscal_year)
+    mostra_periodi_iva(client, fiscal_year)
 
 with scheda_conto_economico:
+    mostra_conto_registrato(client, fiscal_year)
     mostra_conto_economico(client, fiscal_year)
 
 with scheda_imposte:
@@ -210,6 +220,7 @@ with scheda_imposte:
 
 with scheda_detrazioni:
     mostra_detrazioni_unificate(client, fiscal_year)
+    mostra_pensione(client, fiscal_year)
 
 with st.sidebar:
     with st.expander("Diagnostica dei permessi (sola lettura)"):

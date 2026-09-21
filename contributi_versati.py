@@ -68,11 +68,8 @@ def _verifica(anno: int, tipo: str, competenza: int, pagamento: date,
 
 
 def _leggi(client: Client, anno: dict) -> list[dict]:
-    risposta = (client.table("tax_deductions")
-                .select("id,description,amount,payment_date,notes")
-                .eq("fiscal_year_id", anno["id"])
-                .order("payment_date").execute())
-    return [r for r in (risposta.data or []) if e_contributo(r)]
+    from registri import leggi_tutti
+    return [r for r in leggi_tutti(client, "tax_deductions", fiscal_year_id=anno["id"]) if e_contributo(r)]
 
 
 def _salva(client: Client, anno: dict, esistenti: list[dict], *,
@@ -115,7 +112,7 @@ def mostra_contributi_versati(client: Client, anno: dict) -> None:
     st.caption("Registra solo pagamenti INPS realmente eseguiti o trattenute Enasarco documentate. "
                "L'anno di competenza può essere precedente all'anno del pagamento.")
     st.warning("Queste sono registrazioni dichiarate, NON deduzioni fiscali approvate. "
-               "Non alimentano ancora imponibile IRPEF, imposte o netto; "
+               "Alimentano soltanto lo scenario a cassa del Conto economico; "
                "non si sommano alle altre deduzioni della scheda.")
     try:
         righe = _leggi(client, anno)
@@ -139,7 +136,7 @@ def mostra_contributi_versati(client: Client, anno: dict) -> None:
             "Tipo": TIPI[tipo], "Competenza": competenza,
             "Data": r["payment_date"], "Causale": r["description"],
             "Importo": euro(D(str(r["amount"]))),
-        } for r, tipo, competenza in arricchite], hide_index=True, use_container_width=True)
+        } for r, tipo, competenza in arricchite], hide_index=True, width="stretch")
     else:
         st.info("Nessun contributo documentato registrato per l'anno selezionato.")
     if anno["status"] != "open":

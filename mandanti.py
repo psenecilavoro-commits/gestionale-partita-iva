@@ -6,14 +6,8 @@ _RAPPORTI = frozenset({"plurimandatario", "monomandatario"})
 
 
 def elenco_mandanti(client: Client) -> list[dict]:
-    """Legge esclusivamente le mandanti visibili alla sessione Supabase corrente."""
-    result = (
-        client.table("principals")
-        .select("id,name,enasarco_relationship,active")
-        .order("name")
-        .execute()
-    )
-    return result.data or []
+    from registri import leggi_tutti
+    return sorted(leggi_tutti(client, "principals"), key=lambda r: r["name"])
 
 
 def aggiungi_mandante(client: Client, nome: str, rapporto: str) -> dict:

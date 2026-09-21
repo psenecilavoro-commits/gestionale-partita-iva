@@ -31,16 +31,16 @@ RICHIESTI = (
 
 
 def obiettivo_annuo_foglio(fatturato: D, inps: D, irpef: D,
-                           veneto: D, verona: D) -> D:
+                           veneto: D, verona: D, avanzo_ap: D = D("0")) -> D:
     """Tabella accantonamenti!E16: somma INPS+imposte - 11,5% fatturato.
 
     Il coefficiente 11,5% è SOLO quello del foglio, non un'aliquota
     previdenziale/fiscale validata né una trattenuta sul fatturato salvato.
     """
-    valori = (fatturato, inps, irpef, veneto, verona)
+    valori = (fatturato, inps, irpef, veneto, verona, avanzo_ap)
     if any(not n.is_finite() or n < 0 for n in valori):
         raise ValueError("Importi del confronto non validi")
-    return inps + irpef + veneto + verona - fatturato * D("0.115")
+    return inps + irpef + veneto + verona - fatturato * D("0.115") - avanzo_ap
 
 
 def quota_mesi_vuoti_foglio(obiettivo: D, gia_accantonato: D,
@@ -145,9 +145,15 @@ def mostra_confronto_accantonamenti(client: Client, anno: dict) -> None:
     except ValueError as exc:
         st.warning(str(exc))
         return
+    testo_avanzo = st.text_input("Avanzo A.P. · H18 del foglio, solo scenario (€)", value="0,00", key="acc_avanzo_ap")
+    try:
+        obiettivo -= importo_valido(testo_avanzo)
+    except ValueError as exc:
+        st.warning(str(exc))
+        return
     st.metric("Obiettivo annuo · formula E16 del foglio, NON importo dovuto", _euro(obiettivo))
     st.caption("E16 = INPS fisso + INPS eccedente + IRPEF + addizionali Veneto/Verona "
-               "− 11,5% del fatturato stimato. L'11,5% è ripreso dal foglio, non verificato "
+               "− 11,5% del fatturato stimato − avanzo A.P. H18. L'11,5% è ripreso dal foglio, non verificato "
                "come regola fiscale. Nessuna deduzione dal fatturato registrato.")
 
     st.markdown("#### Prova la ripartizione sui mesi ancora vuoti")
@@ -175,5 +181,5 @@ def mostra_confronto_accantonamenti(client: Client, anno: dict) -> None:
     if obiettivo < gia:
         st.warning("Nel confronto quanto già accantonato supera l'obiettivo: la quota residua "
                    "può essere negativa. Non è un ordine di disinvestimento o rimborso.")
-    st.caption("Le colonne IVA dovuta e PROVV. NETTE saranno collegate solo quando avremo "
-               "dati di fattura e un campo dedicato per le provvigioni nette manuali.")
+    st.caption("Le provvigioni nette manuali, il quadro mensile e i prospetti IVA documentali "
+               "sono nelle rispettive sezioni; questo confronto non li sovrascrive.")

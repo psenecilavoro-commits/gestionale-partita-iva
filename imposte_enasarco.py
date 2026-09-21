@@ -79,7 +79,7 @@ def mostra_confronto_enasarco(client: Client, anno: dict, presenti: dict) -> Non
         return
     if any(r.get("notes") == NOTA_TEST for r in ricavi):
         st.warning("DATI DI PROVA: non sono versamenti o contributi realmente dovuti.")
-    st.dataframe(righe, hide_index=True, use_container_width=True)
+    st.dataframe(righe, hide_index=True, width="stretch")
     if mono:
         st.info("Sono presenti mandanti monomandatarie: il foglio usa il massimale plurimandatario. "
                 "La relativa formula resta sospesa finché non la concordiamo.")

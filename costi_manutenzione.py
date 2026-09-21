@@ -69,7 +69,7 @@ def mostra_manutenzione(client: Client, anno: dict) -> None:
             "Costo lordo": _euro_arrotondato(lordo), "IVA scorporata": _euro_arrotondato(iva),
             "Costo netto": _euro_arrotondato(netto),
             "Quota deducibile": _euro_arrotondato(deducibile),
-        }], hide_index=True, use_container_width=True)
+        }], hide_index=True, width="stretch")
     elif anno["status"] == "open":
         if st.button("Carica manutenzione auto di prova da 500 €", key="manut_carica"):
             try:

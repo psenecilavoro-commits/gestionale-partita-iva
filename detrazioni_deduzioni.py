@@ -85,13 +85,10 @@ def _data(testo: str, anno: int) -> str:
 
 
 def _leggi(client: Client, anno: dict) -> tuple[list[dict], list[dict]]:
-    deduzioni = (client.table("tax_deductions")
-                 .select("id,description,amount,payment_date,notes")
-                 .eq("fiscal_year_id", anno["id"]).order("description").execute()).data or []
+    from registri import leggi_tutti
+    deduzioni = leggi_tutti(client, "tax_deductions", fiscal_year_id=anno["id"])
     # I crediti sono associati a first_fiscal_year e visibili negli anni successivi.
-    detrazioni = (client.table("tax_credits")
-                  .select("id,description,original_amount,credit_rate,installment_count,first_fiscal_year,notes")
-                  .order("description").execute()).data or []
+    detrazioni = leggi_tutti(client, "tax_credits")
     return detrazioni, deduzioni
 
 
@@ -125,11 +122,11 @@ def _anteprima_foglio() -> None:
         righe.append({
             "Causale": nome, "Importo (input)": _formato(valore),
             "Rate annue (input)": rate,
-            "N. rata nel foglio": numero if numero is not None else "—",
+            "N. rata nel foglio": str(numero) if numero is not None else "—",
             "% (input)": f"{D(tasso) * 100:g}%",
             "Detrazione annua (formula)": _formato(annuo),
         })
-    st.dataframe(righe, hide_index=True, use_container_width=True)
+    st.dataframe(righe, hide_index=True, width="stretch")
     st.caption("Spese sanitarie: F3 = MAX(0; B3 − 129,11)/C3 × E3. "
                "Altre righe: F = B/C × E. N. rata NON cambia l'importo annuo: "
                "determina fino a quale anno la voce deve essere mostrata.")
@@ -336,7 +333,7 @@ def mostra_detrazioni_deduzioni(client: Client, anno: dict) -> None:
             "Detrazione annua (formula)": _formato(annuo),
         })
     if righe_crediti:
-        st.dataframe(righe_crediti, hide_index=True, use_container_width=True)
+        st.dataframe(righe_crediti, hide_index=True, width="stretch")
         st.metric("Totale detrazioni registrate attive · solo confronto", _formato(totale_crediti))
     else:
         st.info("Nessuna detrazione attiva registrata: l'anteprima del foglio NON viene inserita automaticamente.")
@@ -356,7 +353,7 @@ def mostra_detrazioni_deduzioni(client: Client, anno: dict) -> None:
             "Causale": r["description"], "Importo inserito": _formato(D(str(r["amount"]))),
             "Data pagamento": r.get("payment_date") or "—",
             "Stato": "Da verificare fiscalmente",
-        } for r in deduzioni], hide_index=True, use_container_width=True)
+        } for r in deduzioni], hide_index=True, width="stretch")
         totale_deduzioni = sum((D(str(r["amount"])) for r in deduzioni), D("0"))
         st.metric("Totale importi deduzioni registrati · sola somma", _formato(totale_deduzioni))
     else:

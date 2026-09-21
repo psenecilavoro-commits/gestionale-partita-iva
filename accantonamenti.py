@@ -121,7 +121,7 @@ def mostra_accantonamenti(client: Client, anno: dict) -> None:
     if any(r.get("notes") == NOTA_TEST for r in fatturati):
         st.warning("DATI DI PROVA presenti nel Fatturato: anche le provvigioni qui visualizzate sono una simulazione.")
 
-    st.dataframe(tabella, hide_index=True, use_container_width=True)
+    st.dataframe(tabella, hide_index=True, width="stretch")
     c1, c2, c3 = st.columns(3)
     c1.metric("Provvigioni registrate", euro(totale_ricavi))
     c2.metric("Accantonamenti annotati", euro(totale_riserve))

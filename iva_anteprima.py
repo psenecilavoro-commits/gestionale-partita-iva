@@ -86,7 +86,7 @@ def mostra_anteprima_iva(client: Client, anno: dict) -> None:
         "IVA detraibile auto · registrata": euro(acquisti[mese]["auto"]) if mese in acquisti else "—",
         "Altra IVA detraibile · registrata": euro(acquisti[mese]["altro"]) if mese in acquisti else "—",
         "IVA dovuta": "— · non determinata",
-    } for mese, nome in enumerate(MESI, 1)], hide_index=True, use_container_width=True)
+    } for mese, nome in enumerate(MESI, 1)], hide_index=True, width="stretch")
     st.caption("Un mese privo di documenti non equivale a 0. IVA sulle vendite = simulazione "
                "dal fatturato, IVA sugli acquisti = quote documentate e da te confermate. "
                "Non sottrarre i due valori come liquidazione effettiva.")

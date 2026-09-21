@@ -1,0 +1,1153 @@
+{
+  "source": "1-FsiHFWzuEWmRbASdeSrowjIE73U5-GanDJkn5tEzAE",
+  "read_date": "2026-09-21",
+  "scope": "Formule e risultati del riferimento di prova, non dati fiscali verificati",
+  "cells": {
+    "Fatturato!B15": {
+      "formula": "=SUM(B2:B13)",
+      "value": {
+        "numberValue": 7000
+      }
+    },
+    "Fatturato!E15": {
+      "formula": "=SUM(E2:E13)",
+      "value": {
+        "numberValue": 1000
+      }
+    },
+    "Fatturato!H15": {
+      "formula": "=SUM(H2:H13)",
+      "value": {
+        "numberValue": 1100
+      }
+    },
+    "Fatturato!K15": {
+      "formula": "=SUM(K2:K13)",
+      "value": {
+        "numberValue": 500
+      }
+    },
+    "Fatturato!B16": {
+      "formula": "=AVERAGE(B2:B13)",
+      "value": {
+        "numberValue": 7000
+      }
+    },
+    "Fatturato!E16": {
+      "formula": "=AVERAGE(E2:E13)",
+      "value": {
+        "numberValue": 1000
+      }
+    },
+    "Fatturato!H16": {
+      "formula": "=AVERAGE(H2:H13)",
+      "value": {
+        "numberValue": 1100
+      }
+    },
+    "Fatturato!K16": {
+      "formula": "=AVERAGE(K2:K13)",
+      "value": {
+        "numberValue": 500
+      }
+    },
+    "Fatturato!B17": {
+      "formula": "=(B15/COUNTA(B2:B13))*12",
+      "value": {
+        "numberValue": 84000
+      }
+    },
+    "Fatturato!E17": {
+      "formula": "=(E15/COUNTA(E2:E13))*12",
+      "value": {
+        "numberValue": 12000
+      }
+    },
+    "Fatturato!H17": {
+      "formula": "=(H15/COUNTA(H2:H13))*12",
+      "value": {
+        "numberValue": 13200
+      }
+    },
+    "Fatturato!K17": {
+      "formula": "=(K15/COUNTA(K2:K13))*12",
+      "value": {
+        "numberValue": 6000
+      }
+    },
+    "Fatturato!B19": {
+      "formula": "=IF(B17<Imposte!$E1;B17*0,085;Imposte!$E1*0,085)",
+      "value": {
+        "numberValue": 2554.8450000000003
+      }
+    },
+    "Fatturato!E19": {
+      "formula": "=IF(E17<Imposte!$E1;E17*0,085;Imposte!$E1*0,085)",
+      "value": {
+        "numberValue": 1020.0000000000001
+      }
+    },
+    "Fatturato!H19": {
+      "formula": "=IF(H17<Imposte!$E1;H17*0,085;Imposte!$E1*0,085)",
+      "value": {
+        "numberValue": 1122
+      }
+    },
+    "Fatturato!K19": {
+      "formula": "=IF(K17<Imposte!$E1;K17*0,085;Imposte!$E1*0,085)",
+      "value": {
+        "numberValue": 510.00000000000006
+      }
+    },
+    "Fatturato!B20": {
+      "formula": "=IF(B15>Imposte!$E$1;\"STOP\";\"VAI\")",
+      "value": {
+        "stringValue": "VAI"
+      }
+    },
+    "Fatturato!E20": {
+      "formula": "=IF(E15>Imposte!$E$1;\"STOP\";\"VAI\")",
+      "value": {
+        "stringValue": "VAI"
+      }
+    },
+    "Fatturato!H20": {
+      "formula": "=IF(H15>Imposte!$E$1;\"STOP\";\"VAI\")",
+      "value": {
+        "stringValue": "VAI"
+      }
+    },
+    "Fatturato!K20": {
+      "formula": "=IF(K15>Imposte!$E$1;\"STOP\";\"VAI\")",
+      "value": {
+        "stringValue": "VAI"
+      }
+    },
+    "Fatturato!E25": {
+      "formula": "=B39",
+      "value": {
+        "numberValue": 9600
+      }
+    },
+    "Fatturato!B26": {
+      "formula": "=SUM(2:2)",
+      "value": {
+        "numberValue": 9600
+      }
+    },
+    "Fatturato!E26": {
+      "formula": "=85000-E25",
+      "value": {
+        "numberValue": 75400
+      }
+    },
+    "Fatturato!B27": {
+      "formula": "=SUM(3:3)",
+      "value": {
+        "numberValue": 0
+      }
+    },
+    "Fatturato!E27": {
+      "formula": "=100000-E25",
+      "value": {
+        "numberValue": 90400
+      }
+    },
+    "Fatturato!B28": {
+      "formula": "=SUM(4:4)",
+      "value": {
+        "numberValue": 0
+      }
+    },
+    "Fatturato!B29": {
+      "formula": "=SUM(5:5)",
+      "value": {
+        "numberValue": 0
+      }
+    },
+    "Fatturato!E29": {
+      "formula": "=B41",
+      "value": {
+        "numberValue": 115200
+      }
+    },
+    "Fatturato!B30": {
+      "formula": "=SUM(6:6)",
+      "value": {
+        "numberValue": 0
+      }
+    },
+    "Fatturato!E30": {
+      "formula": "=85000-E29",
+      "value": {
+        "numberValue": -30200
+      }
+    },
+    "Fatturato!B31": {
+      "formula": "=SUM(7:7)",
+      "value": {
+        "numberValue": 0
+      }
+    },
+    "Fatturato!E31": {
+      "formula": "=100000-E29",
+      "value": {
+        "numberValue": -15200
+      }
+    },
+    "Fatturato!B32": {
+      "formula": "=SUM(8:8)",
+      "value": {
+        "numberValue": 0
+      }
+    },
+    "Fatturato!B33": {
+      "formula": "=SUM(9:9)",
+      "value": {
+        "numberValue": 0
+      }
+    },
+    "Fatturato!B34": {
+      "formula": "=SUM(10:10)",
+      "value": {
+        "numberValue": 0
+      }
+    },
+    "Fatturato!B35": {
+      "formula": "=SUM(11:11)",
+      "value": {
+        "numberValue": 0
+      }
+    },
+    "Fatturato!B36": {
+      "formula": "=SUM(12:12)",
+      "value": {
+        "numberValue": 0
+      }
+    },
+    "Fatturato!B37": {
+      "formula": "=SUM(13:13)",
+      "value": {
+        "numberValue": 0
+      }
+    },
+    "Fatturato!B39": {
+      "formula": "=SUM(15:15)",
+      "value": {
+        "numberValue": 9600
+      }
+    },
+    "Fatturato!B40": {
+      "formula": "=SUM(16:16)",
+      "value": {
+        "numberValue": 9600
+      }
+    },
+    "Fatturato!B41": {
+      "formula": "=SUM(17:17)",
+      "value": {
+        "numberValue": 115200
+      }
+    },
+    "Auto!E4": {
+      "formula": "=B15-E1",
+      "value": {
+        "numberValue": -48000
+      }
+    },
+    "Auto!E5": {
+      "formula": "=IF(E4>0;E4*E2;E4*0)",
+      "value": {
+        "numberValue": 0
+      }
+    },
+    "Auto!E7": {
+      "formula": "=B17-E1",
+      "value": {
+        "numberValue": -26000
+      }
+    },
+    "Auto!E8": {
+      "formula": "=IF(E7>0;E7*E2;E7*0)",
+      "value": {
+        "numberValue": 0
+      }
+    },
+    "Auto!E11": {
+      "formula": "=E10/1,22",
+      "value": {
+        "numberValue": 32704.918032786885
+      }
+    },
+    "Auto!B15": {
+      "formula": "=SUM(B2:B13)",
+      "value": {
+        "numberValue": 2000
+      }
+    },
+    "Auto!H15": {
+      "formula": "=SUM(H2:H13)",
+      "value": {
+        "numberValue": 200
+      }
+    },
+    "Auto!K15": {
+      "formula": "=SUM(K2:K13)",
+      "value": {
+        "numberValue": 50
+      }
+    },
+    "Auto!N15": {
+      "formula": "=SUM(N2:N13)",
+      "value": {
+        "numberValue": 670
+      }
+    },
+    "Auto!B16": {
+      "formula": "=AVERAGE(B2:B13)",
+      "value": {
+        "numberValue": 2000
+      }
+    },
+    "Auto!H16": {
+      "formula": "=AVERAGE(H2:H13)",
+      "value": {
+        "numberValue": 200
+      }
+    },
+    "Auto!K16": {
+      "formula": "=AVERAGE(K2:K13)",
+      "value": {
+        "numberValue": 50
+      }
+    },
+    "Auto!N16": {
+      "formula": "=AVERAGE(N2:N13)",
+      "value": {
+        "numberValue": 670
+      }
+    },
+    "Auto!B17": {
+      "formula": "=(B15/COUNTA(B2:B13))*12",
+      "value": {
+        "numberValue": 24000
+      }
+    },
+    "Auto!H17": {
+      "formula": "=(H15/COUNTA(H2:H13))*12",
+      "value": {
+        "numberValue": 2400
+      }
+    },
+    "Auto!K17": {
+      "formula": "=(K15/COUNTA(K2:K13))*12",
+      "value": {
+        "numberValue": 600
+      }
+    },
+    "Auto!N17": {
+      "formula": "=(N15/COUNTA(N2:N13))*12",
+      "value": {
+        "numberValue": 8040
+      }
+    },
+    "Tabella accantonamenti!C2": {
+      "formula": "=B2-D2-J2",
+      "value": {
+        "numberValue": -1946.0983606557377
+      }
+    },
+    "Tabella accantonamenti!E2": {
+      "formula": "=(E16-SUM(D2:D13))/COUNTBLANK(D2:D13)",
+      "value": {
+        "numberValue": 3400.245739732618
+      }
+    },
+    "Tabella accantonamenti!G2": {
+      "formula": "=Fatturato!B26*0,22",
+      "value": {
+        "numberValue": 2112
+      }
+    },
+    "Tabella accantonamenti!H2": {
+      "formula": "=(Auto!H2+Auto!K2+Auto!N2)*22/122",
+      "value": {
+        "numberValue": 165.9016393442623
+      }
+    },
+    "Tabella accantonamenti!J2": {
+      "formula": "=G2-H2-I2",
+      "value": {
+        "numberValue": 1946.0983606557377
+      }
+    },
+    "Tabella accantonamenti!C3": {
+      "formula": "=B3-D3-J3",
+      "value": {
+        "numberValue": 0
+      }
+    },
+    "Tabella accantonamenti!G3": {
+      "formula": "=Fatturato!B27*0,22",
+      "value": {
+        "numberValue": 0
+      }
+    },
+    "Tabella accantonamenti!H3": {
+      "formula": "=(Auto!H3+Auto!K3+Auto!N3)*22/122",
+      "value": {
+        "numberValue": 0
+      }
+    },
+    "Tabella accantonamenti!J3": {
+      "formula": "=G3-H3-I3",
+      "value": {
+        "numberValue": 0
+      }
+    },
+    "Tabella accantonamenti!C4": {
+      "formula": "=B4-D4-J4",
+      "value": {
+        "numberValue": 0
+      }
+    },
+    "Tabella accantonamenti!G4": {
+      "formula": "=Fatturato!B28*0,22",
+      "value": {
+        "numberValue": 0
+      }
+    },
+    "Tabella accantonamenti!H4": {
+      "formula": "=(Auto!H4+Auto!K4+Auto!N4)*22/122",
+      "value": {
+        "numberValue": 0
+      }
+    },
+    "Tabella accantonamenti!J4": {
+      "formula": "=G4-H4-I4",
+      "value": {
+        "numberValue": 0
+      }
+    },
+    "Tabella accantonamenti!C5": {
+      "formula": "=B5-D5-J5",
+      "value": {
+        "numberValue": 0
+      }
+    },
+    "Tabella accantonamenti!G5": {
+      "formula": "=Fatturato!B29*0,22",
+      "value": {
+        "numberValue": 0
+      }
+    },
+    "Tabella accantonamenti!H5": {
+      "formula": "=(Auto!H5+Auto!K5+Auto!N5)*22/122",
+      "value": {
+        "numberValue": 0
+      }
+    },
+    "Tabella accantonamenti!J5": {
+      "formula": "=G5-H5-I5",
+      "value": {
+        "numberValue": 0
+      }
+    },
+    "Tabella accantonamenti!C6": {
+      "formula": "=B6-D6-J6",
+      "value": {
+        "numberValue": 0
+      }
+    },
+    "Tabella accantonamenti!G6": {
+      "formula": "=Fatturato!B30*0,22",
+      "value": {
+        "numberValue": 0
+      }
+    },
+    "Tabella accantonamenti!H6": {
+      "formula": "=(Auto!H6+Auto!K6+Auto!N6)*22/122",
+      "value": {
+        "numberValue": 0
+      }
+    },
+    "Tabella accantonamenti!J6": {
+      "formula": "=G6-H6-I6",
+      "value": {
+        "numberValue": 0
+      }
+    },
+    "Tabella accantonamenti!C7": {
+      "formula": "=B7-D7-J7",
+      "value": {
+        "numberValue": 0
+      }
+    },
+    "Tabella accantonamenti!G7": {
+      "formula": "=Fatturato!B31*0,22",
+      "value": {
+        "numberValue": 0
+      }
+    },
+    "Tabella accantonamenti!H7": {
+      "formula": "=(Auto!H7+Auto!K7+Auto!N7)*22/122",
+      "value": {
+        "numberValue": 0
+      }
+    },
+    "Tabella accantonamenti!J7": {
+      "formula": "=G7-H7-I7",
+      "value": {
+        "numberValue": 0
+      }
+    },
+    "Tabella accantonamenti!C8": {
+      "formula": "=B8-D8-J8",
+      "value": {
+        "numberValue": 0
+      }
+    },
+    "Tabella accantonamenti!G8": {
+      "formula": "=Fatturato!B32*0,22",
+      "value": {
+        "numberValue": 0
+      }
+    },
+    "Tabella accantonamenti!H8": {
+      "formula": "=(Auto!H8+Auto!K8+Auto!N8)*22/122",
+      "value": {
+        "numberValue": 0
+      }
+    },
+    "Tabella accantonamenti!J8": {
+      "formula": "=G8-H8-I8",
+      "value": {
+        "numberValue": 0
+      }
+    },
+    "Tabella accantonamenti!C9": {
+      "formula": "=B9-D9-J9",
+      "value": {
+        "numberValue": 0
+      }
+    },
+    "Tabella accantonamenti!G9": {
+      "formula": "=Fatturato!B33*0,22",
+      "value": {
+        "numberValue": 0
+      }
+    },
+    "Tabella accantonamenti!H9": {
+      "formula": "=(Auto!H9+Auto!K9+Auto!N9)*22/122",
+      "value": {
+        "numberValue": 0
+      }
+    },
+    "Tabella accantonamenti!J9": {
+      "formula": "=G9-H9-I9",
+      "value": {
+        "numberValue": 0
+      }
+    },
+    "Tabella accantonamenti!C10": {
+      "formula": "=B10-D10-J10",
+      "value": {
+        "numberValue": 0
+      }
+    },
+    "Tabella accantonamenti!G10": {
+      "formula": "=Fatturato!B34*0,22",
+      "value": {
+        "numberValue": 0
+      }
+    },
+    "Tabella accantonamenti!H10": {
+      "formula": "=(Auto!H10+Auto!K10+Auto!N10)*22/122",
+      "value": {
+        "numberValue": 0
+      }
+    },
+    "Tabella accantonamenti!J10": {
+      "formula": "=G10-H10-I10",
+      "value": {
+        "numberValue": 0
+      }
+    },
+    "Tabella accantonamenti!C11": {
+      "formula": "=B11-D11-J11",
+      "value": {
+        "numberValue": 0
+      }
+    },
+    "Tabella accantonamenti!G11": {
+      "formula": "=Fatturato!B35*0,22",
+      "value": {
+        "numberValue": 0
+      }
+    },
+    "Tabella accantonamenti!H11": {
+      "formula": "=(Auto!H11+Auto!K11+Auto!N11)*22/122",
+      "value": {
+        "numberValue": 0
+      }
+    },
+    "Tabella accantonamenti!J11": {
+      "formula": "=G11-H11-I11",
+      "value": {
+        "numberValue": 0
+      }
+    },
+    "Tabella accantonamenti!C12": {
+      "formula": "=B12-D12-J12",
+      "value": {
+        "numberValue": 0
+      }
+    },
+    "Tabella accantonamenti!G12": {
+      "formula": "=Fatturato!B36*0,22",
+      "value": {
+        "numberValue": 0
+      }
+    },
+    "Tabella accantonamenti!H12": {
+      "formula": "=(Auto!H12+Auto!K12+Auto!N12)*22/122",
+      "value": {
+        "numberValue": 0
+      }
+    },
+    "Tabella accantonamenti!J12": {
+      "formula": "=G12-H12-I12",
+      "value": {
+        "numberValue": 0
+      }
+    },
+    "Tabella accantonamenti!C13": {
+      "formula": "=B13-D13-J13",
+      "value": {
+        "numberValue": 0
+      }
+    },
+    "Tabella accantonamenti!G13": {
+      "formula": "=Fatturato!B37*0,22",
+      "value": {
+        "numberValue": 0
+      }
+    },
+    "Tabella accantonamenti!H13": {
+      "formula": "=(Auto!H13+Auto!K13+Auto!N13)*22/122",
+      "value": {
+        "numberValue": 0
+      }
+    },
+    "Tabella accantonamenti!J13": {
+      "formula": "=G13-H13-I13",
+      "value": {
+        "numberValue": 0
+      }
+    },
+    "Tabella accantonamenti!E15": {
+      "formula": "=E16-SUM(D2:D13)",
+      "value": {
+        "numberValue": 40802.948876791415
+      }
+    },
+    "Tabella accantonamenti!H15": {
+      "formula": "=SUM(H2:H13)",
+      "value": {
+        "numberValue": 165.9016393442623
+      }
+    },
+    "Tabella accantonamenti!I15": {
+      "formula": "=SUM(I2:I13)",
+      "value": {
+        "numberValue": 0
+      }
+    },
+    "Tabella accantonamenti!J15": {
+      "formula": "=SUM(J2:J13)",
+      "value": {
+        "numberValue": 1946.0983606557377
+      }
+    },
+    "Tabella accantonamenti!E16": {
+      "formula": "=(Imposte!B5+Imposte!B6+Imposte!B7+Imposte!B8+Imposte!B9-(Fatturato!B41*0,115))-H18",
+      "value": {
+        "numberValue": 40802.948876791415
+      }
+    },
+    "Tabella accantonamenti!E17": {
+      "formula": "=Imposte!B5+Imposte!B6+Imposte!B7+Imposte!B8+Imposte!B9-(Fatturato!B41*0,115)",
+      "value": {
+        "numberValue": 40802.948876791415
+      }
+    },
+    "Tabella accantonamenti!E18": {
+      "formula": "=E16/12",
+      "value": {
+        "numberValue": 3400.245739732618
+      }
+    },
+    "Conto economico!B1": {
+      "formula": "=Fatturato!B41",
+      "value": {
+        "numberValue": 115200
+      }
+    },
+    "Conto economico!B5": {
+      "formula": "=B1*0,22",
+      "value": {
+        "numberValue": 25344
+      }
+    },
+    "Conto economico!B6": {
+      "formula": "=B5-Costi!C14",
+      "value": {
+        "numberValue": 22722.032786885247
+      }
+    },
+    "Conto economico!B8": {
+      "formula": "=B1-Costi!F14-Imposte!E4",
+      "value": {
+        "numberValue": 99945.20098821644
+      }
+    },
+    "Conto economico!B9": {
+      "formula": "=B1-Costi!F14-Imposte!E4-Imposte!B3-Imposte!B5-'Detrazioni e deduzioni'!I3",
+      "value": {
+        "numberValue": 82033.56098821644
+      }
+    },
+    "Conto economico!B11": {
+      "formula": "=Imposte!B5+Imposte!B6",
+      "value": {
+        "numberValue": 24911.23636379755
+      }
+    },
+    "Conto economico!B12": {
+      "formula": "=Imposte!E4",
+      "value": {
+        "numberValue": 5206.845
+      }
+    },
+    "Conto economico!B13": {
+      "formula": "=Costi!D14",
+      "value": {
+        "numberValue": 13319.862786885245
+      }
+    },
+    "Conto economico!B14": {
+      "formula": "=Imposte!B7+Imposte!B8+Imposte!B9",
+      "value": {
+        "numberValue": 29139.71251299386
+      }
+    },
+    "Conto economico!B15": {
+      "formula": "='Detrazioni e deduzioni'!F19",
+      "value": {
+        "numberValue": 2941.5090999999998
+      }
+    },
+    "Conto economico!B16": {
+      "formula": "=SUM('Detrazioni e deduzioni'!I3:I19)",
+      "value": {
+        "numberValue": 5300
+      }
+    },
+    "Conto economico!B18": {
+      "formula": "=B1-B11-B13-B14-B12+B15",
+      "value": {
+        "numberValue": 45563.85243632334
+      }
+    },
+    "Conto economico!B19": {
+      "formula": "=B18/12",
+      "value": {
+        "numberValue": 3796.987703026945
+      }
+    },
+    "Conto economico!B21": {
+      "formula": "=B1-B11-B14-B12+B15",
+      "value": {
+        "numberValue": 58883.71522320859
+      }
+    },
+    "Conto economico!B22": {
+      "formula": "=B21/12",
+      "value": {
+        "numberValue": 4906.976268600715
+      }
+    },
+    "Costi!B2": {
+      "formula": "=Auto!N17",
+      "value": {
+        "numberValue": 8040
+      }
+    },
+    "Costi!C2": {
+      "formula": "=B2*22/122",
+      "value": {
+        "numberValue": 1449.8360655737704
+      }
+    },
+    "Costi!D2": {
+      "formula": "=B2-C2",
+      "value": {
+        "numberValue": 6590.163934426229
+      }
+    },
+    "Costi!E2": {
+      "formula": "=0,8*(Auto!E12/Auto!E11)",
+      "value": {
+        "numberValue": 0.6331241062656643
+      }
+    },
+    "Costi!F2": {
+      "formula": "=D2*E2",
+      "value": {
+        "numberValue": 4172.39165112782
+      }
+    },
+    "Costi!B3": {
+      "formula": "=Auto!E8",
+      "value": {
+        "numberValue": 0
+      }
+    },
+    "Costi!C3": {
+      "formula": "=B3*22/122",
+      "value": {
+        "numberValue": 0
+      }
+    },
+    "Costi!D3": {
+      "formula": "=B3-C3",
+      "value": {
+        "numberValue": 0
+      }
+    },
+    "Costi!F3": {
+      "formula": "=D3*E3",
+      "value": {
+        "numberValue": 0
+      }
+    },
+    "Costi!B4": {
+      "formula": "=Auto!H17",
+      "value": {
+        "numberValue": 2400
+      }
+    },
+    "Costi!C4": {
+      "formula": "=B4*22/122",
+      "value": {
+        "numberValue": 432.78688524590166
+      }
+    },
+    "Costi!D4": {
+      "formula": "=B4-C4",
+      "value": {
+        "numberValue": 1967.2131147540983
+      }
+    },
+    "Costi!F4": {
+      "formula": "=D4*E4",
+      "value": {
+        "numberValue": 1573.7704918032787
+      }
+    },
+    "Costi!B5": {
+      "formula": "=Auto!K17",
+      "value": {
+        "numberValue": 600
+      }
+    },
+    "Costi!C5": {
+      "formula": "=B5*22/122",
+      "value": {
+        "numberValue": 108.19672131147541
+      }
+    },
+    "Costi!D5": {
+      "formula": "=B5-C5",
+      "value": {
+        "numberValue": 491.8032786885246
+      }
+    },
+    "Costi!F5": {
+      "formula": "=D5*E5",
+      "value": {
+        "numberValue": 393.44262295081967
+      }
+    },
+    "Costi!D6": {
+      "formula": "=B6-C6",
+      "value": {
+        "numberValue": 340.97
+      }
+    },
+    "Costi!F6": {
+      "formula": "=D6*E6",
+      "value": {
+        "numberValue": 272.776
+      }
+    },
+    "Costi!D7": {
+      "formula": "=B7-C7",
+      "value": {
+        "numberValue": 1060.86
+      }
+    },
+    "Costi!F7": {
+      "formula": "=D7*E7",
+      "value": {
+        "numberValue": 848.688
+      }
+    },
+    "Costi!C8": {
+      "formula": "=B8*22/122",
+      "value": {
+        "numberValue": 90.1639344262295
+      }
+    },
+    "Costi!D8": {
+      "formula": "=B8-C8",
+      "value": {
+        "numberValue": 409.8360655737705
+      }
+    },
+    "Costi!F8": {
+      "formula": "=D8*E8",
+      "value": {
+        "numberValue": 327.8688524590164
+      }
+    },
+    "Costi!C9": {
+      "formula": "=B9*22/122",
+      "value": {
+        "numberValue": 540.983606557377
+      }
+    },
+    "Costi!D9": {
+      "formula": "=B9-C9",
+      "value": {
+        "numberValue": 2459.0163934426228
+      }
+    },
+    "Costi!F9": {
+      "formula": "=D9*E9",
+      "value": {
+        "numberValue": 2459.0163934426228
+      }
+    },
+    "Costi!C10": {
+      "formula": "=B10*22/122",
+      "value": {
+        "numberValue": 0
+      }
+    },
+    "Costi!D10": {
+      "formula": "=B10-C10",
+      "value": {
+        "numberValue": 0
+      }
+    },
+    "Costi!F10": {
+      "formula": "=D10*E10",
+      "value": {
+        "numberValue": 0
+      }
+    },
+    "Costi!C11": {
+      "formula": "=B11*22/122",
+      "value": {
+        "numberValue": 0
+      }
+    },
+    "Costi!D11": {
+      "formula": "=B11-C11",
+      "value": {
+        "numberValue": 0
+      }
+    },
+    "Costi!F11": {
+      "formula": "=D11*E11",
+      "value": {
+        "numberValue": 0
+      }
+    },
+    "Costi!C12": {
+      "formula": "=B12*22/122",
+      "value": {
+        "numberValue": 0
+      }
+    },
+    "Costi!D12": {
+      "formula": "=B12-C12",
+      "value": {
+        "numberValue": 0
+      }
+    },
+    "Costi!F12": {
+      "formula": "=D12*E12",
+      "value": {
+        "numberValue": 0
+      }
+    },
+    "Costi!B14": {
+      "formula": "=SUM(B2:B12)",
+      "value": {
+        "numberValue": 15941.83
+      }
+    },
+    "Costi!C14": {
+      "formula": "=SUM(C2:C12)",
+      "value": {
+        "numberValue": 2621.9672131147536
+      }
+    },
+    "Costi!D14": {
+      "formula": "=SUM(D2:D12)",
+      "value": {
+        "numberValue": 13319.862786885245
+      }
+    },
+    "Costi!F14": {
+      "formula": "=SUM(F2:F12)",
+      "value": {
+        "numberValue": 10047.954011783557
+      }
+    },
+    "Imposte!E4": {
+      "formula": "=SUM(Fatturato!19:19)",
+      "value": {
+        "numberValue": 5206.845
+      }
+    },
+    "Imposte!B6": {
+      "formula": "=IF('Conto economico'!B8<=$E$6;0;IF(MIN('Conto economico'!B8;$E$8)<=$E$7;(MIN('Conto economico'!B8;$E$8)-$E$6)*$F$6;($E$7-$E$6)*$F$6+(MIN('Conto economico'!B8;$E$8)-$E$7)*$F$7))",
+      "value": {
+        "numberValue": 20299.59636379755
+      }
+    },
+    "Imposte!B7": {
+      "formula": "=IF('Conto economico'!B9<E11;'Conto economico'!B9*F10;(IF('Conto economico'!B9<E12;(E11*F10+('Conto economico'!B9-E11)*F11);(E11*F10+(E12-E11)*F11+('Conto economico'!B9-E12)*F12))))",
+      "value": {
+        "numberValue": 27474.43122493307
+      }
+    },
+    "Imposte!B8": {
+      "formula": "='Conto economico'!B9*F13",
+      "value": {
+        "numberValue": 1009.0128001550622
+      }
+    },
+    "Imposte!B9": {
+      "formula": "='Conto economico'!B9*F14",
+      "value": {
+        "numberValue": 656.2684879057316
+      }
+    },
+    "Detrazioni e deduzioni!F3": {
+      "formula": "=(MAX(0;B3-129,11)/C3)*E3",
+      "value": {
+        "numberValue": 73.6991
+      }
+    },
+    "Detrazioni e deduzioni!F4": {
+      "formula": "=(B4/C4)*E4",
+      "value": {
+        "numberValue": 100.13
+      }
+    },
+    "Detrazioni e deduzioni!F5": {
+      "formula": "=(B5/C5)*E5",
+      "value": {
+        "numberValue": 159
+      }
+    },
+    "Detrazioni e deduzioni!F6": {
+      "formula": "=(B6/C6)*E6",
+      "value": {
+        "numberValue": 266.05
+      }
+    },
+    "Detrazioni e deduzioni!F7": {
+      "formula": "=(B7/C7)*E7",
+      "value": {
+        "numberValue": 1290.75
+      }
+    },
+    "Detrazioni e deduzioni!F8": {
+      "formula": "=(B8/C8)*E8",
+      "value": {
+        "numberValue": 1.2
+      }
+    },
+    "Detrazioni e deduzioni!F9": {
+      "formula": "=(B9/C9)*E9",
+      "value": {
+        "numberValue": 391.75
+      }
+    },
+    "Detrazioni e deduzioni!F10": {
+      "formula": "=(B10/C10)*E10",
+      "value": {
+        "numberValue": 2.95
+      }
+    },
+    "Detrazioni e deduzioni!F11": {
+      "formula": "=(B11/C11)*E11",
+      "value": {
+        "numberValue": 142.78000000000003
+      }
+    },
+    "Detrazioni e deduzioni!F12": {
+      "formula": "=(B12/C12)*E12",
+      "value": {
+        "numberValue": 4.2
+      }
+    },
+    "Detrazioni e deduzioni!F13": {
+      "formula": "=(B13/C13)*E13",
+      "value": {
+        "numberValue": 6.2
+      }
+    },
+    "Detrazioni e deduzioni!F14": {
+      "formula": "=(B14/C14)*E14",
+      "value": {
+        "numberValue": 30.75
+      }
+    },
+    "Detrazioni e deduzioni!F15": {
+      "formula": "=(B15/C15)*E15",
+      "value": {
+        "numberValue": 429
+      }
+    },
+    "Detrazioni e deduzioni!F16": {
+      "formula": "=(B16/C16)*E16",
+      "value": {
+        "numberValue": 36.65
+      }
+    },
+    "Detrazioni e deduzioni!F17": {
+      "formula": "=(B17/C17)*E17",
+      "value": {
+        "numberValue": 6.4
+      }
+    },
+    "Detrazioni e deduzioni!B19": {
+      "formula": "=SUM(B1:B17)",
+      "value": {
+        "numberValue": 52190
+      }
+    },
+    "Detrazioni e deduzioni!F19": {
+      "formula": "=SUM(F1:F17)",
+      "value": {
+        "numberValue": 2941.5090999999998
+      }
+    }
+  }
+}

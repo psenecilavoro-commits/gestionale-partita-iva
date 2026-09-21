@@ -178,7 +178,7 @@ def mostra_costi(client: Client, anno: dict) -> None:
         })
 
     if risultati:
-        st.dataframe(risultati, hide_index=True, use_container_width=True)
+        st.dataframe(risultati, hide_index=True, width="stretch")
     else:
         st.info("Non sono ancora presenti costi annuali di prova.")
 

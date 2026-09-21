@@ -26,10 +26,8 @@ CAMPI = (
 
 
 def leggi_fatture_iva(client: Client, anno_id: str) -> list[dict]:
-    risultato = (client.table(TABELLA).select(",".join(CAMPI))
-                 .eq("fiscal_year_id", anno_id)
-                 .order("registered_date").execute())
-    return risultato.data or []
+    from registri import leggi_tutti
+    return leggi_tutti(client, TABELLA, ",".join(CAMPI), fiscal_year_id=anno_id)
 
 
 def _data(valore: str | date) -> date:
@@ -149,7 +147,7 @@ def mostra_registro_iva_acquisti(client: Client, anno: dict) -> None:
         "Altra IVA detraibile": euro(gruppi[m]["altro"]) if m in gruppi else "—",
         "Totale IVA detraibile registrata": euro(gruppi[m]["auto"] + gruppi[m]["altro"]) if m in gruppi else "—",
         "Fatture": gruppi[m]["count"] if m in gruppi else "—",
-    } for m in range(1, 13)], hide_index=True, use_container_width=True)
+    } for m in range(1, 13)], hide_index=True, width="stretch")
     if righe:
         with st.expander(f"Mostra le {len(righe)} fatture registrate"):
             st.dataframe([{
@@ -160,7 +158,7 @@ def mostra_registro_iva_acquisti(client: Client, anno: dict) -> None:
                 "IVA fattura": euro(D(str(r["vat_amount"]))),
                 "IVA detraibile verificata": euro(D(str(r["deductible_vat"]))),
                 "Categoria": "Auto" if r["category"] == "auto" else "Altra",
-            } for r in righe], hide_index=True, use_container_width=True)
+            } for r in righe], hide_index=True, width="stretch")
     st.info("Le somme sono soltanto l'IVA detraibile da TE confermata sui documenti presenti. "
             "Non comprendono fatture assenti, IVA a credito precedente, rettifiche o versamenti. "
             "Consulta il commercialista sulla detraibilità effettiva.")

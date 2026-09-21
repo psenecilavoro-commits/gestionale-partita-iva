@@ -192,7 +192,7 @@ def mostra_detrazioni_unificate(client: Client, anno: dict) -> None:
             "Importo": dd._formato(D(str(r["original_amount"]))),
             "Rate": r["installment_count"],
             "%": f"{D(str(r['credit_rate'])) * 100:g}%",
-        } for r in anomalie], hide_index=True, use_container_width=True)
+        } for r in anomalie], hide_index=True, width="stretch")
     _carica_documenti(client, anno, crediti, manuali)
 
     st.divider()
@@ -221,7 +221,7 @@ def mostra_detrazioni_unificate(client: Client, anno: dict) -> None:
             "Detrazione annua (formula)": dd._formato(annuo),
         })
     if righe:
-        st.dataframe(righe, hide_index=True, use_container_width=True)
+        st.dataframe(righe, hide_index=True, width="stretch")
         st.metric("Totale detrazioni registrate attive · solo confronto", dd._formato(totale))
     else:
         st.info("Nessuna detrazione attiva registrata: l'anteprima del foglio non viene inserita in Supabase.")
@@ -254,7 +254,7 @@ def mostra_detrazioni_unificate(client: Client, anno: dict) -> None:
             "Importo inserito": dd._formato(D(str(r["amount"]))),
             "Data pagamento": r.get("payment_date") or "—",
             "Stato": "Da verificare fiscalmente",
-        } for r in deduzioni], hide_index=True, use_container_width=True)
+        } for r in deduzioni], hide_index=True, width="stretch")
         totale_deduzioni = sum((D(str(r["amount"])) for r in deduzioni), D("0"))
         st.metric("Totale importi deduzioni registrati · sola somma", dd._formato(totale_deduzioni))
     else:

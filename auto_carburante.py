@@ -32,15 +32,8 @@ def _categoria(client: Client, anno_id: str) -> dict | None:
 
 
 def _spese(client: Client, anno_id: str, categoria_id: str) -> list[dict]:
-    risposta = (
-        client.table("costs")
-        .select("id,vehicle_id,expense_date,gross_amount,amount_includes_vat,vat_rate,vat_deductible_rate,cost_deductible_rate,notes")
-        .eq("fiscal_year_id", anno_id)
-        .eq("category_id", categoria_id)
-        .order("expense_date")
-        .execute()
-    )
-    return risposta.data or []
+    from registri import leggi_tutti
+    return leggi_tutti(client, "costs", fiscal_year_id=anno_id, category_id=categoria_id)
 
 
 def _per_mese(righe: list[dict]) -> dict[int, Decimal]:
@@ -135,7 +128,7 @@ def mostra_carburante(client: Client, anno: dict) -> None:
     st.dataframe([
         {"Mese": MESI[mese - 1], "Spesa carburante lorda": _euro(valori_mensili[mese]) if mese in valori_mensili else "—"}
         for mese in range(1, 13)
-    ], hide_index=True, use_container_width=True)
+    ], hide_index=True, width="stretch")
 
     if anno["status"] != "open":
         st.info("Anno chiuso: carburante in sola lettura.")
@@ -206,5 +199,5 @@ def mostra_carburante_nei_costi(client: Client, anno: dict) -> None:
         "Costo netto": _euro(netto),
         "Costo deducibile": _euro(deducibile),
         "Origine": "TEST · stima annuale",
-    }], hide_index=True, use_container_width=True)
+    }], hide_index=True, width="stretch")
     st.caption("Confronto con il foglio: carburante 2.400,00 €; IVA 432,79 €; netto 1.967,21 €; quota deducibile 1.573,77 €. Il costo non viene inserito una seconda volta.")

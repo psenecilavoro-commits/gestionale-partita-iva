@@ -160,7 +160,7 @@ def mostra_confronto_irpef(client: Client, anno: dict, presenti: dict) -> None:
         {"Passaggio": "3 · Addizionale Veneto del foglio", "Importo": _valuta(veneto), "Riferimento": "Imposte!B8"},
         {"Passaggio": "3 · Addizionale Verona del foglio", "Importo": _valuta(verona), "Riferimento": "Imposte!B9"},
         {"Passaggio": "Totale IRPEF e addizionali (solo somma)", "Importo": _valuta(totale), "Riferimento": "Conto economico!B14"},
-    ], hide_index=True, use_container_width=True)
+    ], hide_index=True, width="stretch")
     st.caption("Formula del foglio: fatturato − costi deducibili − Enasarco − contributi A.P. "
                "− INPS fisso − fondo pensione. L'Enasarco NON è sottratto dal fatturato registrato: "
                "entra solo nella formula dell'imponibile.")
