@@ -251,7 +251,7 @@ def mostra_detrazioni_unificate(client: Client, anno: dict) -> None:
     if deduzioni:
         st.dataframe([{
             "Causale": r["description"],
-            "Importo inserito": dd._formato(D(str(r["amount"])),
+            "Importo inserito": dd._formato(D(str(r["amount"]))),
             "Data pagamento": r.get("payment_date") or "—",
             "Stato": "Da verificare fiscalmente",
         } for r in deduzioni], hide_index=True, use_container_width=True)
