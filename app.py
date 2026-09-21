@@ -17,6 +17,7 @@ from conto_economico import mostra_conto_economico
 from contributi_versati import mostra_contributi_versati
 from costi_tabella import mostra_tabella_costi
 from database import create_fiscal_year, get_fiscal_year
+from fatture_provvigioni import mostra_carica_fatture
 from sanitarie_unificate import mostra_detrazioni_unificate
 from fatturato import mostra_fatturato
 from imposte_parametri import mostra_imposte
@@ -191,6 +192,7 @@ with scheda_auto:
 
 with scheda_accantonamenti:
     mostra_accantonamenti(client, fiscal_year)
+    mostra_carica_fatture(client, fiscal_year)
     mostra_confronto_accantonamenti(client, fiscal_year)
 
 with scheda_conto_economico:
@@ -209,7 +211,7 @@ with st.sidebar:
             try:
                 client.table("fiscal_years").select("id").limit(1).execute()
             except Exception:
-                st.error("Accesso autenticato: lettura non riuscita. Nessuna modifica è stata effettuata.")
+                st.error("Accesso autenticato: lettura non riuscita. Nessun dato modificato.")
             else:
                 st.success("Accesso autenticato: lettura consentita.")
 
