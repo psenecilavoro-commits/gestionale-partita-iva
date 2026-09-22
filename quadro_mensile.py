@@ -1,7 +1,7 @@
-"""Quadro di controllo della struttura: sola lettura, nessuna liquidazione fiscale.
+"""Quadro mensile di controllo: sola lettura, nessuna liquidazione fiscale.
 
-Importi assenti restano assenti; il 22% sulle vendite e' SOLO la formula del
-foglio di riferimento. I CSV si generano in memoria e non vengono archiviati.
+Gli importi assenti restano assenti e l'ipotesi IVA 22% non e' un debito.
+CSV generati in memoria e non archiviati.
 """
 from __future__ import annotations
 
@@ -19,6 +19,12 @@ from iva_acquisti import leggi_fatture_iva, riepilogo_acquisti_iva
 from iva_anteprima import iva_vendite_foglio
 
 D = Decimal
+
+# Le chiavi interne rimangono invariate per compatibilita' con test e import.
+ETICHETTE_UI = {
+    "IVA vendite · 22% foglio (SIMULAZIONE)": "IVA vendite · ipotesi 22%",
+    "Netto foglio · ipotesi (NON disponibile)": "Netto teorico · NON disponibile",
+}
 
 
 def _per_mese_unico(righe: list[dict], campo: str) -> dict[int, D]:
@@ -47,7 +53,7 @@ def _fatturato_mensile(righe: list[dict]) -> dict[int, D]:
 def costruisci_quadro(fatturati: list[dict], nette: list[dict],
                       accantonamenti: list[dict], fatture: list[dict],
                       anno: int) -> tuple[list[dict], list[dict]]:
-    """Tabella e verifiche: non promuovere importi parziali a IVA dovuta."""
+    """Compatibilita' interna invariata; non presentare IVA parziale come dovuta."""
     ricavi = _fatturato_mensile(fatturati)
     provvigioni = _per_mese_unico(nette, "amount")
     riserve = _per_mese_unico(accantonamenti, "reserved_amount")
@@ -57,7 +63,6 @@ def costruisci_quadro(fatturati: list[dict], nette: list[dict],
     righe = []
     controlli = []
     for mese, nome in enumerate(MESI, 1):
-        # Almeno una fattura presente NON certifica che tutte siano state caricate.
         documenti = acquisti.get(mese)
         netta = provvigioni.get(mese)
         riserva = riserve.get(mese)
@@ -98,8 +103,14 @@ def costruisci_quadro(fatturati: list[dict], nette: list[dict],
     return righe, controlli
 
 
+def _righe_presentabili(righe: list[dict]) -> list[dict]:
+    """Soltanto intestazioni di presentazione: nessuna modifica ai dati."""
+    return [{ETICHETTE_UI.get(chiave, chiave): valore for chiave, valore in r.items()}
+            for r in righe]
+
+
 def _sicuro_csv(valore: object) -> str:
-    """Protegge le celle testuali da formule in Excel e Google Fogli."""
+    """Protegge le celle da formule in programmi di fogli di calcolo."""
     testo = "" if valore is None else str(valore)
     if testo.lstrip().startswith(("=", "+", "-", "@", "\t", "\r")):
         return "'" + testo
@@ -121,33 +132,30 @@ def _csv_bytes(righe: list[dict]) -> bytes:
 def mostra_quadro_mensile(client: Client, anno: dict) -> None:
     st.divider()
     st.subheader("Quadro mensile e controllo dei dati")
-    st.caption("Unisce le schede senza duplicare o modificare registrazioni. "
-               "Le colonne IVA e netto del foglio sono SOLO simulazioni matematiche, "
-               "non liquidazioni né disponibilità finanziaria.")
+    st.caption("Riunisce i dati senza duplicare registrazioni. IVA e netto ipotetici "
+               "sono simulazioni matematiche, non liquidazioni o disponibilità finanziaria.")
     try:
         fatturati = leggi_fatturato(client, anno["id"])
         nette = leggi_provvigioni_nette(client, anno["id"])
         riserve = leggi_accantonamenti(client, anno["id"])
         acquisti = leggi_fatture_iva(client, anno["id"])
-        tabella, controlli = costruisci_quadro(
-            fatturati, nette, riserve, acquisti, int(anno["fiscal_year"])
-        )
+        tabella, controlli = costruisci_quadro(fatturati, nette, riserve, acquisti,
+                                               int(anno["fiscal_year"]))
     except Exception:
         st.warning("Quadro integrato non disponibile: controlla che siano presenti e "
-                   "accessibili entrambe le tabelle SQL delle provvigioni nette e "
-                   "delle fatture IVA acquisti. Nessun dato modificato.")
+                   "accessibili le tabelle delle provvigioni nette e dell'IVA acquisti.")
         return
     if any(r.get("notes") == NOTA_TEST for r in fatturati):
-        st.warning("Attenzione: il fatturato contiene dati di PROVA; non usare i risultati per versamenti.")
-    st.dataframe(tabella, hide_index=True, width="stretch")
+        st.warning("Il fatturato contiene dati di PROVA: non usare i risultati per versamenti.")
+    st.dataframe(_righe_presentabili(tabella), hide_index=True, width="stretch")
     st.caption("La presenza di documenti per un mese non ne attesta la completezza; "
                "un campo vuoto NON equivale a zero. Il saldo IVA effettivo richiede "
-               "le fatture emesse, i crediti riportati, rettifiche e verifica del commercialista.")
+               "fatture emesse, crediti riportati, rettifiche e verifica professionale.")
     with st.expander("Controlli mese per mese", expanded=False):
         st.dataframe(controlli, hide_index=True, width="stretch")
     st.markdown("#### Esporta le registrazioni per controllo")
     c1, c2, c3 = st.columns(3)
-    c1.download_button("Scarica quadro mensile CSV", _csv_bytes(tabella),
+    c1.download_button("Scarica quadro mensile CSV", _csv_bytes(_righe_presentabili(tabella)),
                        file_name=f"quadro_mensile_{anno['fiscal_year']}.csv",
                        mime="text/csv", key=f"csv_quadro_{anno['id']}")
     c2.download_button("Scarica controlli CSV", _csv_bytes(controlli),
@@ -165,4 +173,4 @@ def mostra_quadro_mensile(client: Client, anno: dict) -> None:
                        file_name=f"fatture_iva_acquisti_{anno['fiscal_year']}.csv",
                        mime="text/csv", disabled=not fatture_csv,
                        key=f"csv_iva_acquisti_{anno['id']}")
-    st.caption("Esportazioni generate in memoria: nessun documento o file CSV viene salvato nel database.")
+    st.caption("Esportazioni generate in memoria: nessun file CSV viene salvato nel database.")
