@@ -11,8 +11,6 @@ from supabase import Client
 from costi_tabella import (VOCI, CONFIG, _leggi, _tabella, _nuova, _modifica,
                           _elimina, _euro)
 
-# Non confondere le voci di sola lettura con quelle inseribili. Le voci Auto
-# sono ancora presenti in VOCI e pertanto nella tabella complessiva.
 SOLO_AUTO = frozenset({"rate_auto", "carburante", "autostrada"})
 
 
@@ -34,16 +32,15 @@ def mostra_tabella_costi(client: Client, anno: dict) -> None:
         st.error("Impossibile leggere la tabella dei costi. Nessun dato modificato.")
         return
     if "TEST" in origini:
-        st.warning("Sono presenti DATI DI PROVA: non rappresentano spese reali.")
+        st.warning("Sono ancora presenti dati dimostrativi nel database. Completa la pulizia controllata prima di utilizzare questi importi.")
     if "MANUALE" in origini:
-        st.info("Gli importi inseriti utilizzano parametri iniziali non verificati per il 2027.")
+        st.info("Le percentuali e i limiti fiscali delle categorie vanno verificati per il 2027.")
     st.dataframe(tabella, hide_index=True, width="stretch")
     if incompleti:
         st.caption("I totali fiscali sono sospesi per voci da verificare: "
                    + ", ".join(sorted(incompleti)) + ".")
-    st.caption("* Rate auto: la quota deducibile è calcolata solo per i dati "
-               "dimostrativi. Il contratto effettivo andrà verificato. "
-               "Assicurazione: premio senza IVA.")
+    st.caption("* Rate auto: la quota fiscalmente deducibile richiede la verifica del contratto "
+               "e dei relativi limiti. Assicurazione: premio senza IVA.")
     if anno["status"] != "open":
         st.info("Anno chiuso: costi in sola lettura.")
         return
@@ -57,7 +54,6 @@ def mostra_tabella_costi(client: Client, anno: dict) -> None:
             if colonna.button("＋ " + voce[1], key="costi_aggiungi_" + voce[0], width="stretch"):
                 st.session_state["costi_voce_aggiungi"] = voce[0]
     codice = st.session_state.get("costi_voce_aggiungi")
-    # Vale anche per un vecchio stato di sessione che puntava a carburante/rate.
     if codice in {voce[0] for voce in annuali}:
         voce = CONFIG[codice]
         categoria = categorie.get(codice)
@@ -101,7 +97,7 @@ def mostra_tabella_costi(client: Client, anno: dict) -> None:
     with st.form("costi_form_modifica_" + riga["id"]):
         nuovo_importo = st.text_input("Nuovo importo lordo (€)",
                                       value=f"{valore:.2f}".replace(".", ","))
-        st.caption("La modifica conserva l'origine dei dati di prova; non cambia aliquote o altri record.")
+        st.caption("La modifica non cambia aliquote, limiti o altri record.")
         salva = st.form_submit_button("Salva modifica", type="primary")
     if salva:
         try:
