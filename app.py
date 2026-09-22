@@ -7,7 +7,7 @@ import streamlit as st
 from accantonamenti_completi import mostra_accantonamenti
 from accantonamenti_confronto import mostra_confronto_accantonamenti
 from auth import current_user, get_client, sign_in, sign_out, reset_fiscal_inputs
-from auto import mostra_auto
+from auto import mostra_auto, prepara_auto_unica
 from auto_autostrada import mostra_autostrada
 from auto_carburante import mostra_carburante
 from auto_limiti import mostra_limiti_auto
@@ -25,7 +25,7 @@ from imposte_parametri import mostra_imposte
 from iva_anteprima import mostra_anteprima_iva
 from mandanti import aggiungi_mandante, elenco_mandanti
 from quadro_mensile import mostra_quadro_mensile
-from registrazioni_reali import mostra_veicoli_reali, mostra_costi_reali
+from registrazioni_reali import mostra_costi_reali
 from riepilogo_laterale import mostra_base
 from stile import applica_stile
 from struttura_ui import (mostra_vendite, mostra_periodi_iva, mostra_pensione,
@@ -184,13 +184,13 @@ with scheda_costi:
     mostra_riconciliazione(client, fiscal_year)
 
 with scheda_auto:
-    mostra_veicoli_reali(client, fiscal_year)
-    mostra_auto(client, fiscal_year)
-    mostra_limiti_auto(client, fiscal_year)
+    prepara_auto_unica(client)
     mostra_spese_auto(client, fiscal_year)
+    mostra_auto(client, fiscal_year)
     mostra_carburante(client, fiscal_year)
     mostra_autostrada(client, fiscal_year)
     mostra_rate(client, fiscal_year)
+    mostra_limiti_auto(client, fiscal_year)
 
 with scheda_accantonamenti:
     mostra_accantonamenti(client, fiscal_year)
