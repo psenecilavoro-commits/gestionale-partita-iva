@@ -1,4 +1,4 @@
-"""Percorrenza mensile e proiezione matematica; dati di prova distinti."""
+"""Percorrenza mensile e proiezione; l'inserimento è nella maschera Auto unificata."""
 from decimal import Decimal, InvalidOperation, ROUND_HALF_UP
 
 import streamlit as st
@@ -6,7 +6,7 @@ from supabase import Client
 
 from fatturato import MESI
 
-# Marcatori legacy: non rinominare dati gia' salvati nel database.
+# Marcatori storici: non modificarli, identificano i record dimostrativi esistenti.
 NOTA_VEICOLO_TEST = "VEICOLO DI PROVA - foglio originale"
 NOTA_KM_TEST = "DATI DI PROVA - gennaio del foglio originale"
 NOME_TEST = "Veicolo di prova (foglio originale)"
@@ -43,36 +43,52 @@ def _formato_km(valore: Decimal) -> str:
     return f"{valore:,.2f}".replace(",", "§").replace(".", ",").replace("§", ".") + " km"
 
 
-def mostra_auto(client: Client, anno: dict) -> None:
-    st.subheader("Auto · percorrenza")
-    st.caption("Chilometri mensili registrati e proiezione annuale. Carburante, autostrada, rate e limiti sono nelle sezioni seguenti.")
+def auto_unica(veicoli: list[dict]) -> dict | None:
+    """Preferisce l'unica auto effettiva, conservando il veicolo demo separato.
+
+    In presenza di più auto effettive non ne sceglie arbitrariamente una:
+    sarebbe possibile attribuire spese e chilometri al veicolo sbagliato.
+    """
+    reali = [v for v in veicoli if v.get("notes") != NOTA_VEICOLO_TEST]
+    if len(reali) > 1:
+        raise ValueError("Risultano più veicoli effettivi: la selezione automatica è sospesa. "
+                         "Controlla l'anagrafica prima di registrare altre spese.")
+    if reali:
+        return reali[0]
+    dimostrativi = [v for v in veicoli if v.get("notes") == NOTA_VEICOLO_TEST]
+    if len(dimostrativi) > 1:
+        raise ValueError("Risultano più veicoli dimostrativi: controlla l'anagrafica.")
+    return dimostrativi[0] if dimostrativi else None
+
+
+def prepara_auto_unica(client: Client) -> None:
+    """Configura il veicolo senza mostrare pulsanti o creare record in lettura."""
+    st.session_state.pop("auto_veicolo", None)
     try:
-        veicoli = _veicoli(client)
+        veicolo = auto_unica(_veicoli(client))
+    except ValueError as exc:
+        st.error(str(exc))
+        return
     except Exception:
-        st.error("Impossibile leggere i veicoli. Nessun dato modificato.")
+        st.error("Impossibile leggere i dati dell'auto. Nessun dato modificato.")
         return
-    veicolo_test = next((v for v in veicoli if v.get("notes") == NOTA_VEICOLO_TEST), None)
-    if anno["status"] == "open" and veicolo_test is None:
-        if st.button("Crea veicolo di prova (senza dati reali)"):
-            try:
-                trovato = next((v for v in _veicoli(client) if v.get("notes") == NOTA_VEICOLO_TEST), None)
-                if trovato is None:
-                    risposta = client.table("vehicles").insert({"label": NOME_TEST, "notes": NOTA_VEICOLO_TEST}).execute()
-                    if len(risposta.data or []) != 1:
-                        raise RuntimeError("Creazione veicolo non confermata")
-            except Exception:
-                st.error("Creazione non confermata: controlla l'elenco prima di riprovare.")
-            else:
-                st.rerun()
-    if not veicoli:
-        st.info("Nessun veicolo registrato. Puoi creare un veicolo di prova per simulare la percorrenza.")
+    if veicolo is not None:
+        st.session_state["auto_veicolo"] = veicolo["id"]
+
+
+def mostra_auto(client: Client, anno: dict) -> None:
+    st.divider()
+    st.subheader("Percorrenza")
+    veicolo_id = st.session_state.get("auto_veicolo")
+    if not veicolo_id:
+        st.info("Nessun chilometro registrato. Inserisci il primo mese nella maschera in alto.")
         return
-    etichette = {v["id"]: ("Veicolo di prova" if v.get("notes") == NOTA_VEICOLO_TEST
-                               else v["label"]) for v in veicoli}
-    selezionato = st.selectbox("Veicolo", list(etichette), format_func=lambda ident: etichette[ident], key="auto_veicolo")
-    veicolo = next(v for v in veicoli if v["id"] == selezionato)
     try:
-        righe = _chilometri(client, anno["id"], selezionato)
+        veicolo = next((v for v in _veicoli(client) if v["id"] == veicolo_id), None)
+        if veicolo is None:
+            st.info("Auto non disponibile. Nessuna modifica effettuata.")
+            return
+        righe = _chilometri(client, anno["id"], veicolo_id)
     except Exception:
         st.error("Impossibile leggere la percorrenza. Nessun dato modificato.")
         return
@@ -94,53 +110,3 @@ def mostra_auto(client: Client, anno: dict) -> None:
     ], hide_index=True, width="stretch")
     if anno["status"] != "open":
         st.info("Anno chiuso: percorrenza in sola lettura.")
-        return
-    if veicolo.get("notes") == NOTA_VEICOLO_TEST and not righe:
-        if st.button("Carica 2.000 km di prova a gennaio"):
-            try:
-                if _chilometri(client, anno["id"], selezionato):
-                    raise ValueError("Sono già presenti chilometri: nessun dato di prova inserito.")
-                risposta = client.table("vehicle_monthly").insert({
-                    "fiscal_year_id": anno["id"], "vehicle_id": selezionato,
-                    "month": 1, "distance_km": "2000.00", "notes": NOTA_KM_TEST,
-                }).execute()
-                if len(risposta.data or []) != 1:
-                    raise RuntimeError("Inserimento non confermato")
-            except ValueError as exc:
-                st.warning(str(exc))
-            except Exception:
-                st.error("Caricamento non confermato: controlla la tabella prima di riprovare.")
-            else:
-                st.rerun()
-    if righe:
-        with st.expander("Elimina manualmente un mese"):
-            mesi_presenti = {f"{MESI[int(r['month']) - 1]} · {r['distance_km']} km": r["id"] for r in righe}
-            scelta = st.selectbox("Mese da eliminare", list(mesi_presenti), key="auto_elimina_mese")
-            conferma = st.checkbox("Confermo l'eliminazione definitiva del mese selezionato", key="auto_conferma_mese")
-            if st.button("Elimina mese", disabled=not conferma):
-                try:
-                    risposta = (client.table("vehicle_monthly").delete()
-                                .eq("id", mesi_presenti[scelta])
-                                .eq("fiscal_year_id", anno["id"])
-                                .eq("vehicle_id", selezionato).execute())
-                    if len(risposta.data or []) != 1:
-                        raise RuntimeError("Eliminazione non confermata")
-                except Exception:
-                    st.error("Eliminazione non confermata: controlla la tabella prima di riprovare.")
-                else:
-                    st.rerun()
-    if veicolo.get("notes") == NOTA_VEICOLO_TEST and not righe:
-        with st.expander("Elimina il veicolo di prova"):
-            conferma = st.checkbox("Confermo di eliminare il veicolo di prova", key="auto_conferma_veicolo")
-            if st.button("Elimina veicolo di prova", disabled=not conferma):
-                try:
-                    if _chilometri(client, anno["id"], selezionato):
-                        raise ValueError("Elimina prima i mesi registrati.")
-                    risposta = (client.table("vehicles").delete()
-                                .eq("id", selezionato).eq("notes", NOTA_VEICOLO_TEST).execute())
-                    if len(risposta.data or []) != 1:
-                        raise RuntimeError("Eliminazione non confermata")
-                except Exception:
-                    st.error("Impossibile eliminare il veicolo di prova: controlla i dati collegati.")
-                else:
-                    st.rerun()
