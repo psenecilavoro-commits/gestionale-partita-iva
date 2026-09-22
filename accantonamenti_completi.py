@@ -1,29 +1,22 @@
-"""Tabella accantonamenti con PROVV. NETTE manuali e persistenti.
+"""Tabella accantonamenti con provvigioni nette manuali e persistenti.
 
-La quota netta è distinta dal fatturato e dagli accantonamenti. Non assume
-che la differenza sia denaro disponibile: i prospetti IVA restano da validare.
-La nuova tabella Supabase è descritta in SQL_PROVVIGIONI_NETTE.sql.
+Le provvigioni nette sono distinte dal fatturato e dalle riserve; la
+differenza non costituisce denaro disponibile o netto fiscale.
 """
 from decimal import Decimal
 
 import streamlit as st
 from supabase import Client
 
-from accantonamenti import (
-    leggi_accantonamenti, salva_accantonamento, elimina_accantonamento,
-)
-from fatturato import (
-    CENT, MESI, NOTA_TEST, euro, importo_valido, leggi_fatturato,
-)
+from accantonamenti import leggi_accantonamenti, salva_accantonamento, elimina_accantonamento
+from fatturato import CENT, MESI, NOTA_TEST, euro, importo_valido, leggi_fatturato
 
 TABELLA_NETTE = "monthly_net_commissions"
 
 
 def leggi_provvigioni_nette(client: Client, anno_id: str) -> list[dict]:
-    risultato = (client.table(TABELLA_NETTE)
-                 .select("id,month,amount")
-                 .eq("fiscal_year_id", anno_id)
-                 .order("month").execute())
+    risultato = (client.table(TABELLA_NETTE).select("id,month,amount")
+                 .eq("fiscal_year_id", anno_id).order("month").execute())
     return risultato.data or []
 
 
@@ -36,20 +29,16 @@ def salva_provvigione_netta(client: Client, anno_id: str, mese: int,
             "fiscal_year_id": anno_id, "month": mese, "amount": str(importo),
         }).execute()
     else:
-        risposta = (client.table(TABELLA_NETTE)
-                    .update({"amount": str(importo)})
-                    .eq("id", esistente["id"])
-                    .eq("fiscal_year_id", anno_id)
+        risposta = (client.table(TABELLA_NETTE).update({"amount": str(importo)})
+                    .eq("id", esistente["id"]).eq("fiscal_year_id", anno_id)
                     .eq("month", mese).execute())
     if len(risposta.data or []) != 1:
         raise RuntimeError("Salvataggio non confermato.")
 
 
 def elimina_provvigione_netta(client: Client, anno_id: str, esistente: dict) -> None:
-    risposta = (client.table(TABELLA_NETTE).delete()
-                .eq("id", esistente["id"])
-                .eq("fiscal_year_id", anno_id)
-                .eq("month", esistente["month"]).execute())
+    risposta = (client.table(TABELLA_NETTE).delete().eq("id", esistente["id"])
+                .eq("fiscal_year_id", anno_id).eq("month", esistente["month"]).execute())
     if len(risposta.data or []) != 1:
         raise RuntimeError("Eliminazione non confermata.")
 
@@ -66,7 +55,7 @@ def _ricavi_per_mese(fatturati: list[dict]) -> dict[int, Decimal]:
 
 def calcola_tabella_completa(fatturati: list[dict], riserve: list[dict],
                              nette: list[dict]) -> tuple[list[dict], Decimal, Decimal, Decimal, int]:
-    """Usa soltanto mesi esplicitamente presenti; non inventa valori zero."""
+    """Non inventa zeri per mesi privi di registrazioni."""
     ricavi = _ricavi_per_mese(fatturati)
     per_riserva: dict[int, Decimal] = {}
     per_nette: dict[int, Decimal] = {}
@@ -102,7 +91,6 @@ def calcola_tabella_completa(fatturati: list[dict], riserve: list[dict],
 
 
 def _tabella_non_disponibile(exc: Exception) -> bool:
-    """Non confondere mancanza della nuova tabella con errori RLS o di rete."""
     codice = str(getattr(exc, "code", ""))
     messaggio = str(exc).lower()
     return codice in ("PGRST205", "42P01") or (
@@ -152,17 +140,15 @@ def mostra_accantonamenti(client: Client, anno: dict) -> None:
     st.caption(f"Mesi con nette e accantonamenti compilati: {completi}/12. "
                "La differenza è PRIMA dell'IVA dovuta e non rappresenta il netto disponibile. "
                "Un mese vuoto non equivale a zero; annotare un accantonamento non sposta denaro.")
-    st.info("Il NETTO del foglio (provvigioni nette − accantonato − IVA dovuta) "
-            "è mostrato nel quadro mensile solo come ipotesi del foglio. I prospetti IVA documentali sono separati e da verificare.")
+    st.info("Il netto mensile ipotetico è visibile nel quadro mensile, ma non rappresenta "
+            "il denaro disponibile. Le liquidazioni IVA documentali sono separate e da verificare.")
     if anno["status"] != "open":
         st.info("Anno chiuso: dati in sola lettura.")
         return
-
     indice_nette = {int(r["month"]): r for r in nette}
     indice_riserve = {int(r["month"]): r for r in riserve}
     mese_nome = st.selectbox("Mese da compilare", MESI, key="accantonamenti_mese")
     mese = MESI.index(mese_nome) + 1
-
     st.markdown("#### Inserisci o modifica le provvigioni nette")
     if nette_disponibili:
         presente = indice_nette.get(mese)
@@ -196,7 +182,6 @@ def mostra_accantonamenti(client: Client, anno: dict) -> None:
                     st.rerun()
     else:
         st.caption("Inserimento disattivato finché la nuova tabella non è accessibile.")
-
     st.markdown("#### Aggiungi o modifica un accantonamento")
     presente_riserva = indice_riserve.get(mese)
     with st.form(f"accantonamento_form_{mese}"):
@@ -205,10 +190,8 @@ def mostra_accantonamenti(client: Client, anno: dict) -> None:
             value=str(presente_riserva["reserved_amount"]).replace(".", ",") if presente_riserva else "",
             help="0 è ammesso solo se inserito intenzionalmente.",
         )
-        nota = st.text_input(
-            "Nota facoltativa",
-            value=(presente_riserva.get("notes") or "") if presente_riserva else "",
-        )
+        nota = st.text_input("Nota facoltativa",
+                             value=(presente_riserva.get("notes") or "") if presente_riserva else "")
         invia = st.form_submit_button("Salva accantonamento", type="primary")
     if invia:
         try:
