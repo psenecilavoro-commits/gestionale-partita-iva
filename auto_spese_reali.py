@@ -26,9 +26,7 @@ def valida_spesa_auto(codice: str, giorno: date, importo: Decimal,
                        anno: int, *, oggi: date | None = None) -> None:
     if codice not in AUTO_CODICI:
         raise ValueError("Questa spesa non appartiene alle tre categorie auto gestite qui.")
-    data_anno(giorno, anno)
-    if giorno > (oggi or date.today()):
-        raise ValueError("Non registrare come sostenuta una spesa con data futura.")
+    data_anno(giorno, anno, oggi=oggi)
     if not importo.is_finite() or importo <= 0:
         raise ValueError("Inserisci un importo positivo e valido.")
 
