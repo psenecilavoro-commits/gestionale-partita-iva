@@ -1,7 +1,6 @@
-"""Un'unica tabella dei costi e moduli di inserimento/modifica sotto la tabella.
+"""Tabella unificata costi: stime annuali e spese mensili restano distinte.
 
-Le aliquote iniziali riproducono il foglio di confronto, NON regole fiscali
-2027 verificate. Stime annuali e spese mensili restano record distinti.
+Le percentuali iniziali sono scenari non verificati per il 2027.
 """
 from collections import defaultdict
 from datetime import date
@@ -16,8 +15,6 @@ from costi import _calcola, _euro_arrotondato, NOTA_CATEGORIA_TEST
 D = Decimal
 CENT = D("0.01")
 NOTA_MANUALE = "INSERIMENTO MANUALE - parametri fiscali da verificare"
-# L'ordine segue il foglio Costi originale. Le voci Auto sono lette da costs,
-# non ricopiate in annual_cost_estimates.
 VOCI = (
     ("rate_auto", "Auto · rate", "mensile", "0.22", "1", "0.8"),
     ("penale_km", "Penale km", "calcolata", "0", "0", "0"),
@@ -89,12 +86,14 @@ def _penale(impostazioni, km):
 
 def _crea_categoria(client, anno_id, codice):
     voce = CONFIG[codice]
-    esistente = (client.table("cost_categories").select("id,code,name,vat_rate,vat_deductible_rate,cost_deductible_rate,deductible_limit,notes")
+    esistente = (client.table("cost_categories")
+                 .select("id,code,name,vat_rate,vat_deductible_rate,cost_deductible_rate,deductible_limit,notes")
                  .eq("fiscal_year_id", anno_id).eq("code", codice).limit(1).execute()).data or []
     if esistente:
         return esistente[0]
     r = client.table("cost_categories").insert({
-        "fiscal_year_id": anno_id, "code": codice, "name": voce[1].replace("Auto · ", "").capitalize(),
+        "fiscal_year_id": anno_id, "code": codice,
+        "name": voce[1].replace("Auto · ", "").capitalize(),
         "vat_rate": voce[3], "vat_deductible_rate": voce[4],
         "cost_deductible_rate": voce[5], "notes": NOTA_CATEGORIA_TEST,
     }).execute()
@@ -255,16 +254,15 @@ def mostra_tabella_costi(client: Client, anno: dict) -> None:
     if "TEST" in origini:
         st.warning("Sono presenti DATI DI PROVA: non rappresentano spese reali.")
     if "MANUALE" in origini:
-        st.info("I nuovi importi usano per ora i parametri del foglio originale, non verificati per il 2027.")
+        st.info("Gli importi inseriti utilizzano parametri iniziali non verificati per il 2027.")
     st.dataframe(tabella, hide_index=True, width="stretch")
     if incompleti:
         st.caption("I totali fiscali sono sospesi per voci da verificare: " + ", ".join(sorted(incompleti)) + ".")
-    st.caption("* Rate auto: quota deducibile calcolata SOLO sui dati di prova con la formula del foglio. "
+    st.caption("* Rate auto: quota deducibile calcolata SOLO sui dati dimostrativi. "
                "Il trattamento effettivo del contratto andrà verificato. Assicurazione: premio senza IVA.")
     if anno["status"] != "open":
         st.info("Anno chiuso: costi in sola lettura.")
         return
-
     st.markdown("**Aggiungi una spesa o una stima**")
     st.caption("Scegli una voce sotto la tabella. Le voci mensili richiedono un veicolo; le altre sono stime annuali.")
     aggiungibili = [v for v in VOCI if v[2] != "calcolata"]
@@ -290,12 +288,14 @@ def mostra_tabella_costi(client: Client, anno: dict) -> None:
                 descrizione = ""
                 if voce[2] == "mensile":
                     veicolo_id = st.selectbox("Veicolo", [v["id"] for v in veicoli],
-                                              format_func=lambda vid: next(v["label"] for v in veicoli if v["id"] == vid))
+                                              format_func=lambda vid: next(
+                                                  "Veicolo di prova" if v.get("notes") == "VEICOLO DI PROVA - foglio originale" else v["label"]
+                                                  for v in veicoli if v["id"] == vid))
                     quando = st.date_input("Data della spesa", value=date(int(anno["fiscal_year"]), 1, 1),
                                            min_value=date(int(anno["fiscal_year"]), 1, 1),
                                            max_value=date(int(anno["fiscal_year"]), 12, 31))
                     descrizione = st.text_input("Descrizione (facoltativa)")
-                st.caption("Parametri fiscali iniziali dal foglio, da verificare. Non è una registrazione IVA né una fattura elettronica.")
+                st.caption("Parametri iniziali da verificare. Non è una registrazione IVA né una fattura elettronica.")
                 conferma = st.form_submit_button("Salva nuova voce", type="primary")
             if conferma:
                 try:
@@ -307,7 +307,6 @@ def mostra_tabella_costi(client: Client, anno: dict) -> None:
                 else:
                     st.session_state.pop("costi_voce_aggiungi", None)
                     st.rerun()
-
     st.markdown("**Modifica una spesa già inserita**")
     modificabili = []
     for codice_voce, nome, tipo, *_ in VOCI:
