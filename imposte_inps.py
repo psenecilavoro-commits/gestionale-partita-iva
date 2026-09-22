@@ -1,8 +1,6 @@
-"""Confronto INPS in sola lettura delle formule del foglio originale.
+"""Scenario INPS in sola lettura, non versamenti effettivi o netto mensile.
 
-Non calcola versamenti effettivi, imposte definitive o il netto mensile.
-Non sottrae mai l'Enasarco dal fatturato; lo considera separatamente
-SOLO nella formula di confronto dell'imponibile INPS del foglio.
+Il fatturato registrato resta integrale; la voce Enasarco e' separata.
 """
 from decimal import Decimal, ROUND_HALF_UP
 
@@ -28,7 +26,7 @@ PARAMETRI = (
 def calcola_inps_foglio(fatturato: D, costi_deducibili: D, enasarco: D,
                         fisso: D, minimale: D, prima: D, soglia: D,
                         seconda: D, massimale: D) -> tuple[D, D, D]:
-    """Conto economico!B8 e Imposte!B6/B5, senza arrotondamenti intermedi."""
+    """Formula di scenario senza arrotondamenti intermedi."""
     valori = (fatturato, costi_deducibili, enasarco, fisso, minimale,
               prima, soglia, seconda, massimale)
     if any(not valore.is_finite() or valore < 0 for valore in valori):
@@ -36,7 +34,6 @@ def calcola_inps_foglio(fatturato: D, costi_deducibili: D, enasarco: D,
     if not (minimale <= soglia <= massimale) or prima > 1 or seconda > 1:
         raise ValueError("Soglie o aliquote INPS non coerenti: chiarire i parametri")
     imponibile = fatturato - costi_deducibili - enasarco
-    # Formula del foglio Imposte!B6, trascritta senza arrotondamenti intermedi.
     if imponibile <= minimale:
         eccedente = D("0")
     else:
@@ -50,7 +47,7 @@ def calcola_inps_foglio(fatturato: D, costi_deducibili: D, enasarco: D,
 
 
 def _nessun_altro_costo(client: Client, anno_id: str) -> bool:
-    """Non presentare il totale di sette voci come completo se esistono altre spese."""
+    """Evita di presentare un prospetto incompleto come totale complessivo."""
     categorie = (client.table("cost_categories")
                  .select("id,code").eq("fiscal_year_id", anno_id).execute()).data or []
     esterne = {c["id"] for c in categorie if c["code"] not in VOCI_TEST_COSTI}
@@ -68,21 +65,20 @@ def _nessun_altro_costo(client: Client, anno_id: str) -> bool:
 
 def mostra_confronto_inps(client: Client, anno: dict, presenti: dict) -> None:
     st.divider()
-    st.subheader("INPS · confronto delle formule del foglio")
-    st.caption("Tre passaggi: imponibile di confronto, quota eccedente e totale con INPS fisso. "
-               "L'Enasarco resta una voce separata dal fatturato.")
-    mancanti = [chiave for chiave in PARAMETRI if chiave not in presenti]
-    if mancanti:
-        st.info("Carica prima tutti i parametri Enasarco e INPS per visualizzare il confronto.")
+    st.subheader("INPS · scenario")
+    st.caption("Imponibile ipotetico, quota eccedente e totale con INPS fisso. "
+               "Enasarco e fatturato restano voci distinte.")
+    if any(chiave not in presenti for chiave in PARAMETRI):
+        st.info("Carica prima i parametri Enasarco e INPS per visualizzare lo scenario.")
         return
     try:
         mandanti = elenco_mandanti(client)
         ricavi = leggi_fatturato(client, anno["id"])
         if not mandanti or not ricavi:
-            st.info("Per il confronto servono le provvigioni di prova nella scheda Fatturato.")
+            st.info("Sono necessari i dati di prova nella scheda Fatturato.")
             return
         if any(r.get("notes") != NOTA_TEST for r in ricavi):
-            st.info("Il confronto dei sette costi di prova è sospeso: non mescolo ricavi ordinari e dati di prova.")
+            st.info("Scenario sospeso: non vengono mescolati ricavi ordinari e dati di prova.")
             return
         dati_mandanti, _registrato, fatturato = riepilogo(mandanti, ricavi)
         if fatturato is None or any(dato["mesi"] == 0 for dato in dati_mandanti):
@@ -94,14 +90,14 @@ def mostra_confronto_inps(client: Client, anno: dict, presenti: dict) -> None:
             D(str(presenti["enasarco_massimale_pluri"]["value"])),
         )
         if mono:
-            st.info("È presente una mandante monomandataria: concordiamo la formula prima di proseguire.")
+            st.info("È presente una mandante monomandataria: serve una formula specifica.")
             return
         costi, mancanti_costi, non_test = calcola_riepilogo(client, anno["id"])
         if non_test or mancanti_costi or len(costi) != len(VOCI_TEST_COSTI):
-            st.info("Il confronto richiede tutte e sette le voci Costi di prova, senza modifiche o voci mancanti.")
+            st.info("Lo scenario richiede tutte e sette le voci di costo di prova complete.")
             return
         if not _nessun_altro_costo(client, anno["id"]):
-            st.info("Sono presenti altre spese oltre alle sette voci di prova: il confronto completo è sospeso.")
+            st.info("Sono presenti ulteriori spese: lo scenario dimostrativo è sospeso.")
             return
         impostazioni = (client.table("vehicle_year_settings")
                         .select("vehicle_id,annual_km_limit,excess_km_penalty")
@@ -111,7 +107,7 @@ def mostra_confronto_inps(client: Client, anno: dict, presenti: dict) -> None:
               .eq("fiscal_year_id", anno["id"]).execute()).data or []
         penale = _penale(impostazioni, km)
         if penale is not None and penale != 0:
-            st.info("La penale chilometrica stimata non è zero: occorre includerla nei costi prima del confronto INPS.")
+            st.info("Penale chilometrica stimata diversa da zero: completare i costi prima dello scenario.")
             return
         deducibili = sum((r["Deducibile"] for r in costi), D("0"))
         p = {codice: D(str(presenti[codice]["value"])) for codice in PARAMETRI}
@@ -125,22 +121,21 @@ def mostra_confronto_inps(client: Client, anno: dict, presenti: dict) -> None:
         st.warning(str(exc))
         return
     except Exception:
-        st.error("Impossibile leggere il confronto INPS: nessun dato modificato.")
+        st.error("Impossibile leggere lo scenario INPS. Nessun dato modificato.")
         return
-
-    st.warning("CONFRONTO DI PROVA: valori e aliquote del foglio non verificati per il 2027. "
-               "Non sono importi da versare e non modificano il fatturato.")
+    st.warning("SCENARIO DI PROVA: aliquote e importi non verificati per il 2027. "
+               "Non sono contributi da versare e non modificano il fatturato.")
     st.dataframe([
-        {"Passaggio": "Fatturato annuo stimato (invariato)", "Importo": euro(fatturato.quantize(CENT, rounding=ROUND_HALF_UP)), "Foglio": "Fatturato!B41"},
-        {"Passaggio": "Costi deducibili stimati", "Importo": euro(deducibili.quantize(CENT, rounding=ROUND_HALF_UP)), "Foglio": "Costi!F14"},
-        {"Passaggio": "Enasarco stimato (separato)", "Importo": euro(enasarco.quantize(CENT, rounding=ROUND_HALF_UP)), "Foglio": "Imposte!E4"},
-        {"Passaggio": "1 · Imponibile INPS del foglio", "Importo": euro(imponibile.quantize(CENT, rounding=ROUND_HALF_UP)), "Foglio": "Conto economico!B8"},
-        {"Passaggio": "2 · INPS eccedente del foglio", "Importo": euro(eccedente.quantize(CENT, rounding=ROUND_HALF_UP)), "Foglio": "Imposte!B6"},
-        {"Passaggio": "INPS fisso del foglio", "Importo": euro(p["inps_fisso_foglio"].quantize(CENT, rounding=ROUND_HALF_UP)), "Foglio": "Imposte!B5"},
-        {"Passaggio": "3 · INPS complessivo del foglio", "Importo": euro(totale.quantize(CENT, rounding=ROUND_HALF_UP)), "Foglio": "Conto economico!B10"},
+        {"Passaggio": "Fatturato annuo stimato (invariato)", "Importo": euro(fatturato.quantize(CENT, rounding=ROUND_HALF_UP))},
+        {"Passaggio": "Costi deducibili stimati", "Importo": euro(deducibili.quantize(CENT, rounding=ROUND_HALF_UP))},
+        {"Passaggio": "Enasarco stimato (separato)", "Importo": euro(enasarco.quantize(CENT, rounding=ROUND_HALF_UP))},
+        {"Passaggio": "1 · Imponibile INPS · scenario", "Importo": euro(imponibile.quantize(CENT, rounding=ROUND_HALF_UP))},
+        {"Passaggio": "2 · INPS eccedente · scenario", "Importo": euro(eccedente.quantize(CENT, rounding=ROUND_HALF_UP))},
+        {"Passaggio": "INPS fisso · scenario", "Importo": euro(p["inps_fisso_foglio"].quantize(CENT, rounding=ROUND_HALF_UP))},
+        {"Passaggio": "3 · INPS complessivo · scenario", "Importo": euro(totale.quantize(CENT, rounding=ROUND_HALF_UP))},
     ], hide_index=True, width="stretch")
-    st.caption("L'Enasarco NON riduce il fatturato registrato: è sottratto soltanto nella specifica "
-               "formula dell'imponibile INPS, esattamente come nel foglio. Nessun doppio conteggio.")
+    st.caption("L'Enasarco non riduce il fatturato registrato: entra separatamente "
+               "nella specifica formula dell'imponibile dello scenario.")
     if all(p[k] == v for k, v in (
         ("enasarco_tasso_foglio", D("0.085")),
         ("enasarco_massimale_pluri", D("30057")),
@@ -155,8 +150,8 @@ def mostra_confronto_inps(client: Client, anno: dict, presenti: dict) -> None:
         ottenuti = (imponibile, eccedente, totale)
         if all(a.quantize(CENT, rounding=ROUND_HALF_UP) == b
                for a, b in zip(ottenuti, attesi)):
-            st.success("I tre risultati riproducono i valori di prova del foglio originale.")
+            st.success("Verifica numerica del caso dimostrativo riuscita.")
         else:
-            st.warning("I tre risultati non coincidono con il foglio di prova: controlla le voci a monte.")
-    st.caption("Il massimale INPS 122.295 € è provvisorio nel foglio (2026), non confermato per il 2027. "
-               "I contributi effettivamente pagati hanno un registro separato; il netto del foglio resta un'ipotesi.")
+            st.warning("Il caso dimostrativo presenta differenze: controlla i dati a monte.")
+    st.caption("Il massimale INPS 122.295 € è un parametro di prova non confermato per il 2027. "
+               "I contributi pagati hanno un registro separato.")
