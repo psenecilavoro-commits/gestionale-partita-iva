@@ -1,4 +1,4 @@
-"""Manutenzione auto: stima annuale di PROVA dal foglio, non fattura reale."""
+"""Manutenzione auto: stima annuale dimostrativa, non fattura reale."""
 from decimal import Decimal
 
 import streamlit as st
@@ -7,6 +7,7 @@ from supabase import Client
 from costi import _calcola, _euro_arrotondato, NOTA_CATEGORIA_TEST
 
 CODICE = "manutenzione_auto"
+# Marcatore legacy: non modificare il contenuto delle note gia' salvate.
 NOTA_TEST = "DATI DI PROVA - manutenzione auto annuale dal foglio originale"
 
 
@@ -51,7 +52,7 @@ def _carica(client: Client, anno_id: str) -> None:
 def mostra_manutenzione(client: Client, anno: dict) -> None:
     st.divider()
     st.subheader("Manutenzione auto · prova annuale")
-    st.caption("La cifra annuale di 500 € riproduce il foglio, non è una spesa realmente sostenuta.")
+    st.caption("La cifra annuale di 500 € è un esempio, non una spesa realmente sostenuta.")
     try:
         categoria = _categoria(client, anno["id"])
         stima = _stima(client, anno["id"], categoria["id"]) if categoria else None
@@ -64,7 +65,7 @@ def mostra_manutenzione(client: Client, anno: dict) -> None:
             lordo, categoria, bool(stima["amount_includes_vat"])
         )
         if stima.get("notes") == NOTA_TEST:
-            st.warning("MANUTENZIONE DI PROVA: deducibilità e detraibilità sono quelle del foglio, non parametri fiscali verificati.")
+            st.warning("MANUTENZIONE DI PROVA: deducibilità e detraibilità sono parametri non verificati.")
         st.dataframe([{
             "Costo lordo": _euro_arrotondato(lordo), "IVA scorporata": _euro_arrotondato(iva),
             "Costo netto": _euro_arrotondato(netto),
