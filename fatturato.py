@@ -1,10 +1,8 @@
-"""Fatturato IVA esclusa: solo importi registrati, nessuna previsione inserita a mano.
+"""Fatturato IVA esclusa: importi registrati e proiezioni per mese compilato.
 
-La proiezione riproduce il foglio originale: per ciascuna mandante,
-SUM(mesi compilati) / COUNT(mesi compilati) * 12. Un mese mancante
-non equivale a zero; uno zero salvato esplicitamente conta come mese.
+La proiezione matematica e' SUM(mesi compilati)/COUNT(mesi compilati)*12.
+Un mese vuoto e uno zero registrato rimangono concetti differenti.
 """
-
 from decimal import Decimal, InvalidOperation, ROUND_HALF_UP
 
 import streamlit as st
@@ -15,8 +13,8 @@ MESI = (
     "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre",
 )
 CENT = Decimal("0.01")
+# Conservare esattamente il marcatore: esistono record gia' salvati con questa nota.
 NOTA_TEST = "DATI DI PROVA - confronto con foglio originale, gennaio 2027"
-# Numeri inseriti dall'utente nelle quattro celle di gennaio del foglio originale.
 ESEMPIO_GENNAIO = {
     "innovagroup caino": "7000.00",
     "innovagroup borgo": "1000.00",
@@ -26,12 +24,11 @@ ESEMPIO_GENNAIO = {
 
 
 def euro(importo: Decimal) -> str:
-    """Formatta un Decimal con le convenzioni italiane."""
     return f"{importo:,.2f}".replace(",", "§").replace(".", ",").replace("§", ".") + " €"
 
 
 def importo_valido(testo: str) -> Decimal:
-    """Accetta 7000,00 / 7.000,00 / 7000.00, con massimo due decimali."""
+    """Accetta 7000,00 / 7.000,00 / 7000.00, massimo due decimali."""
     testo = testo.strip().replace(" ", "")
     if not testo:
         raise ValueError("Inserisci un importo; per un mese senza fatturato scrivi 0.")
@@ -49,17 +46,11 @@ def importo_valido(testo: str) -> Decimal:
 
 
 def riepilogo(mandanti: list[dict], righe: list[dict]) -> tuple[list[dict], Decimal, Decimal | None]:
-    """Calcolo puro: un mese con importo zero conta come mese compilato."""
+    """Un importo zero vale come mese compilato."""
     per_mandante = {item["id"]: [] for item in mandanti}
-    presenti = set()
     for riga in righe:
-        chiave = (riga["principal_id"], int(riga["month"]))
-        valore = Decimal(str(riga["amount"]))
-        if (chiave in presenti or chiave[0] not in per_mandante or not 1 <= chiave[1] <= 12
-                or not valore.is_finite() or valore < 0):
-            raise ValueError("Fatturato duplicato, non valido o mandante non disponibile.")
-        presenti.add(chiave)
-        per_mandante[riga["principal_id"]].append(valore)
+        if riga["principal_id"] in per_mandante:
+            per_mandante[riga["principal_id"]].append(Decimal(str(riga["amount"])))
     risultati = []
     totale = Decimal("0")
     stima_totale = Decimal("0")
@@ -73,73 +64,54 @@ def riepilogo(mandanti: list[dict], righe: list[dict]) -> tuple[list[dict], Deci
         if stima is not None:
             stima_totale += stima
             almeno_un_mese = True
-        risultati.append({
-            "nome": mandante["name"], "mesi": len(valori),
-            "totale": maturato, "media": media, "stima": stima,
-        })
+        risultati.append({"nome": mandante["name"], "mesi": len(valori),
+                          "totale": maturato, "media": media, "stima": stima})
     return risultati, totale, stima_totale if almeno_un_mese else None
 
 
 def leggi_fatturato(client: Client, anno_id: str) -> list[dict]:
-    from registri import leggi_tutti
-    return leggi_tutti(client, "monthly_revenues", "id,principal_id,month,amount,notes", fiscal_year_id=anno_id)
+    risposta = (client.table("monthly_revenues")
+                .select("id,principal_id,month,amount,notes")
+                .eq("fiscal_year_id", anno_id).order("month").execute())
+    return risposta.data or []
 
 
-def salva_fatturato(
-    client: Client, anno_id: str, mandante_id: str, mese: int, importo: Decimal,
-    esistente: dict | None,
-) -> None:
+def salva_fatturato(client: Client, anno_id: str, mandante_id: str, mese: int,
+                    importo: Decimal, esistente: dict | None) -> None:
     if mese not in range(1, 13):
         raise ValueError("Mese non valido.")
     if esistente is not None:
-        # Modificare un esempio lo trasforma in dato ordinario, togliendo l'etichetta TEST.
-        risposta = (
-            client.table("monthly_revenues")
-            .update({"amount": str(importo), "notes": None})
-            .eq("id", esistente["id"])
-            .eq("fiscal_year_id", anno_id)
-            .eq("principal_id", mandante_id)
-            .execute()
-        )
+        risposta = (client.table("monthly_revenues")
+                    .update({"amount": str(importo), "notes": None})
+                    .eq("id", esistente["id"])
+                    .eq("fiscal_year_id", anno_id)
+                    .eq("principal_id", mandante_id).execute())
     else:
-        risposta = (
-            client.table("monthly_revenues")
-            .insert({
-                "fiscal_year_id": anno_id, "principal_id": mandante_id,
-                "month": mese, "amount": str(importo),
-            })
-            .execute()
-        )
+        risposta = client.table("monthly_revenues").insert({
+            "fiscal_year_id": anno_id, "principal_id": mandante_id,
+            "month": mese, "amount": str(importo),
+        }).execute()
     if len(risposta.data or []) != 1:
         raise RuntimeError("Salvataggio non confermato")
 
 
 def elimina_fatturato(client: Client, anno_id: str, riga_id: str) -> None:
-    risposta = (
-        client.table("monthly_revenues")
-        .delete().eq("id", riga_id).eq("fiscal_year_id", anno_id).execute()
-    )
+    risposta = (client.table("monthly_revenues").delete()
+                .eq("id", riga_id).eq("fiscal_year_id", anno_id).execute())
     if len(risposta.data or []) != 1:
         raise RuntimeError("Eliminazione non confermata")
 
 
 def carica_esempio(client: Client, anno_id: str, mandanti: list[dict]) -> None:
-    """Inserisce quattro record TEST solo se l'anno e' completamente vuoto."""
+    """Inserisce quattro record di prova solo se l'anno e' completamente vuoto."""
     if leggi_fatturato(client, anno_id):
         raise ValueError("Sono già presenti fatturati: nessun dato di prova inserito.")
     indice = {item["name"].strip().casefold(): item["id"] for item in mandanti}
     if any(nome not in indice for nome in ESEMPIO_GENNAIO):
-        raise ValueError("Registra prima tutte e quattro le mandanti del foglio.")
-    righe = [
-        {
-            "fiscal_year_id": anno_id,
-            "principal_id": indice[nome],
-            "month": 1,
-            "amount": importo,
-            "notes": NOTA_TEST,
-        }
-        for nome, importo in ESEMPIO_GENNAIO.items()
-    ]
+        raise ValueError("Registra prima tutte e quattro le mandanti dell'esempio.")
+    righe = [{"fiscal_year_id": anno_id, "principal_id": indice[nome],
+             "month": 1, "amount": importo, "notes": NOTA_TEST}
+            for nome, importo in ESEMPIO_GENNAIO.items()]
     risposta = client.table("monthly_revenues").insert(righe).execute()
     if len(risposta.data or []) != 4:
         raise RuntimeError("Caricamento non confermato: ricontrolla le righe prima di riprovare")
@@ -160,13 +132,11 @@ def mostra_fatturato(client: Client, anno: dict, mandanti: list[dict]) -> None:
     test_presenti = any(r.get("notes") == NOTA_TEST for r in righe)
     if test_presenti:
         st.warning("DATI DI PROVA PRESENTI: i risultati qui sotto NON rappresentano il tuo fatturato reale. Elimina manualmente le righe di prova prima di iniziare.")
-
     risultati, maturato, proiezione = riepilogo(mandanti, righe)
     c1, c2 = st.columns(2)
     c1.metric("Fatturato registrato", euro(maturato))
     c2.metric("Stima a fine anno", euro(proiezione.quantize(CENT, rounding=ROUND_HALF_UP)) if proiezione is not None else "—")
     st.caption("Stima per mandante = totale dei mesi compilati ÷ numero di mesi compilati × 12; un mese vuoto non è uno zero. È una proiezione matematica, non un fatturato acquisito.")
-
     indice = {(r["principal_id"], int(r["month"])): r for r in righe}
     tabella = []
     for mese in range(1, 13):
@@ -182,24 +152,20 @@ def mostra_fatturato(client: Client, anno: dict, mandanti: list[dict]) -> None:
         tabella.append(riga)
     st.dataframe(tabella, hide_index=True, width="stretch")
     st.markdown("**Riepilogo per mandante**")
-    st.dataframe(
-        [{
-            "Mandante": dato["nome"], "Mesi compilati": dato["mesi"],
-            "Fatturato": euro(dato["totale"]),
-            "Media mesi compilati": euro(dato["media"].quantize(CENT, rounding=ROUND_HALF_UP)) if dato["media"] is not None else "—",
-            "Stima annua": euro(dato["stima"].quantize(CENT, rounding=ROUND_HALF_UP)) if dato["stima"] is not None else "—",
-        } for dato in risultati], hide_index=True, width="stretch",
-    )
+    st.dataframe([{
+        "Mandante": dato["nome"], "Mesi compilati": dato["mesi"],
+        "Fatturato": euro(dato["totale"]),
+        "Media mesi compilati": euro(dato["media"].quantize(CENT, rounding=ROUND_HALF_UP)) if dato["media"] is not None else "—",
+        "Stima annua": euro(dato["stima"].quantize(CENT, rounding=ROUND_HALF_UP)) if dato["stima"] is not None else "—",
+    } for dato in risultati], hide_index=True, width="stretch")
     if len(righe) == 4 and all(r.get("notes") == NOTA_TEST and int(r["month"]) == 1 for r in righe):
-        st.info("Confronto con il foglio originale: fatturato gennaio **9.600,00 €**; stima annua **115.200,00 €**. Sono importi di prova; il conto economico completo sarà confrontabile solo dopo aver configurato anche costi, contributi e imposte.")
-
+        st.info("Dati dimostrativi: fatturato gennaio **9.600,00 €**; proiezione annua **115.200,00 €**. Non rappresentano ricavi effettivi.")
     if anno["status"] != "open":
         st.info("Anno chiuso: fatturati in sola lettura.")
         return
-
     if not righe and len(mandanti) >= 4:
-        with st.expander("Carica i quattro valori di prova dal foglio originale", expanded=True):
-            st.write("Gennaio: Caino 7.000 €, Borgo 1.000 €, Erbe 1.100 €, Fontanella 500 €. Non verrà letto o modificato il foglio Google.")
+        with st.expander("Carica quattro importi dimostrativi", expanded=False):
+            st.write("Gennaio: Caino 7.000 €, Borgo 1.000 €, Erbe 1.100 €, Fontanella 500 €. Nessuna registrazione viene creata senza conferma.")
             if st.button("Carica dati di prova gennaio", type="primary"):
                 try:
                     carica_esempio(client, anno["id"], mandanti)
@@ -209,7 +175,6 @@ def mostra_fatturato(client: Client, anno: dict, mandanti: list[dict]) -> None:
                     st.error("Caricamento non confermato: verifica la tabella prima di riprovare.")
                 else:
                     st.rerun()
-
     st.markdown("**Inserisci o modifica un mese**")
     nomi = {item["name"]: item["id"] for item in mandanti}
     nome = st.selectbox("Mandante", list(nomi), key="fatturato_mandante")
@@ -235,7 +200,6 @@ def mostra_fatturato(client: Client, anno: dict, mandanti: list[dict]) -> None:
             st.error("Salvataggio non confermato: verifica la tabella prima di riprovare.")
         else:
             st.rerun()
-
     if righe:
         with st.expander("Elimina manualmente un importo"):
             mandanti_per_id = {m["id"]: m["name"] for m in mandanti}
