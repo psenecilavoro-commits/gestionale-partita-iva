@@ -46,11 +46,22 @@ def importo_valido(testo: str) -> Decimal:
 
 
 def riepilogo(mandanti: list[dict], righe: list[dict]) -> tuple[list[dict], Decimal, Decimal | None]:
-    """Un importo zero vale come mese compilato."""
+    """Calcolo puro: rifiuta duplicati, mesi non validi e mandanti estranee."""
     per_mandante = {item["id"]: [] for item in mandanti}
+    chiavi = set()
     for riga in righe:
-        if riga["principal_id"] in per_mandante:
-            per_mandante[riga["principal_id"]].append(Decimal(str(riga["amount"])))
+        mandante_id = riga["principal_id"]
+        try:
+            mese = int(riga["month"])
+            importo = Decimal(str(riga["amount"]))
+        except (KeyError, ValueError, TypeError, InvalidOperation) as exc:
+            raise ValueError("Registrazione fatturato non valida.") from exc
+        chiave = (mandante_id, mese)
+        if (mandante_id not in per_mandante or mese not in range(1, 13)
+                or chiave in chiavi or not importo.is_finite() or importo < 0):
+            raise ValueError("Mandante, mese, importo o duplicato non valido nel fatturato.")
+        chiavi.add(chiave)
+        per_mandante[mandante_id].append(importo)
     risultati = []
     totale = Decimal("0")
     stima_totale = Decimal("0")
