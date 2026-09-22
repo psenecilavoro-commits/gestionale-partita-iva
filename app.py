@@ -5,20 +5,17 @@ from datetime import date
 import streamlit as st
 
 from accantonamenti_completi import mostra_accantonamenti
-from accantonamenti_confronto import mostra_confronto_accantonamenti
 from auth import current_user, get_client, sign_in, sign_out, reset_fiscal_inputs
 from auto import prepara_auto_unica
-from auto_riepilogo import mostra_riepilogo_auto
 from auto_spese_reali import mostra_spese_auto
-from conto_economico import mostra_conto_economico
 from contributi_versati import mostra_contributi_versati
 from costi_scheda import mostra_tabella_costi
 from database import create_fiscal_year, get_fiscal_year
 from fatture_acquisto_xml import mostra_importa_xml_acquisti
 from fatture_provvigioni import mostra_carica_fatture
 from sanitarie_unificate import mostra_detrazioni_unificate
-from fatturato import mostra_fatturato
-from imposte_parametri import mostra_imposte
+from interfaccia_operativa import (mostra_fatturato, mostra_imposte,
+                                  mostra_auto as mostra_riepilogo_auto)
 from iva_anteprima import mostra_anteprima_iva
 from mandanti import aggiungi_mandante, elenco_mandanti
 from quadro_mensile import mostra_quadro_mensile
@@ -65,11 +62,9 @@ with st.sidebar:
         sign_out()
         st.rerun()
     st.divider()
-    # Il placeholder resta in alto e viene aggiornato quando cambia lo scenario.
     conto_slot = st.empty()
 
 st.subheader("Anno fiscale")
-# Il selettore propone l'anno corrente dal 2027, senza modificare anni storici.
 anni = list(range(2027, 2051))
 anno_corrente = min(max(date.today().year, 2027), anni[-1])
 anno_selezionato = st.selectbox("Anno da visualizzare", anni,
@@ -121,8 +116,6 @@ mostra_base(client, fiscal_year, conto_slot)
 ])
 
 with scheda_fatturato:
-    # Carichiamo prima le mandanti perché servono al fatturato, ma mostriamo
-    # la loro anagrafica per ultima, secondo l'ordine richiesto nella scheda.
     try:
         mandanti = elenco_mandanti(client)
     except Exception:
@@ -188,15 +181,15 @@ with scheda_auto:
 with scheda_accantonamenti:
     mostra_accantonamenti(client, fiscal_year)
     mostra_carica_fatture(client, fiscal_year)
-    mostra_confronto_accantonamenti(client, fiscal_year)
     mostra_anteprima_iva(client, fiscal_year)
     mostra_importa_xml_acquisti(client, fiscal_year)
     mostra_quadro_mensile(client, fiscal_year)
     mostra_periodi_iva(client, fiscal_year)
 
 with scheda_conto_economico:
+    # La simulazione legacy richiedeva esclusivamente fatture e costi fittizi.
+    # Rimane testata internamente, ma non compare nell'interfaccia operativa.
     mostra_conto_registrato(client, fiscal_year)
-    mostra_conto_economico(client, fiscal_year, sidebar_slot=conto_slot)
 
 with scheda_imposte:
     mostra_imposte(client, fiscal_year)
