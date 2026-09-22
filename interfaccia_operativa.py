@@ -1,12 +1,11 @@
-"""Schermate operative: nessun pulsante di caricamento o scenario dimostrativo.
+"""Maschere operative 2027, senza pulsanti o caricamenti dimostrativi.
 
-Le funzioni matematiche e i marcatori storici restano nei moduli tecnici per
-compatibilità e per individuare con precisione i record demo nel database.
+Le formule e i marcatori tecnici legacy restano nei moduli originali per
+compatibilità e identificazione controllata dei vecchi record di prova.
 """
 from __future__ import annotations
 
 from decimal import Decimal, ROUND_HALF_UP
-
 import streamlit as st
 
 from auto import NOTA_VEICOLO_TEST, _chilometri, _veicoli, auto_unica
@@ -21,10 +20,9 @@ D = Decimal
 
 
 def mostra_fatturato(client, anno: dict, mandanti: list[dict]) -> None:
-    """Gestione dei soli importi immessi dall'utente; nessun generatore demo."""
     st.divider()
     st.subheader(f"Fatturato registrato · {anno['fiscal_year']}")
-    st.caption("Importi fatturati IVA esclusa. La stima annua usa soltanto i mesi compilati; un mese non compilato non equivale a zero.")
+    st.caption("Importi fatturati IVA esclusa. La stima usa soltanto i mesi compilati; un mese mancante non equivale a zero.")
     if not mandanti:
         st.info("Aggiungi prima una mandante nella sezione Mandanti.")
         return
@@ -38,7 +36,7 @@ def mostra_fatturato(client, anno: dict, mandanti: list[dict]) -> None:
         st.error("Impossibile leggere il fatturato. Nessun dato modificato.")
         return
     if any(str(r.get("notes") or "").startswith("DATI DI PROVA") for r in righe):
-        st.warning("Sono ancora presenti ricavi dimostrativi nel database: non considerarli ricavi effettivi. Esegui la pulizia controllata prima di usare il gestionale.")
+        st.warning("Sono ancora presenti ricavi dimostrativi nel database: esegui la pulizia controllata prima di usare il gestionale.")
     c1, c2 = st.columns(2)
     c1.metric("Fatturato registrato", euro(maturato))
     c2.metric("Stima a fine anno", euro(proiezione.quantize(CENT, rounding=ROUND_HALF_UP)) if proiezione is not None else "—")
@@ -76,8 +74,8 @@ def mostra_fatturato(client, anno: dict, mandanti: list[dict]) -> None:
         st.caption("Il mese è già registrato: salvando ne sostituisci l'importo.")
     with st.form("salva_fatturato"):
         testo = st.text_input("Importo fatturato (IVA esclusa)",
-                              value=str(presente["amount"]).replace(".", ",") if presente else "",
-                              help="Inserisci 0 solo se il fatturato del mese è realmente zero.")
+            value=str(presente["amount"]).replace(".", ",") if presente else "",
+            help="Inserisci 0 solo se il fatturato del mese è realmente zero.")
         salva = st.form_submit_button("Salva importo", type="primary")
     if salva:
         try:
@@ -93,12 +91,12 @@ def mostra_fatturato(client, anno: dict, mandanti: list[dict]) -> None:
         with st.expander("Elimina un importo registrato"):
             nomi_id = {m["id"]: m["name"] for m in mandanti}
             opzioni = {r["id"]: r for r in righe}
-            selezione = st.selectbox("Importo da eliminare", list(opzioni),
-                format_func=lambda ident: (
-                    f"{MESI[int(opzioni[ident]['month']) - 1]} · "
-                    f"{nomi_id.get(opzioni[ident]['principal_id'], 'Mandante')} · "
-                    f"{euro(D(str(opzioni[ident]['amount'])))} · {ident[:8]}"),
+            etichette = {ident: (
+                f"{MESI[int(r['month']) - 1]} · {nomi_id.get(r['principal_id'], 'Mandante')} · "
+                f"{euro(D(str(r['amount'])))} · {ident[:8]}") for ident, r in opzioni.items()}
+            scelta = st.selectbox("Importo da eliminare", list(etichette.values()),
                 key="fatturato_elimina_scelta")
+            selezione = next(ident for ident, label in etichette.items() if label == scelta)
             conferma = st.checkbox("Confermo l'eliminazione definitiva di questa registrazione")
             if st.button("Elimina importo", disabled=not conferma):
                 try:
@@ -111,7 +109,6 @@ def mostra_fatturato(client, anno: dict, mandanti: list[dict]) -> None:
 
 
 def mostra_imposte(client, anno: dict) -> None:
-    """Inserimento manuale senza valori precompilati di prova."""
     st.subheader("Imposte · parametri da confermare")
     st.warning("I parametri fiscali del 2027 non sono ancora verificati. Inserisci soltanto valori documentati e concorda massimali, aliquote e deducibilità con il commercialista prima di usarli per decisioni fiscali.")
     try:
@@ -131,14 +128,16 @@ def mostra_imposte(client, anno: dict) -> None:
             hide_index=True, width="stretch")
         if anno["status"] != "open":
             continue
+        # Opzioni testuali stabili; non usare format_func sui codici tecnici:
+        # la selezione deve sopravvivere al salvataggio e al successivo logout.
+        descrizioni = {descrizione: codice for codice, descrizione, *_ in voci}
         mancanti = {codice: (descrizione, unita) for codice, descrizione, _esempio, unita, _cella
                     in voci if codice not in presenti}
         if mancanti:
             with st.expander(f"Inserisci parametro mancante · {gruppo}"):
-                # Le opzioni restano stabili quando un parametro viene salvato.
-                etichette = {codice: descrizione for codice, descrizione, *_ in voci}
-                codice = st.selectbox("Parametro da impostare", list(etichette),
-                    format_func=lambda c: etichette[c], key=f"param_nuovo_{voci[0][0]}")
+                nome = st.selectbox("Parametro da impostare", list(descrizioni),
+                                    key=f"param_nuovo_{voci[0][0]}")
+                codice = descrizioni[nome]
                 if codice not in mancanti:
                     st.info("Parametro già configurato: scegli una voce ancora da impostare.")
                 else:
@@ -154,7 +153,7 @@ def mostra_imposte(client, anno: dict) -> None:
                                 raise ValueError("Conferma anno, importo e fonte prima di salvare.")
                             numero = _numero(testo, mancanti[codice][1])
                             if codice in leggi_parametri(client, anno["id"]):
-                                raise ValueError("Parametro già presente: ricarica la pagina prima di riprovare.")
+                                raise ValueError("Parametro già presente: ricarica prima di riprovare.")
                             risposta = client.table("fiscal_parameters").insert({
                                 "fiscal_year_id": anno["id"], "code": codice,
                                 "description": mancanti[codice][0], "value": str(numero),
@@ -170,12 +169,13 @@ def mostra_imposte(client, anno: dict) -> None:
                             st.error("Salvataggio non confermato: controlla i parametri prima di riprovare.")
                         else:
                             st.rerun()
-        modificabili = {codice: descrizione for codice, descrizione, _esempio, _unita, _cella
+        modificabili = {descrizione: codice for codice, descrizione, _esempio, _unita, _cella
                        in voci if codice in presenti}
         if modificabili:
             with st.expander(f"Modifica parametro · {gruppo}"):
-                codice = st.selectbox("Parametro", list(modificabili),
-                    format_func=lambda c: modificabili[c], key=f"param_mod_{voci[0][0]}")
+                nome = st.selectbox("Parametro", list(modificabili),
+                                    key=f"param_mod_{voci[0][0]}")
+                codice = modificabili[nome]
                 record = presenti[codice]
                 with st.form(f"param_mod_form_{codice}"):
                     testo = st.text_input("Nuovo valore (aliquote in forma decimale)",
@@ -196,11 +196,10 @@ def mostra_imposte(client, anno: dict) -> None:
                         st.rerun()
     if anno["status"] != "open":
         st.info("Anno chiuso: parametri in sola lettura.")
-    st.caption("Le registrazioni dei contributi effettivamente versati si gestiscono nel registro sottostante. Un parametro stimato non equivale a un debito o a un versamento confermato.")
+    st.caption("I contributi effettivamente versati si registrano nella sezione sottostante. Un parametro stimato non è un debito o un versamento confermato.")
 
 
 def mostra_auto(client, anno: dict) -> None:
-    """Vista mensile e contratto, senza gestione di dati dimostrativi."""
     st.divider()
     st.subheader("Riepilogo Auto")
     try:
