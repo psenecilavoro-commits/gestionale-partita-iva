@@ -1,8 +1,7 @@
-"""Confronto IRPEF e addizionali del foglio: solo simulazione, nessun versamento.
+"""Scenario IRPEF e addizionali: nessun importo da versare calcolato.
 
-Le cifre A.P. e fondo pensione del foglio si caricano SOLO su azione esplicita,
-non diventano pagamenti, deduzioni fiscali validate o dati nel database.
-Enasarco e' distinto dal fatturato e compare solo nelle formule del foglio.
+I contributi degli anni precedenti e il fondo pensione dimostrativi non sono
+pagamenti documentati e non sono salvati dal modulo.
 """
 from decimal import Decimal, ROUND_HALF_UP
 
@@ -32,7 +31,7 @@ def calcola_irpef_foglio(
     seconda: D, soglia_tre: D, terza: D, aliquota_veneto: D,
     aliquota_verona: D,
 ) -> tuple[D, D, D, D, D]:
-    """Conto economico!B9; Imposte!B7:B9, senza arrotondamenti intermedi."""
+    """Formula di scenario senza arrotondamenti intermedi."""
     valori = (
         fatturato, deducibili, enasarco, contributi_ap, inps_fisso,
         fondo_pensione, prima, soglia_due, seconda, soglia_tre, terza,
@@ -47,7 +46,6 @@ def calcola_irpef_foglio(
         raise ValueError("Soglie o aliquote non coerenti: confrontiamole prima di continuare.")
     imponibile = (fatturato - deducibili - enasarco - contributi_ap
                   - inps_fisso - fondo_pensione)
-    # Nel foglio la formula e' a scaglioni con soglie E11 ed E12.
     if imponibile < soglia_due:
         irpef = imponibile * prima
     elif imponibile < soglia_tre:
@@ -66,19 +64,15 @@ def _valuta(valore: D) -> str:
 
 def mostra_confronto_irpef(client: Client, anno: dict, presenti: dict) -> None:
     st.divider()
-    st.subheader("IRPEF e addizionali · confronto delle formule del foglio")
-    st.caption("Tre blocchi: imponibile di confronto, IRPEF per scaglioni, addizionali Veneto e Verona. "
-               "Non viene calcolata un'imposta effettivamente dovuta o un netto disponibile.")
+    st.subheader("IRPEF e addizionali · scenario")
+    st.caption("Imponibile ipotetico, IRPEF per scaglioni e addizionali Veneto e Verona. "
+               "Non determina imposte effettivamente dovute né un netto disponibile.")
     if any(codice not in presenti for codice in PARAMETRI):
-        st.info("Per questo confronto occorrono tutti i parametri Enasarco, INPS fisso e IRPEF già caricati.")
+        st.info("Per lo scenario occorrono i parametri Enasarco, INPS fisso e IRPEF.")
         return
-
-    st.warning(
-        "ATTENZIONE: nel foglio i contributi A.P. sono 8.000 € e il fondo pensione 5.300 €. "
-        "Sono importi DI PROVA, non pagamenti verificati. Non li salvo e non li considero "
-        "deduzioni ammesse per il 2027."
-    )
-    if st.button("Usa 8.000 € A.P. e 5.300 € fondo pensione SOLO per il confronto", key="irpef_scenario_test"):
+    st.warning("I contributi precedenti di 8.000 € e il fondo pensione di 5.300 € sono "
+               "importi DIMOSTRATIVI, non pagamenti o deduzioni verificate per il 2027.")
+    if st.button("Usa importi dimostrativi (8.000 € e 5.300 €)", key="irpef_scenario_test"):
         st.session_state["irpef_ap_confronto"] = "8000,00"
         st.session_state["irpef_fondo_confronto"] = "5300,00"
     c1, c2 = st.columns(2)
@@ -92,23 +86,22 @@ def mostra_confronto_irpef(client: Client, anno: dict, presenti: dict) -> None:
             "Fondo pensione (€) · scenario",
             key="irpef_fondo_confronto", placeholder="Lascia vuoto finché non scegli lo scenario",
         )
-    st.caption("Puoi modificare i due importi soltanto per confrontare le formule: "
-               "nessuna cifra viene salvata in Supabase. Per indicare uno zero effettivo, scrivi 0.")
+    st.caption("Puoi modificare gli importi soltanto per una simulazione: nessuna cifra "
+               "viene salvata. Per indicare uno zero esplicito, scrivi 0.")
     if not testo_ap.strip() or not testo_fondo.strip():
-        st.info("Inserisci entrambi gli importi oppure premi il pulsante per usare i valori di prova del foglio.")
+        st.info("Inserisci entrambi gli importi oppure usa i valori dimostrativi.")
         return
-
     try:
         ap = importo_valido(testo_ap)
         fondo = importo_valido(testo_fondo)
         mandanti = elenco_mandanti(client)
         ricavi = leggi_fatturato(client, anno["id"])
         if not mandanti or not ricavi or any(r.get("notes") != NOTA_TEST for r in ricavi):
-            st.info("Confronto sospeso: occorrono esclusivamente i fatturati di prova del foglio.")
+            st.info("Scenario sospeso: occorrono esclusivamente i fatturati di prova.")
             return
         risultati, _registrato, fatturato = riepilogo(mandanti, ricavi)
         if fatturato is None or any(r["mesi"] == 0 for r in risultati):
-            st.info("Confronto sospeso: ogni mandante deve avere almeno un mese compilato.")
+            st.info("Ogni mandante deve avere almeno un mese compilato.")
             return
         _dettagli, enasarco, mono = calcola_confronto(
             mandanti, ricavi,
@@ -116,11 +109,11 @@ def mostra_confronto_irpef(client: Client, anno: dict, presenti: dict) -> None:
             D(str(presenti["enasarco_massimale_pluri"]["value"])),
         )
         if mono:
-            st.info("Mandante monomandataria presente: concordiamo prima la formula Enasarco.")
+            st.info("Mandante monomandataria presente: serve un parametro specifico.")
             return
         costi, mancanti, non_test = calcola_riepilogo(client, anno["id"])
         if non_test or mancanti or len(costi) != len(VOCI_COSTI_TEST) or not _nessun_altro_costo(client, anno["id"]):
-            st.info("Confronto sospeso: servono esattamente i sette costi di prova, senza altre spese.")
+            st.info("Per lo scenario servono le sette voci di costo di prova, senza altre spese.")
             return
         impostazioni = (client.table("vehicle_year_settings")
                         .select("vehicle_id,annual_km_limit,excess_km_penalty")
@@ -130,7 +123,7 @@ def mostra_confronto_irpef(client: Client, anno: dict, presenti: dict) -> None:
               .eq("fiscal_year_id", anno["id"]).execute()).data or []
         penale = _penale(impostazioni, km)
         if penale is not None and penale != 0:
-            st.info("Penale chilometrica diversa da zero: prima concordiamo la sua inclusione nei costi.")
+            st.info("Penale chilometrica diversa da zero: completa i costi prima dello scenario.")
             return
         deducibili = sum((r["Deducibile"] for r in costi), D("0"))
         p = {codice: D(str(presenti[codice]["value"])) for codice in PARAMETRI}
@@ -145,25 +138,24 @@ def mostra_confronto_irpef(client: Client, anno: dict, presenti: dict) -> None:
         st.warning(str(exc))
         return
     except Exception:
-        st.error("Impossibile costruire il confronto IRPEF: nessun dato modificato.")
+        st.error("Impossibile costruire lo scenario IRPEF. Nessun dato modificato.")
         return
-
     st.dataframe([
-        {"Passaggio": "Fatturato stimato INVARIATO", "Importo": _valuta(fatturato), "Riferimento": "Conto economico!B1"},
-        {"Passaggio": "Costi deducibili di prova", "Importo": _valuta(deducibili), "Riferimento": "Costi!F14"},
-        {"Passaggio": "Enasarco separato (formula imponibile)", "Importo": _valuta(enasarco), "Riferimento": "Imposte!E4"},
-        {"Passaggio": "Contributi A.P. · scenario NON registrato", "Importo": _valuta(ap), "Riferimento": "Imposte!B3"},
-        {"Passaggio": "INPS fisso del foglio", "Importo": _valuta(p["inps_fisso_foglio"]), "Riferimento": "Imposte!B5"},
-        {"Passaggio": "Fondo pensione · scenario NON registrato", "Importo": _valuta(fondo), "Riferimento": "Detrazioni e deduzioni!I3"},
-        {"Passaggio": "1 · Imponibile IRPEF del foglio", "Importo": _valuta(imponibile), "Riferimento": "Conto economico!B9"},
-        {"Passaggio": "2 · IRPEF a scaglioni del foglio", "Importo": _valuta(irpef), "Riferimento": "Imposte!B7"},
-        {"Passaggio": "3 · Addizionale Veneto del foglio", "Importo": _valuta(veneto), "Riferimento": "Imposte!B8"},
-        {"Passaggio": "3 · Addizionale Verona del foglio", "Importo": _valuta(verona), "Riferimento": "Imposte!B9"},
-        {"Passaggio": "Totale IRPEF e addizionali (solo somma)", "Importo": _valuta(totale), "Riferimento": "Conto economico!B14"},
+        {"Passaggio": "Fatturato stimato invariato", "Importo": _valuta(fatturato)},
+        {"Passaggio": "Costi deducibili di prova", "Importo": _valuta(deducibili)},
+        {"Passaggio": "Enasarco separato", "Importo": _valuta(enasarco)},
+        {"Passaggio": "Contributi precedenti · scenario", "Importo": _valuta(ap)},
+        {"Passaggio": "INPS fisso · scenario", "Importo": _valuta(p["inps_fisso_foglio"])},
+        {"Passaggio": "Fondo pensione · scenario", "Importo": _valuta(fondo)},
+        {"Passaggio": "1 · Imponibile IRPEF · scenario", "Importo": _valuta(imponibile)},
+        {"Passaggio": "2 · IRPEF a scaglioni · scenario", "Importo": _valuta(irpef)},
+        {"Passaggio": "3 · Addizionale Veneto · scenario", "Importo": _valuta(veneto)},
+        {"Passaggio": "3 · Addizionale Verona · scenario", "Importo": _valuta(verona)},
+        {"Passaggio": "IRPEF e addizionali · totale ipotetico", "Importo": _valuta(totale)},
     ], hide_index=True, width="stretch")
-    st.caption("Formula del foglio: fatturato − costi deducibili − Enasarco − contributi A.P. "
-               "− INPS fisso − fondo pensione. L'Enasarco NON è sottratto dal fatturato registrato: "
-               "entra solo nella formula dell'imponibile.")
+    st.caption("Base ipotetica = fatturato − costi deducibili − Enasarco − "
+               "contributi anni precedenti − INPS fisso − fondo pensione. "
+               "Il fatturato registrato resta invariato.")
     if (ap == D("8000") and fondo == D("5300") and
             all(p[chiave] == valore for chiave, valore in (
                 ("enasarco_tasso_foglio", D("0.085")),
@@ -180,9 +172,8 @@ def mostra_confronto_irpef(client: Client, anno: dict, presenti: dict) -> None:
         attesi = (D("82033.56"), D("27474.43"), D("1009.01"), D("656.27"), D("29139.71"))
         if all(val.quantize(CENT, rounding=ROUND_HALF_UP) == atteso
                for val, atteso in zip((imponibile, irpef, veneto, verona, totale), attesi)):
-            st.success("Confronto matematico: imponibile, IRPEF e addizionali coincidono con il foglio.")
+            st.success("Verifica numerica del caso dimostrativo riuscita.")
         else:
-            st.warning("I valori differiscono dal foglio di prova: verifica i dati a monte.")
-    st.warning("Solo confronto del foglio: NON usare questi numeri come imposte da pagare o "
-               "come netto mensile. Le somme realmente versate e le deduzioni ammesse "
-               "vanno registrate e verificate separatamente.")
+            st.warning("Il caso dimostrativo presenta differenze: controlla i dati a monte.")
+    st.warning("Prospetto di prova: non utilizzare i numeri come imposte da pagare "
+               "o come netto mensile. Versamenti e deduzioni vanno verificati separatamente.")
