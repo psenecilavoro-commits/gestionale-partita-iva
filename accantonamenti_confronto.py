@@ -1,8 +1,7 @@
-"""Accantonamenti: confronto matematico delle celle E16 ed E2 del foglio.
+"""Accantonamenti: scenario matematico di prova senza scritture a Supabase.
 
-Non confonde Fatturato con PROVV. NETTE (B2:B13, input manuali nel foglio).
-I valori di scenario non vengono salvati e non rappresentano denaro o tasse
-realmente dovute. Nessuna scrittura su Supabase.
+Fatturato e provvigioni nette restano distinti. Il risultato non rappresenta
+liquidita', imposte o contributi realmente dovuti.
 """
 from decimal import Decimal, ROUND_HALF_UP
 
@@ -32,11 +31,7 @@ RICHIESTI = (
 
 def obiettivo_annuo_foglio(fatturato: D, inps: D, irpef: D,
                            veneto: D, verona: D, avanzo_ap: D = D("0")) -> D:
-    """Tabella accantonamenti!E16: somma INPS+imposte - 11,5% fatturato.
-
-    Il coefficiente 11,5% è SOLO quello del foglio, non un'aliquota
-    previdenziale/fiscale validata né una trattenuta sul fatturato salvato.
-    """
+    """Formula matematica originaria; coefficiente 11,5% NON validato fiscalmente."""
     valori = (fatturato, inps, irpef, veneto, verona, avanzo_ap)
     if any(not n.is_finite() or n < 0 for n in valori):
         raise ValueError("Importi del confronto non validi")
@@ -45,7 +40,7 @@ def obiettivo_annuo_foglio(fatturato: D, inps: D, irpef: D,
 
 def quota_mesi_vuoti_foglio(obiettivo: D, gia_accantonato: D,
                             mesi_compilati: int) -> D | None:
-    """E2:E13: (E16-SUM(D2:D13))/COUNTBLANK(D2:D13)."""
+    """Distribuzione residua su 12 meno i mesi gia' compilati."""
     if (not obiettivo.is_finite() or not gia_accantonato.is_finite()
             or gia_accantonato < 0 or type(mesi_compilati) is not int
             or not 0 <= mesi_compilati <= 12):
@@ -53,7 +48,7 @@ def quota_mesi_vuoti_foglio(obiettivo: D, gia_accantonato: D,
     if mesi_compilati == 0 and gia_accantonato != 0:
         raise ValueError("Non puoi indicare accantonamenti senza mesi compilati")
     if mesi_compilati == 12:
-        return None  # COUNTBLANK=0: niente divisioni per zero.
+        return None
     return (obiettivo - gia_accantonato) / D(12 - mesi_compilati)
 
 
@@ -63,21 +58,20 @@ def _euro(n: D) -> str:
 
 def mostra_confronto_accantonamenti(client: Client, anno: dict) -> None:
     st.divider()
-    st.subheader("Quota mensile residua · confronto con il foglio")
+    st.subheader("Quota mensile residua · scenario")
     st.warning("SOLO SCENARIO DI PROVA: il coefficiente 11,5%, i parametri e gli importi "
-               "del foglio non sono verificati come importi da versare per il 2027. "
-               "Non vengono creati accantonamenti o movimenti di denaro.")
-    st.caption("Nel foglio la colonna «PROVV. NETTE» è un input manuale, distinto dal "
-               "fatturato. Non viene compilata automaticamente e non è il netto fiscale.")
+               "non sono verificati come somme da versare. Non crea accantonamenti o movimenti.")
+    st.caption("Le provvigioni nette sono importi inseriti manualmente e distinti dal "
+               "fatturato; non sono un netto fiscale.")
     try:
         presenti = leggi_parametri(client, anno["id"])
         if any(k not in presenti for k in RICHIESTI):
-            st.info("Per il confronto servono prima tutti i parametri della scheda Imposte.")
+            st.info("Per lo scenario completa prima i parametri nella scheda Imposte.")
             return
         mandanti = elenco_mandanti(client)
         ricavi = leggi_fatturato(client, anno["id"])
         if not mandanti or not ricavi or any(r.get("notes") != NOTA_TEST for r in ricavi):
-            st.info("Confronto non disponibile: richiede esclusivamente i ricavi di prova del foglio.")
+            st.info("Scenario dimostrativo non disponibile: richiede esclusivamente ricavi di prova.")
             return
         righe, _registrato, fatturato = riepilogo(mandanti, ricavi)
         if fatturato is None or any(r["mesi"] == 0 for r in righe):
@@ -88,11 +82,11 @@ def mostra_confronto_accantonamenti(client: Client, anno: dict) -> None:
             mandanti, ricavi, p["enasarco_tasso_foglio"], p["enasarco_massimale_pluri"]
         )
         if mono:
-            st.info("Mandante monomandataria presente: formula Enasarco del foglio non applicabile automaticamente.")
+            st.info("Mandante monomandataria presente: scenario Enasarco non applicabile automaticamente.")
             return
         costi, mancanti, non_test = calcola_riepilogo(client, anno["id"])
         if non_test or mancanti or len(costi) != len(VOCI) or not _nessun_altro_costo(client, anno["id"]):
-            st.info("Il confronto richiede le sette voci di costo di prova complete, senza altre spese.")
+            st.info("Lo scenario richiede le sette voci di costo di prova complete, senza altre spese.")
             return
         impostazioni = (client.table("vehicle_year_settings")
                         .select("vehicle_id,annual_km_limit,excess_km_penalty")
@@ -102,7 +96,7 @@ def mostra_confronto_accantonamenti(client: Client, anno: dict) -> None:
               .eq("fiscal_year_id", anno["id"]).execute()).data or []
         penale = _penale(impostazioni, km)
         if penale is None or penale != D("0"):
-            st.info("Controlla prima la penale chilometrica nella scheda Auto: il confronto richiede penale zero.")
+            st.info("Controlla prima la penale chilometrica nella scheda Auto: deve essere zero per questo scenario.")
             return
         deducibili = sum((r["Deducibile"] for r in costi), D("0"))
         _imponibile, _eccedente, inps = calcola_inps_foglio(
@@ -117,19 +111,18 @@ def mostra_confronto_accantonamenti(client: Client, anno: dict) -> None:
     except Exception:
         st.error("Lettura dello scenario non riuscita; nessun dato modificato.")
         return
-
-    if st.button("Usa gli importi di prova del foglio · accantonamenti", key="acc_scenario_prova"):
+    if st.button("Usa importi dimostrativi · accantonamenti", key="acc_scenario_prova"):
         st.session_state["acc_contributi_ap_prova"] = "8000,00"
         st.session_state["acc_fondo_prova"] = "5300,00"
     col1, col2 = st.columns(2)
     with col1:
-        ap_testo = st.text_input("Contributi anni precedenti · SOLO scenario (€)",
+        ap_testo = st.text_input("Contributi anni precedenti · scenario (€)",
                                  key="acc_contributi_ap_prova", placeholder="es. 8000,00")
     with col2:
-        fondo_testo = st.text_input("Fondo pensione · SOLO scenario (€)",
+        fondo_testo = st.text_input("Fondo pensione · scenario (€)",
                                     key="acc_fondo_prova", placeholder="es. 5300,00")
     if not ap_testo.strip() or not fondo_testo.strip():
-        st.info("Premi il pulsante dello scenario o compila entrambi gli importi di prova.")
+        st.info("Usa gli importi dimostrativi o compila entrambi i valori di prova.")
         return
     try:
         ap = importo_valido(ap_testo)
@@ -145,26 +138,25 @@ def mostra_confronto_accantonamenti(client: Client, anno: dict) -> None:
     except ValueError as exc:
         st.warning(str(exc))
         return
-    testo_avanzo = st.text_input("Avanzo A.P. · H18 del foglio, solo scenario (€)", value="0,00", key="acc_avanzo_ap")
+    testo_avanzo = st.text_input("Avanzo anni precedenti · solo scenario (€)", value="0,00", key="acc_avanzo_ap")
     try:
         obiettivo -= importo_valido(testo_avanzo)
     except ValueError as exc:
         st.warning(str(exc))
         return
-    st.metric("Obiettivo annuo · formula E16 del foglio, NON importo dovuto", _euro(obiettivo))
-    st.caption("E16 = INPS fisso + INPS eccedente + IRPEF + addizionali Veneto/Verona "
-               "− 11,5% del fatturato stimato − avanzo A.P. H18. L'11,5% è ripreso dal foglio, non verificato "
-               "come regola fiscale. Nessuna deduzione dal fatturato registrato.")
-
-    st.markdown("#### Prova la ripartizione sui mesi ancora vuoti")
-    st.caption("I due campi sottostanti servono SOLO a simulare D2:D13 del foglio. "
-               "Non leggono né sovrascrivono gli accantonamenti eventualmente registrati nel gestionale.")
+    st.metric("Obiettivo annuo · ipotesi, NON importo dovuto", _euro(obiettivo))
+    st.caption("Calcolo: INPS fisso + INPS eccedente + IRPEF + addizionali Veneto/Verona "
+               "− 11,5% del fatturato stimato − avanzo anni precedenti. "
+               "Il coefficiente è solo un'ipotesi da verificare; il fatturato registrato non cambia.")
+    st.markdown("#### Ripartizione sui mesi ancora vuoti")
+    st.caption("I campi servono soltanto a simulare le riserve mensili: non leggono "
+               "né sovrascrivono gli accantonamenti registrati.")
     a, b = st.columns(2)
     with a:
         mesi = st.number_input("Mesi già compilati nello scenario", min_value=0, max_value=12,
                                step=1, value=0, key="acc_mesi_scenario")
     with b:
-        testo_riserve = st.text_input("Totale già accantonato NELLO SCENARIO (€)",
+        testo_riserve = st.text_input("Totale già accantonato nello scenario (€)",
                                       value="0,00", key="acc_totale_scenario")
     try:
         gia = importo_valido(testo_riserve)
@@ -173,13 +165,13 @@ def mostra_confronto_accantonamenti(client: Client, anno: dict) -> None:
         st.warning(str(exc))
         return
     if quota is None:
-        st.info("Tutti i 12 mesi sono compilati: la formula del foglio non può dividere per zero.")
+        st.info("Tutti i 12 mesi sono compilati: nessuna quota residua da ripartire.")
     else:
-        st.metric("Quota per ciascuno dei mesi ancora vuoti · solo scenario", _euro(quota))
-        st.caption(f"Formula E2:E13: ({_euro(obiettivo)} − {_euro(gia)}) / "
-                   f"{12 - int(mesi)} mesi da compilare. Una registrazione a zero conta come mese compilato.")
+        st.metric("Quota per ogni mese ancora vuoto · scenario", _euro(quota))
+        st.caption(f"({_euro(obiettivo)} − {_euro(gia)}) / {12 - int(mesi)} mesi da compilare. "
+                   "Uno zero registrato conta come mese compilato.")
     if obiettivo < gia:
-        st.warning("Nel confronto quanto già accantonato supera l'obiettivo: la quota residua "
+        st.warning("Le riserve ipotizzate superano l'obiettivo: la quota residua "
                    "può essere negativa. Non è un ordine di disinvestimento o rimborso.")
     st.caption("Le provvigioni nette manuali, il quadro mensile e i prospetti IVA documentali "
-               "sono nelle rispettive sezioni; questo confronto non li sovrascrive.")
+               "sono nelle rispettive sezioni; questo scenario non li sovrascrive.")
