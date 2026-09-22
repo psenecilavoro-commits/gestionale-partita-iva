@@ -187,10 +187,10 @@ with scheda_auto:
     mostra_veicoli_reali(client, fiscal_year)
     mostra_auto(client, fiscal_year)
     mostra_limiti_auto(client, fiscal_year)
+    mostra_spese_auto(client, fiscal_year)
     mostra_carburante(client, fiscal_year)
     mostra_autostrada(client, fiscal_year)
     mostra_rate(client, fiscal_year)
-    mostra_spese_auto(client, fiscal_year)
 
 with scheda_accantonamenti:
     mostra_accantonamenti(client, fiscal_year)
