@@ -3,7 +3,6 @@
 from datetime import date
 
 import streamlit as st
-from supabase import create_client
 
 from accantonamenti_completi import mostra_accantonamenti
 from accantonamenti_confronto import mostra_confronto_accantonamenti
@@ -25,14 +24,16 @@ from imposte_parametri import mostra_imposte
 from iva_anteprima import mostra_anteprima_iva
 from mandanti import aggiungi_mandante, elenco_mandanti
 from quadro_mensile import mostra_quadro_mensile
+from registrazioni_reali import mostra_veicoli_reali, mostra_costi_reali
+from riepilogo_laterale import mostra_base
+from stile import applica_stile
 from struttura_ui import (mostra_vendite, mostra_periodi_iva, mostra_pensione,
                           mostra_conto_registrato, mostra_riconciliazione)
-from registrazioni_reali import mostra_veicoli_reali, mostra_costi_reali
 
-st.set_page_config(page_title="Gestionale Partita IVA", page_icon="📊", layout="wide")
-
+st.set_page_config(page_title="Gestionale Partita IVA", page_icon="📊", layout="wide",
+                   initial_sidebar_state="expanded")
+applica_stile()
 st.title("Gestionale Partita IVA")
-st.caption("Versione iniziale · applicazione desktop")
 
 try:
     client = get_client()
@@ -41,7 +42,6 @@ except Exception:
     st.stop()
 
 user = current_user()
-
 if user is None:
     st.subheader("Accedi")
     st.write("Inserisci l'email e la password dell'utente creato in Supabase.")
@@ -49,7 +49,6 @@ if user is None:
         email = st.text_input("Email", placeholder="nome@esempio.it")
         password = st.text_input("Password", type="password")
         submitted = st.form_submit_button("Accedi", type="primary")
-
     if submitted:
         if not email.strip() or not password:
             st.warning("Inserisci email e password.")
@@ -67,11 +66,12 @@ with st.sidebar:
     if st.button("Esci"):
         sign_out()
         st.rerun()
+    st.divider()
+    # Il placeholder resta in alto e viene aggiornato quando cambia lo scenario.
+    conto_slot = st.empty()
 
 st.subheader("Anno fiscale")
-# La scelta dell'anno e' necessaria per mostrare la rata corretta senza
-# aggiornare o eliminare record storici. Nel 2026 resta selezionato il 2027;
-# dagli anni successivi si propone l'anno corrente, modificabile dall'utente.
+# Il selettore propone l'anno corrente dal 2027, senza modificare anni storici.
 anni = list(range(2027, 2051))
 anno_corrente = min(max(date.today().year, 2027), anni[-1])
 anno_selezionato = st.selectbox("Anno da visualizzare", anni,
@@ -102,9 +102,8 @@ if fiscal_year is None:
     st.stop()
 
 st.success(f"Anno {fiscal_year['fiscal_year']} presente · stato: {fiscal_year['status']}.")
+mostra_base(client, fiscal_year, conto_slot)
 
-# Costi e' la seconda scheda, come richiesto. Le altre sezioni mantengono
-# i nomi del foglio di riferimento.
 (
     scheda_fatturato,
     scheda_costi,
@@ -131,19 +130,14 @@ with scheda_fatturato:
     except Exception:
         st.error("Impossibile leggere le mandanti. Nessuna modifica effettuata.")
         st.stop()
-
     if mandanti:
         st.dataframe(
-            [
-                {
-                    "Mandante": item["name"],
-                    "Rapporto Enasarco": item["enasarco_relationship"],
-                    "Stato": "Attiva" if item["active"] else "Non attiva",
-                }
-                for item in mandanti
-            ],
-            hide_index=True,
-            width="stretch",
+            [{
+                "Mandante": item["name"],
+                "Rapporto Enasarco": item["enasarco_relationship"],
+                "Stato": "Attiva" if item["active"] else "Non attiva",
+            } for item in mandanti],
+            hide_index=True, width="stretch",
         )
     else:
         st.info("Non hai ancora registrato alcuna mandante.")
@@ -151,27 +145,19 @@ with scheda_fatturato:
     if fiscal_year["status"] == "open":
         scelta = st.selectbox(
             "Nome della mandante",
-            [
-                "Innovagroup Caino",
-                "Innovagroup Borgo",
-                "Innovagroup Erbe",
-                "Innovagroup Fontanella",
-                "Altra mandante (inserimento manuale)",
-            ],
+            ["Innovagroup Caino", "Innovagroup Borgo", "Innovagroup Erbe",
+             "Innovagroup Fontanella", "Altra mandante (inserimento manuale)"],
         )
         with st.form("nuova_mandante"):
             nome_personalizzato = (
                 st.text_input("Nome della nuova mandante")
-                if scelta == "Altra mandante (inserimento manuale)"
-                else ""
+                if scelta == "Altra mandante (inserimento manuale)" else ""
             )
             rapporto = st.selectbox(
-                "Tipo di rapporto Enasarco",
-                ["plurimandatario", "monomandatario"],
+                "Tipo di rapporto Enasarco", ["plurimandatario", "monomandatario"],
                 help="Controlla il tipo di rapporto prima di salvare.",
             )
             salva = st.form_submit_button("Aggiungi mandante", type="primary")
-
         if salva:
             nome = nome_personalizzato if scelta == "Altra mandante (inserimento manuale)" else scelta
             try:
@@ -184,7 +170,6 @@ with scheda_fatturato:
                 st.rerun()
     else:
         st.info("L'anno fiscale è chiuso: non è possibile aggiungere mandanti da questa schermata.")
-
     mostra_fatturato(client, fiscal_year, mandanti)
     mostra_vendite(client, fiscal_year)
 
@@ -212,7 +197,7 @@ with scheda_accantonamenti:
 
 with scheda_conto_economico:
     mostra_conto_registrato(client, fiscal_year)
-    mostra_conto_economico(client, fiscal_year)
+    mostra_conto_economico(client, fiscal_year, sidebar_slot=conto_slot)
 
 with scheda_imposte:
     mostra_imposte(client, fiscal_year)
@@ -221,28 +206,3 @@ with scheda_imposte:
 with scheda_detrazioni:
     mostra_detrazioni_unificate(client, fiscal_year)
     mostra_pensione(client, fiscal_year)
-
-with st.sidebar:
-    with st.expander("Diagnostica dei permessi (sola lettura)"):
-        if st.button("Verifica accesso al database"):
-            try:
-                client.table("fiscal_years").select("id").limit(1).execute()
-            except Exception:
-                st.error("Accesso autenticato: lettura non riuscita. Nessun dato modificato.")
-            else:
-                st.success("Accesso autenticato: lettura consentita.")
-
-            try:
-                anonymous_client = create_client(
-                    st.secrets["SUPABASE_URL"],
-                    st.secrets["SUPABASE_PUBLISHABLE_KEY"],
-                )
-                anonymous_client.table("fiscal_years").select("id").limit(1).execute()
-            except Exception as exc:
-                if str(getattr(exc, "code", "")) == "42501":
-                    st.success("Accesso anonimo: lettura negata per mancanza di permessi.")
-                else:
-                    st.warning("Accesso anonimo: verifica non conclusiva. Riporta soltanto questo messaggio.")
-            else:
-                st.warning("Accesso anonimo: richiesta accettata. Non inserire ancora dati fiscali.")
-    st.caption("Verificato l'isolamento in lettura dell'anno fiscale fra due utenti; altre tabelle non ancora testate separatamente.")
