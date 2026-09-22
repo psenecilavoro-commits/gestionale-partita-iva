@@ -1,8 +1,7 @@
-"""Detrazioni e deduzioni: ingressi manuali distinti dalle formule del foglio.
+"""Detrazioni e deduzioni: registrazioni manuali distinte da esempi matematici.
 
-L'anteprima del foglio non viene salvata nel database. Le detrazioni scadute
-scompaiono dalla tabella dell'anno ma lo storico NON viene cancellato.
-I valori non sono ancora collegati alle imposte o al netto.
+Le rate scadute scompaiono dalla vista annuale senza eliminare lo storico.
+I valori non sono ancora collegati alle imposte definitive.
 """
 from datetime import date
 from decimal import Decimal, InvalidOperation, ROUND_HALF_UP
@@ -15,14 +14,10 @@ from fatturato import euro
 D = Decimal
 CENT = D("0.01")
 FRANCHIGIA_FOGLIO = D("129.11")
+# Marcatori legacy dei record sanitari: non modificarli.
 MARCATORE_SANITARIE = "TIPO_SANITARIE_FOGLIO; PARAMETRI FISCALI DA VERIFICARE"
 MARCATORE_ORDINARIE = "PARAMETRI FISCALI DA VERIFICARE"
 NOTA_DEDUZIONE = "DA VERIFICARE: registrazione manuale, non deduzione fiscale approvata"
-
-# Colonne bianche A/B/C/D/E e formula grigia F del foglio originale.
-# La colonna D (N. RATA) e' un dato presente nel foglio; la formula F
-# non lo usa. Qui lo rendiamo automatico usando l'anno della prima rata.
-# None corrisponde al trattino delle voci non pluriennali.
 PROVE = (
     ("Spese sanitarie", "517", 1, None, "0.19", True),
     ("Mutuo", "527", 1, None, "0.19", False),
@@ -63,7 +58,7 @@ def _aliquota(testo: str) -> D:
 
 
 def _annuale(importo: D, rate: int, aliquota: D, sanitarie: bool) -> D:
-    """F = MAX(0;B-129,11)/C*E per sanitarie, altrimenti B/C*E."""
+    """Spese sanitarie: max(0,importo-franchigia)/rate*aliquota."""
     if rate < 1 or rate > 30 or aliquota < 0 or aliquota > 2:
         raise ValueError("Numero rate o percentuale non valido.")
     base = max(D("0"), importo - FRANCHIGIA_FOGLIO) if sanitarie else importo
@@ -87,7 +82,6 @@ def _data(testo: str, anno: int) -> str:
 def _leggi(client: Client, anno: dict) -> tuple[list[dict], list[dict]]:
     from registri import leggi_tutti
     deduzioni = leggi_tutti(client, "tax_deductions", fiscal_year_id=anno["id"])
-    # I crediti sono associati a first_fiscal_year e visibili negli anni successivi.
     detrazioni = leggi_tutti(client, "tax_credits")
     return detrazioni, deduzioni
 
@@ -100,7 +94,6 @@ def _validazione_voce(descrizione: str, importo: str) -> tuple[str, D]:
 
 
 def _numero_rata(anno: int, primo_anno: int, numero_rate: int) -> int | None:
-    """Rata 1 nell'anno iniziale; None prima della prima o dopo l'ultima."""
     if numero_rate < 1 or numero_rate > 30:
         raise ValueError("Numero totale delle rate non valido.")
     corrente = anno - primo_anno + 1
@@ -108,9 +101,9 @@ def _numero_rata(anno: int, primo_anno: int, numero_rate: int) -> int | None:
 
 
 def _anteprima_foglio() -> None:
-    st.markdown("### Confronto con il foglio originale · sola lettura")
-    st.caption("L'anteprima riporta anche N. RATA della colonna D. Esempi NON caricati in Supabase: "
-               "solo la colonna F e i totali sono formule, non campi da modificare.")
+    """Prospetto matematico dimostrativo, lasciato per compatibilita'."""
+    st.markdown("### Esempi dimostrativi · sola lettura")
+    st.caption("Importi ipotetici, non registrati nel database né verificati fiscalmente.")
     righe = []
     importi = D("0")
     totale = D("0")
@@ -120,24 +113,24 @@ def _anteprima_foglio() -> None:
         importi += valore
         totale += annuo
         righe.append({
-            "Causale": nome, "Importo (input)": _formato(valore),
-            "Rate annue (input)": rate,
-            "N. rata nel foglio": str(numero) if numero is not None else "—",
-            "% (input)": f"{D(tasso) * 100:g}%",
-            "Detrazione annua (formula)": _formato(annuo),
+            "Causale": nome, "Importo ipotetico": _formato(valore),
+            "Rate annuali": rate,
+            "N. rata di prova": str(numero) if numero is not None else "—",
+            "% ipotizzata": f"{D(tasso) * 100:g}%",
+            "Detrazione annua ipotetica": _formato(annuo),
         })
     st.dataframe(righe, hide_index=True, width="stretch")
-    st.caption("Spese sanitarie: F3 = MAX(0; B3 − 129,11)/C3 × E3. "
-               "Altre righe: F = B/C × E. N. rata NON cambia l'importo annuo: "
-               "determina fino a quale anno la voce deve essere mostrata.")
+    st.caption("Spese sanitarie: max(0; importo − franchigia) / rate × aliquota. "
+               "Altre voci: importo / rate × aliquota. Il numero della rata determina "
+               "gli anni in cui una voce è visualizzata.")
     c1, c2, c3 = st.columns(3)
-    c1.metric("Importi di prova · B19", _formato(importi))
-    c2.metric("Detrazioni di prova · F19", _formato(totale))
-    c3.metric("Fondo pensione di prova · I3", _formato(D("5300")))
+    c1.metric("Importi di prova", _formato(importi))
+    c2.metric("Detrazioni di prova", _formato(totale))
+    c3.metric("Fondo pensione dimostrativo", _formato(D("5300")))
     if importi == D("52190") and totale.quantize(CENT, rounding=ROUND_HALF_UP) == D("2941.51"):
-        st.success("Le formule di prova riproducono i totali del foglio: 52.190,00 € e 2.941,51 €.")
+        st.success("Verifica numerica del caso dimostrativo riuscita.")
     else:
-        st.error("Il confronto non coincide: non usare i risultati.")
+        st.error("Il caso dimostrativo presenta differenze: non usare i risultati.")
 
 
 def _nuova_detrazione(client: Client, anno: dict) -> None:
@@ -153,7 +146,7 @@ def _nuova_detrazione(client: Client, anno: dict) -> None:
             corrente = st.number_input(f"Numero della rata nel {anno_fiscale} (1 = prima rata)",
                                        min_value=1, max_value=30, value=1, step=1)
             percentuale = st.text_input("Percentuale detrazione (%)", placeholder="es. 19 oppure 110")
-            sanitaria = st.checkbox("Spese sanitarie: applica soltanto la franchigia di confronto del foglio (129,11 €)")
+            sanitaria = st.checkbox("Spese sanitarie: applica la franchigia di scenario (129,11 €)")
             salva = st.form_submit_button("Salva nuova riga di detrazione")
         if salva:
             try:
@@ -202,7 +195,7 @@ def _modifica_detrazione(client: Client, crediti: list[dict], anno_fiscale: int)
                                     min_value=2000, max_value=2100,
                                     value=int(r["first_fiscal_year"]), step=1)
             percentuale = st.text_input("Percentuale (%)", value=str(D(str(r["credit_rate"])) * 100).replace(".", ","))
-            sanitaria = st.checkbox("Usa franchigia sanitaria del foglio",
+            sanitaria = st.checkbox("Usa franchigia sanitaria di scenario",
                                     value=str(r.get("notes") or "").startswith("TIPO_SANITARIE_FOGLIO"))
             cancella = st.checkbox("Elimina definitivamente questa registrazione")
             salva = st.form_submit_button("Conferma operazione")
@@ -293,19 +286,17 @@ def _modifica_deduzione(client: Client, anno: dict, deduzioni: list[dict]) -> No
 
 
 def mostra_detrazioni_deduzioni(client: Client, anno: dict) -> None:
+    """Vista storica di compatibilita'; l'app usa sanitarie_unificate."""
     st.subheader("Detrazioni e deduzioni")
-    st.warning("Le formule riproducono SOLO il foglio originale: percentuali, franchigia e ammissibilità "
-               "fiscale non sono ancora verificate per il 2027. Nessun dato qui cambia imposte o netto.")
+    st.warning("Aliquote, franchigie e ammissibilità fiscale sono scenari non verificati per il 2027.")
     anno_fiscale = int(anno["fiscal_year"])
-    st.info(f"Nelle rate pluriennali il numero è automatico: rata 1 nell'anno iniziale, "
-            f"poi +1 ogni anno. Dal primo anno successivo all'ultima rata la voce non "
-            f"compare più nella tabella {anno_fiscale}; lo storico non viene eliminato.")
+    st.info("Le rate pluriennali avanzano di uno per ogni anno fiscale e scompaiono dalla "
+            "vista annuale dopo l'ultima rata; lo storico resta nel database.")
     try:
         crediti, deduzioni = _leggi(client, anno)
     except Exception:
         st.error("Impossibile leggere detrazioni e deduzioni. Nessun dato modificato.")
         return
-
     st.markdown(f"### 1 · Detrazioni attive nell'anno {anno_fiscale}")
     righe_crediti = []
     totale_crediti = D("0")
@@ -326,28 +317,25 @@ def mostra_detrazioni_deduzioni(client: Client, anno: dict) -> None:
         totale_crediti += annuo
         righe_crediti.append({
             "Causale": r["description"], "Importo inserito": _formato(importo),
-            "Rate totali": rate,
-            "N. rata": f"{numero} / {rate}" if rate > 1 else "—",
-            "Anno prima rata": prima,
-            "% inserita": f"{D(str(r['credit_rate'])) * 100:g}%",
+            "Rate totali": rate, "N. rata": f"{numero} / {rate}" if rate > 1 else "—",
+            "Anno prima rata": prima, "% inserita": f"{D(str(r['credit_rate'])) * 100:g}%",
             "Detrazione annua (formula)": _formato(annuo),
         })
     if righe_crediti:
         st.dataframe(righe_crediti, hide_index=True, width="stretch")
-        st.metric("Totale detrazioni registrate attive · solo confronto", _formato(totale_crediti))
+        st.metric("Totale detrazioni attive · scenario", _formato(totale_crediti))
     else:
-        st.info("Nessuna detrazione attiva registrata: l'anteprima del foglio NON viene inserita automaticamente.")
+        st.info("Nessuna detrazione attiva registrata.")
     if future or scadute:
-        st.caption(f"Fuori dalla tabella di quest'anno: {future} future e {scadute} scadute. "
-                   "Restano nel database e sono disponibili in «Modifica o elimina una detrazione».")
+        st.caption(f"Fuori dalla tabella dell'anno: {future} future e {scadute} scadute. "
+                   "Restano nello storico.")
     if anno["status"] == "open":
         _nuova_detrazione(client, anno)
         _modifica_detrazione(client, crediti, anno_fiscale)
     else:
-        st.info("Anno fiscale chiuso: le detrazioni sono in sola lettura.")
-
+        st.info("Anno fiscale chiuso: detrazioni in sola lettura.")
     st.divider()
-    st.markdown("### 2 · Deduzioni registrate · input bianchi, somma calcolata")
+    st.markdown("### 2 · Deduzioni registrate · input e somma")
     if deduzioni:
         st.dataframe([{
             "Causale": r["description"], "Importo inserito": _formato(D(str(r["amount"]))),
@@ -355,17 +343,11 @@ def mostra_detrazioni_deduzioni(client: Client, anno: dict) -> None:
             "Stato": "Da verificare fiscalmente",
         } for r in deduzioni], hide_index=True, width="stretch")
         totale_deduzioni = sum((D(str(r["amount"])) for r in deduzioni), D("0"))
-        st.metric("Totale importi deduzioni registrati · sola somma", _formato(totale_deduzioni))
+        st.metric("Totale deduzioni registrate · sola somma", _formato(totale_deduzioni))
     else:
-        st.info("Nessuna deduzione registrata: i 5.300 € del fondo pensione del foglio restano SOLO un esempio.")
+        st.info("Nessuna deduzione registrata; i valori dimostrativi non sono pagamenti.")
     if anno["status"] == "open":
         _nuova_deduzione(client, anno)
         _modifica_deduzione(client, anno, deduzioni)
     else:
         st.info("Anno fiscale chiuso: deduzioni in sola lettura.")
-
-    st.divider()
-    with st.expander("3 · Apri l'anteprima del foglio originale (sola lettura)"):
-        _anteprima_foglio()
-    st.caption("Le detrazioni e le deduzioni registrate sono distinte dai risultati fiscali definitivi. "
-               "Prima di usarle per le imposte verificheremo spettanza, limiti e pagamenti.")
