@@ -12,9 +12,10 @@ from auto_autostrada import mostra_autostrada
 from auto_carburante import mostra_carburante
 from auto_limiti import mostra_limiti_auto
 from auto_rate import mostra_rate
+from auto_spese_reali import mostra_spese_auto
 from conto_economico import mostra_conto_economico
 from contributi_versati import mostra_contributi_versati
-from costi_tabella import mostra_tabella_costi
+from costi_scheda import mostra_tabella_costi
 from database import create_fiscal_year, get_fiscal_year
 from fatture_acquisto_xml import mostra_importa_xml_acquisti
 from fatture_provvigioni import mostra_carica_fatture
@@ -189,6 +190,7 @@ with scheda_auto:
     mostra_carburante(client, fiscal_year)
     mostra_autostrada(client, fiscal_year)
     mostra_rate(client, fiscal_year)
+    mostra_spese_auto(client, fiscal_year)
 
 with scheda_accantonamenti:
     mostra_accantonamenti(client, fiscal_year)
