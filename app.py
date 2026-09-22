@@ -7,11 +7,8 @@ import streamlit as st
 from accantonamenti_completi import mostra_accantonamenti
 from accantonamenti_confronto import mostra_confronto_accantonamenti
 from auth import current_user, get_client, sign_in, sign_out, reset_fiscal_inputs
-from auto import mostra_auto, prepara_auto_unica
-from auto_autostrada import mostra_autostrada
-from auto_carburante import mostra_carburante
-from auto_limiti import mostra_limiti_auto
-from auto_rate import mostra_rate
+from auto import prepara_auto_unica
+from auto_riepilogo import mostra_riepilogo_auto
 from auto_spese_reali import mostra_spese_auto
 from conto_economico import mostra_conto_economico
 from contributi_versati import mostra_contributi_versati
@@ -186,11 +183,7 @@ with scheda_costi:
 with scheda_auto:
     prepara_auto_unica(client)
     mostra_spese_auto(client, fiscal_year)
-    mostra_auto(client, fiscal_year)
-    mostra_carburante(client, fiscal_year)
-    mostra_autostrada(client, fiscal_year)
-    mostra_rate(client, fiscal_year)
-    mostra_limiti_auto(client, fiscal_year)
+    mostra_riepilogo_auto(client, fiscal_year)
 
 with scheda_accantonamenti:
     mostra_accantonamenti(client, fiscal_year)
