@@ -1,9 +1,4 @@
-"""Confronto dei chilometri con il limite contrattuale del foglio di prova.
-
-Le soglie qui caricate sono esempi del foglio, non parametri fiscali né
-costi effettivi. Nessun dato esistente viene sovrascritto automaticamente.
-"""
-
+"""Confronto dei chilometri con il limite contrattuale; prove distinte."""
 from decimal import Decimal, ROUND_HALF_UP
 
 import streamlit as st
@@ -12,6 +7,7 @@ from supabase import Client
 from auto import NOTA_VEICOLO_TEST, _chilometri, _veicoli
 from fatturato import euro
 
+# Marcatore storico da conservare per rileggere i dati esistenti.
 NOTA_LIMITE_TEST = "DATI DI PROVA - limite chilometrico e penale del foglio originale"
 CENT = Decimal("0.01")
 
@@ -24,25 +20,20 @@ def calcola_sforamento(chilometri: Decimal, limite: Decimal, tariffa: Decimal) -
 
 
 def _leggi_impostazioni(client: Client, anno_id: str, veicolo_id: str) -> dict | None:
-    risposta = (
-        client.table("vehicle_year_settings")
-        .select("id,annual_km_limit,excess_km_penalty,notes")
-        .eq("fiscal_year_id", anno_id)
-        .eq("vehicle_id", veicolo_id)
-        .limit(1)
-        .execute()
-    )
+    risposta = (client.table("vehicle_year_settings")
+                .select("id,annual_km_limit,excess_km_penalty,notes")
+                .eq("fiscal_year_id", anno_id).eq("vehicle_id", veicolo_id)
+                .limit(1).execute())
     return risposta.data[0] if risposta.data else None
 
 
 def mostra_limiti_auto(client: Client, anno: dict) -> None:
-    """Va invocata dopo mostra_auto, così usa il veicolo già selezionato."""
     veicolo_id = st.session_state.get("auto_veicolo")
     if not veicolo_id:
         return
     st.divider()
     st.subheader("Auto · limite chilometrico e penale")
-    st.caption("Confronto contrattuale con il foglio originale; non è un calcolo fiscale.")
+    st.caption("Confronto contrattuale; non costituisce un calcolo fiscale.")
     try:
         veicolo = next((item for item in _veicoli(client) if item["id"] == veicolo_id), None)
         if veicolo is None:
@@ -52,20 +43,17 @@ def mostra_limiti_auto(client: Client, anno: dict) -> None:
     except Exception:
         st.error("Impossibile leggere il limite chilometrico: nessun dato modificato.")
         return
-
     if impostazioni is None:
         st.info("Nessun limite chilometrico registrato per questo veicolo e questo anno.")
         if anno["status"] == "open" and veicolo.get("notes") == NOTA_VEICOLO_TEST:
-            st.caption("Valori di prova del foglio: limite 50.000 km; penale 0,16 € per km eccedente.")
+            st.caption("Valori dimostrativi: limite 50.000 km; penale 0,16 € per km eccedente.")
             if st.button("Carica limite e penale di prova", key="auto_carica_limiti"):
                 try:
                     if _leggi_impostazioni(client, anno["id"], veicolo_id) is not None:
                         raise ValueError("Impostazioni già presenti: nessun valore sovrascritto.")
                     risposta = client.table("vehicle_year_settings").insert({
-                        "fiscal_year_id": anno["id"],
-                        "vehicle_id": veicolo_id,
-                        "annual_km_limit": 50000,
-                        "excess_km_penalty": "0.16",
+                        "fiscal_year_id": anno["id"], "vehicle_id": veicolo_id,
+                        "annual_km_limit": 50000, "excess_km_penalty": "0.16",
                         "notes": NOTA_LIMITE_TEST,
                     }).execute()
                     if len(risposta.data or []) != 1:
@@ -77,13 +65,11 @@ def mostra_limiti_auto(client: Client, anno: dict) -> None:
                 else:
                     st.rerun()
         return
-
     if impostazioni.get("notes") == NOTA_LIMITE_TEST:
-        st.warning("PARAMETRI DI PROVA: il limite e la penale non sono stati verificati sul tuo contratto attuale.")
+        st.warning("PARAMETRI DI PROVA: limite e penale non verificati sul contratto attuale.")
     if impostazioni["annual_km_limit"] is None or impostazioni["excess_km_penalty"] is None:
         st.info("Limite o penale non impostati: nessun confronto calcolato.")
         return
-
     limite = Decimal(str(impostazioni["annual_km_limit"]))
     tariffa = Decimal(str(impostazioni["excess_km_penalty"]))
     try:
@@ -95,7 +81,6 @@ def mostra_limiti_auto(client: Client, anno: dict) -> None:
     reale = sum(valori, Decimal("0"))
     stimato = reale / len(valori) * 12 if valori else None
     differenza_reale, penale_reale = calcola_sforamento(reale, limite, tariffa)
-
     col1, col2 = st.columns(2)
     col1.metric("Limite annuo", f"{limite:,.0f}".replace(",", ".") + " km")
     col2.metric("Penale per km eccedente", euro(tariffa))
@@ -108,21 +93,16 @@ def mostra_limiti_auto(client: Client, anno: dict) -> None:
     else:
         st.caption("Nessuna stima: non ci sono mesi di percorrenza compilati.")
     st.caption("Una differenza negativa indica chilometri ancora disponibili. La penale è zero finché il limite non viene superato.")
-
     if anno["status"] == "open" and impostazioni.get("notes") == NOTA_LIMITE_TEST:
         with st.expander("Elimina limite e penale di prova"):
             conferma = st.checkbox("Confermo l'eliminazione dei parametri di prova", key="auto_limiti_conferma")
             if st.button("Elimina limite e penale di prova", disabled=not conferma, key="auto_limiti_elimina"):
                 try:
-                    risposta = (
-                        client.table("vehicle_year_settings")
-                        .delete()
-                        .eq("id", impostazioni["id"])
-                        .eq("fiscal_year_id", anno["id"])
-                        .eq("vehicle_id", veicolo_id)
-                        .eq("notes", NOTA_LIMITE_TEST)
-                        .execute()
-                    )
+                    risposta = (client.table("vehicle_year_settings").delete()
+                                .eq("id", impostazioni["id"])
+                                .eq("fiscal_year_id", anno["id"])
+                                .eq("vehicle_id", veicolo_id)
+                                .eq("notes", NOTA_LIMITE_TEST).execute())
                     if len(risposta.data or []) != 1:
                         raise RuntimeError("Eliminazione non confermata")
                 except Exception:
