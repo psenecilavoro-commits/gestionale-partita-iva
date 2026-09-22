@@ -123,13 +123,19 @@ mostra_base(client, fiscal_year, conto_slot)
 ])
 
 with scheda_fatturato:
-    st.subheader("Mandanti")
-    st.caption("Le mandanti sono anagrafiche; gli importi fatturati si registrano qui sotto.")
+    # Carichiamo prima le mandanti perché servono al fatturato, ma mostriamo
+    # la loro anagrafica per ultima, secondo l'ordine richiesto nella scheda.
     try:
         mandanti = elenco_mandanti(client)
     except Exception:
         st.error("Impossibile leggere le mandanti. Nessuna modifica effettuata.")
         st.stop()
+
+    mostra_fatturato(client, fiscal_year, mandanti)
+    mostra_vendite(client, fiscal_year)
+
+    st.subheader("Mandanti")
+    st.caption("Anagrafica delle mandanti associate alle registrazioni del fatturato.")
     if mandanti:
         st.dataframe(
             [{
@@ -170,8 +176,6 @@ with scheda_fatturato:
                 st.rerun()
     else:
         st.info("L'anno fiscale è chiuso: non è possibile aggiungere mandanti da questa schermata.")
-    mostra_fatturato(client, fiscal_year, mandanti)
-    mostra_vendite(client, fiscal_year)
 
 with scheda_costi:
     mostra_tabella_costi(client, fiscal_year)
