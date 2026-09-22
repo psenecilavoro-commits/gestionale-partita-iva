@@ -27,6 +27,9 @@ class TestRipartizioneSpese(unittest.TestCase):
             {"category_id": "c", "vehicle_id": "v", "gross_amount": "80.00",
              "expense_date": "2027-02-05", "amount_includes_vat": True},
         ]
+        for spesa in spese:
+            spesa.update(vat_rate="0.22", vat_deductible_rate="0.4",
+                         cost_deductible_rate="0.8")
         registrato, proiezione = _proietta(spese)
         self.assertEqual(registrato, Decimal("180.00"))
         self.assertEqual(proiezione, Decimal("1080.00"))
