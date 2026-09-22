@@ -86,12 +86,17 @@ def mostra_spese_auto(client: Client, anno: dict) -> None:
                              f"({euro(Decimal(str(per_id[ident]['gross_amount'])))})"),
                          key=f"auto_spesa_scelta_{anno['id']}_{codice}")
     precedente = per_id.get(scelta)
+    anno_num = int(anno["fiscal_year"])
+    # L'anno selezionato può essere futuro: il widget deve ricevere una data
+    # compresa nei suoi limiti, anche se l'inserimento sarà bloccato fino ad allora.
+    giorno_predefinito = max(date(anno_num, 1, 1),
+                             min(date.today(), date(anno_num, 12, 31)))
     with st.form(f"auto_spesa_form_{anno['id']}_{codice}_{scelta or 'nuova'}"):
         giorno = st.date_input("Data della spesa", value=(
             date.fromisoformat(precedente["expense_date"]) if precedente
-            else min(date.today(), date(int(anno["fiscal_year"]), 12, 31))),
-            min_value=date(int(anno["fiscal_year"]), 1, 1),
-            max_value=date(int(anno["fiscal_year"]), 12, 31))
+            else giorno_predefinito),
+            min_value=date(anno_num, 1, 1),
+            max_value=date(anno_num, 12, 31))
         descrizione = st.text_input("Descrizione", value=(
             precedente["description"] if precedente else CONFIG[codice][1]),
             max_chars=200)
@@ -120,7 +125,7 @@ def mostra_spese_auto(client: Client, anno: dict) -> None:
                         .eq("expense_date", precedente["expense_date"]))
         else:
             valore = importo_valido(testo)
-            valida_spesa_auto(codice, giorno, valore, int(anno["fiscal_year"]))
+            valida_spesa_auto(codice, giorno, valore, anno_num)
             descrizione = " ".join(descrizione.split())
             if not descrizione or len(descrizione) > 200:
                 raise ValueError("Inserisci una descrizione di massimo 200 caratteri.")
@@ -146,7 +151,7 @@ def mostra_spese_auto(client: Client, anno: dict) -> None:
                     "vat_rate": categoria["vat_rate"],
                     "vat_deductible_rate": categoria["vat_deductible_rate"],
                     "cost_deductible_rate": categoria["cost_deductible_rate"],
-                    "fiscal_competence_year": int(anno["fiscal_year"]),
+                    "fiscal_competence_year": anno_num,
                     "notes": NOTA_REALE,
                 })
                 richiesta = client.table("costs").insert(dati)
