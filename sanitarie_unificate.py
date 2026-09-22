@@ -1,9 +1,7 @@
-"""Vista unificata delle spese sanitarie, senza migrazioni o modifiche ai dati.
+"""Vista unificata delle spese sanitarie, senza migrazioni o modifiche dati.
 
-Le registrazioni manuali restano modificabili in tax_credits, il registro OCR
-resta separato e conserva le impronte SHA-256. Il riepilogo applica la
-franchigia di confronto del foglio UNA volta sulla somma delle spese dell'anno.
-Non alimenta ancora le imposte o il netto definitivo.
+Registrazioni manuali e registro OCR restano separati. La franchigia
+matematica e' applicata una sola volta al totale dell'anno.
 """
 from decimal import Decimal
 from hashlib import sha256
@@ -25,11 +23,6 @@ def _sanitaria(r: dict) -> bool:
 
 
 def _riepilogo(crediti: list[dict], anno: int) -> tuple[D, D, list[dict], list[dict]]:
-    """Somma solo spese sanitarie annuali con aliquota omogenea del foglio.
-
-    Voci sanitarie pluriennali o con aliquota differente NON sono ricalcolate
-    tacitamente: restano visibili come anomalie e fuori dai totali di confronto.
-    """
     registro = sd._trova_aggregato(crediti, anno)
     documenti = D(str(registro["original_amount"])) if registro else D("0")
     manuali = D("0")
@@ -40,7 +33,6 @@ def _riepilogo(crediti: list[dict], anno: int) -> tuple[D, D, list[dict], list[d
         if numero is None:
             continue
         if r["description"] == sd.DESCRIZIONE:
-            # Il solo registro valido dell'anno è già stato contato sopra.
             if registro is None or r["id"] != registro["id"]:
                 anomalie.append(r)
             continue
@@ -55,7 +47,6 @@ def _riepilogo(crediti: list[dict], anno: int) -> tuple[D, D, list[dict], list[d
 
 
 def _carica_documenti(client: Client, anno: dict, crediti: list[dict], manuali: D) -> None:
-    """Usa l'OCR e il salvataggio esistenti, senza mostrare un secondo totale annuo."""
     anno_num = int(anno["fiscal_year"])
     st.markdown("#### Carica scontrini farmacia e ricevute mediche")
     st.caption("PDF, JPG o PNG: massimo 10 documenti da 8 MB. I documenti sono letti "
@@ -72,10 +63,8 @@ def _carica_documenti(client: Client, anno: dict, crediti: list[dict], manuali: 
     except ValueError as exc:
         st.error(str(exc))
         return
-    caricati = st.file_uploader(
-        "Carica uno o più documenti", type=["pdf", "jpg", "jpeg", "png"],
-        accept_multiple_files=True, key=f"san_documenti_{anno_num}",
-    )
+    caricati = st.file_uploader("Carica uno o più documenti", type=["pdf", "jpg", "jpeg", "png"],
+                               accept_multiple_files=True, key=f"san_documenti_{anno_num}")
     if not caricati:
         return
     if len(caricati) > sd.MAX_FILES:
@@ -121,19 +110,15 @@ def _carica_documenti(client: Client, anno: dict, crediti: list[dict], manuali: 
     somma = sum(importi_validi.values(), D("0")) if len(importi_validi) == len(nuovi) else None
     st.metric("Totale nuovo da aggiungere", euro(somma) if somma is not None else "Da completare")
     selezione = sha256("".join(sorted(nuovi)).encode()).hexdigest()[:12]
-    verifica = st.checkbox(
-        f"Ho controllato importi e anno {anno_num}; confermo la somma.",
-        key=f"san_verifica_{anno_num}_{selezione}",
-    )
+    verifica = st.checkbox(f"Ho controllato importi e anno {anno_num}; confermo la somma.",
+                           key=f"san_verifica_{anno_num}_{selezione}")
     non_duplicati = True
     if manuali > 0:
         st.warning("Esistono spese sanitarie inserite a mano. Verifica che questi "
                    "documenti NON siano già inclusi in quelle registrazioni: "
-                   "il programma non può riconoscere due foto diverse o un inserimento manuale dello stesso scontrino.")
-        non_duplicati = st.checkbox(
-            "Confermo che questi documenti non sono già compresi nelle spese manuali.",
-            key=f"san_no_doppioni_manual_{anno_num}_{selezione}",
-        )
+                   "due foto diverse o un inserimento manuale dello stesso scontrino potrebbero duplicarsi.")
+        non_duplicati = st.checkbox("Confermo che questi documenti non sono già compresi nelle spese manuali.",
+                                   key=f"san_no_doppioni_manual_{anno_num}_{selezione}")
     if st.button("Conferma e aggiungi alle spese sanitarie", type="primary",
                  key=f"san_conferma_{anno_num}"):
         if not verifica or not non_duplicati:
@@ -154,10 +139,9 @@ def _carica_documenti(client: Client, anno: dict, crediti: list[dict], manuali: 
 
 
 def mostra_detrazioni_unificate(client: Client, anno: dict) -> None:
-    """Sostituisce le due viste separate, senza cambiare i dati sottostanti."""
     anno_num = int(anno["fiscal_year"])
     st.subheader("Detrazioni e deduzioni")
-    st.warning("Formule di confronto con il foglio originale, NON parametri fiscali verificati per il 2027. "
+    st.warning("Le formule sono scenari matematici, NON parametri fiscali verificati per il 2027. "
                "Questi importi non modificano ancora imposte o netto.")
     st.info("Le rate pluriennali avanzano con l'anno selezionato e scompaiono "
             "dalla vista annuale dopo l'ultima rata; lo storico resta conservato.")
@@ -170,18 +154,15 @@ def mostra_detrazioni_unificate(client: Client, anno: dict) -> None:
     except Exception:
         st.error("Impossibile leggere detrazioni e deduzioni. Nessun dato modificato.")
         return
-    # I contributi hanno una propria sezione e NON sono sommati alle deduzioni
-    # generiche: evita doppioni quando collegheremo i versamenti all'IRPEF.
     deduzioni = [r for r in deduzioni if not e_contributo(r)]
-
     st.markdown(f"### 1 · Spese sanitarie · {anno_num}")
     totale_sanitario = manuali + documenti
     detrazione_sanitaria = dd._annuale(totale_sanitario, 1, ALIQUOTA_FOGLIO, True)
     st.metric("Totale unico spese sanitarie inserite", dd._formato(totale_sanitario))
     st.caption(f"Di cui inserite manualmente: {dd._formato(manuali)} · da documenti: "
-               f"{dd._formato(documenti)}. La franchigia di confronto di "
+               f"{dd._formato(documenti)}. La franchigia ipotetica di "
                f"{dd._formato(dd.FRANCHIGIA_FOGLIO)} si applica UNA sola volta alla somma.")
-    st.metric("Detrazione sanitaria annua · solo formula del foglio", dd._formato(detrazione_sanitaria))
+    st.metric("Detrazione sanitaria annua · scenario", dd._formato(detrazione_sanitaria))
     if anomalie:
         st.error("Alcune voci sanitarie hanno più di una rata, un'aliquota diversa dal 19% "
                  "oppure usano impropriamente la descrizione riservata ai documenti. "
@@ -190,19 +171,16 @@ def mostra_detrazioni_unificate(client: Client, anno: dict) -> None:
         st.dataframe([{
             "Causale da verificare": r["description"],
             "Importo": dd._formato(D(str(r["original_amount"]))),
-            "Rate": r["installment_count"],
-            "%": f"{D(str(r['credit_rate'])) * 100:g}%",
+            "Rate": r["installment_count"], "%": f"{D(str(r['credit_rate'])) * 100:g}%",
         } for r in anomalie], hide_index=True, width="stretch")
     _carica_documenti(client, anno, crediti, manuali)
-
     st.divider()
     st.markdown(f"### 2 · Detrazioni attive nell'anno {anno_num}")
     righe = []
     totale = detrazione_sanitaria
     if totale_sanitario > 0:
         righe.append({
-            "Causale": "Spese sanitarie · totale unificato",
-            "Importo inserito": dd._formato(totale_sanitario),
+            "Causale": "Spese sanitarie · totale unificato", "Importo inserito": dd._formato(totale_sanitario),
             "Rate totali": 1, "N. rata": "—", "Anno prima rata": anno_num,
             "% inserita": "19%", "Detrazione annua (formula)": dd._formato(detrazione_sanitaria),
         })
@@ -216,15 +194,14 @@ def mostra_detrazioni_unificate(client: Client, anno: dict) -> None:
         righe.append({
             "Causale": r["description"], "Importo inserito": dd._formato(importo),
             "Rate totali": rate, "N. rata": f"{numero} / {rate}" if rate > 1 else "—",
-            "Anno prima rata": prima,
-            "% inserita": f"{D(str(r['credit_rate'])) * 100:g}%",
+            "Anno prima rata": prima, "% inserita": f"{D(str(r['credit_rate'])) * 100:g}%",
             "Detrazione annua (formula)": dd._formato(annuo),
         })
     if righe:
         st.dataframe(righe, hide_index=True, width="stretch")
-        st.metric("Totale detrazioni registrate attive · solo confronto", dd._formato(totale))
+        st.metric("Totale detrazioni attive · scenario", dd._formato(totale))
     else:
-        st.info("Nessuna detrazione attiva registrata: l'anteprima del foglio non viene inserita in Supabase.")
+        st.info("Nessuna detrazione attiva registrata.")
     futuri = scaduti = 0
     for r in crediti:
         prima = int(r["first_fiscal_year"])
@@ -236,36 +213,28 @@ def mostra_detrazioni_unificate(client: Client, anno: dict) -> None:
     if futuri or scaduti:
         st.caption(f"Fuori dalla vista: {futuri} voci future e {scaduti} scadute, conservate nello storico.")
     if anno["status"] == "open":
-        st.caption("Per le spese sanitarie manuali usa una rata e il 19% del foglio; "
+        st.caption("Per le spese sanitarie manuali usa una rata e l'aliquota dimostrativa del 19%; "
                    "non reinserire le spese già presenti nei documenti.")
         dd._nuova_detrazione(client, anno)
-        # Non aprire il registro OCR nell'editor generale: salvare una modifica
-        # lì sostituirebbe le note e cancellerebbe le impronte anti-duplicato.
         modificabili = [r for r in crediti if r["description"] != sd.DESCRIZIONE]
         dd._modifica_detrazione(client, modificabili, anno_num)
     else:
         st.info("Anno fiscale chiuso: detrazioni in sola lettura.")
-
     st.divider()
-    st.markdown("### 3 · Deduzioni registrate · input bianchi, somma calcolata")
+    st.markdown("### 3 · Deduzioni registrate · input e totale")
     if deduzioni:
         st.dataframe([{
-            "Causale": r["description"],
-            "Importo inserito": dd._formato(D(str(r["amount"]))),
+            "Causale": r["description"], "Importo inserito": dd._formato(D(str(r["amount"]))),
             "Data pagamento": r.get("payment_date") or "—",
             "Stato": "Da verificare fiscalmente",
         } for r in deduzioni], hide_index=True, width="stretch")
         totale_deduzioni = sum((D(str(r["amount"])) for r in deduzioni), D("0"))
         st.metric("Totale importi deduzioni registrati · sola somma", dd._formato(totale_deduzioni))
     else:
-        st.info("Nessuna deduzione registrata: il fondo pensione del foglio rimane un esempio.")
+        st.info("Nessuna deduzione registrata: il fondo pensione dimostrativo non è un versamento.")
     if anno["status"] == "open":
         dd._nuova_deduzione(client, anno)
         dd._modifica_deduzione(client, anno, deduzioni)
     else:
         st.info("Anno fiscale chiuso: deduzioni in sola lettura.")
-
-    st.divider()
-    with st.expander("4 · Apri l'anteprima del foglio originale (sola lettura)"):
-        dd._anteprima_foglio()
     st.caption("Prima del collegamento alle imposte verificheremo spettanza, limiti e pagamenti.")
