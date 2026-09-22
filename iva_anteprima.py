@@ -1,7 +1,7 @@
-"""Confronto IVA mensile: fatturato al 22% e registro acquisti separato.
+"""Simulazione IVA mensile: fatturato al 22% e acquisti documentati separati.
 
-Nessuna liquidazione ufficiale: vendite, crediti, note di credito, opzioni
-fiscali e completezza dei documenti devono ancora essere verificati.
+Non e' una liquidazione: fatture effettive, crediti e rettifiche devono
+ancora essere verificati prima dell'uso fiscale.
 """
 from datetime import date
 from decimal import Decimal, ROUND_HALF_UP
@@ -13,15 +13,11 @@ from fatturato import MESI, NOTA_TEST, euro, leggi_fatturato
 
 D = Decimal
 CENT = D("0.01")
-ALIQUOTA_FOGLIO = D("0.22")
+ALIQUOTA_FOGLIO = D("0.22")  # Nome interno conservato per compatibilita'.
 
 
 def periodo_detrazione(operazione: date, ricezione: date, registrazione: date) -> tuple[int, int, bool]:
-    """Prima imputazione mensile simulata, con retrodatazione facoltativa.
-
-    Presuppone fattura ordinaria, IVA detraibile e registrazione regolare;
-    casistiche speciali, rettifiche, decadenze e liquidazione trimestrale fuori ambito.
-    """
+    """Prima imputazione mensile simulata, con retrodatazione facoltativa."""
     if not isinstance(operazione, date) or not isinstance(ricezione, date) or not isinstance(registrazione, date):
         raise ValueError("Inserisci tre date valide.")
     if ricezione < operazione or registrazione < ricezione:
@@ -29,8 +25,6 @@ def periodo_detrazione(operazione: date, ricezione: date, registrazione: date) -
     if (ricezione.year == operazione.year and ricezione.month == operazione.month
             and registrazione.year == operazione.year and registrazione.month == operazione.month):
         return operazione.year, operazione.month, False
-    # Il mese dell'operazione si può scegliere se fattura ricevuta e annotata
-    # entro il giorno 15 del mese dopo, ma non per operazioni dell'anno prima.
     if operazione.month < 12:
         mese_dopo = date(operazione.year, operazione.month + 1, 15)
         if ricezione <= mese_dopo and registrazione <= mese_dopo:
@@ -39,7 +33,7 @@ def periodo_detrazione(operazione: date, ricezione: date, registrazione: date) -
 
 
 def iva_vendite_foglio(fatturati: list[dict]) -> dict[int, D]:
-    """Confronto G2:G13, non documento fiscale: solo mesi espressi nel DB."""
+    """Ipotesi di IVA al 22% sui soli mesi presenti nel DB."""
     imponibili: dict[int, D] = {}
     for riga in fatturati:
         mese = int(riga["month"])
@@ -52,13 +46,11 @@ def iva_vendite_foglio(fatturati: list[dict]) -> dict[int, D]:
 
 
 def mostra_anteprima_iva(client: Client, anno: dict) -> None:
-    # Import a runtime: iva_acquisti usa la funzione pura periodo_detrazione.
     from iva_acquisti import leggi_fatture_iva, mostra_registro_iva_acquisti, riepilogo_acquisti_iva
-
     anno_num = int(anno["fiscal_year"])
     st.divider()
     st.subheader("IVA mensile · confronto e verifica date")
-    st.warning("Anteprima matematica, NON liquidazione IVA: il 22% deriva dal foglio "
+    st.warning("Anteprima matematica, NON liquidazione IVA: il 22% è un'ipotesi "
                "e non verifica aliquote delle singole fatture, imponibilità o note di credito. "
                "I documenti di acquisto registrati possono essere incompleti; "
                "crediti precedenti, rettifiche e periodicità non sono conteggiati.")
@@ -72,25 +64,23 @@ def mostra_anteprima_iva(client: Client, anno: dict) -> None:
         st.error("Impossibile leggere il fatturato. Nessun dato modificato.")
         return
     if any(r.get("notes") == NOTA_TEST for r in fatturati):
-        st.warning("Sono presenti fatturati di PROVA: anche i valori IVA del confronto sono simulati.")
+        st.warning("Sono presenti fatturati di PROVA: anche i valori IVA sono simulati.")
     try:
         acquisti = riepilogo_acquisti_iva(leggi_fatture_iva(client, anno["id"]), anno_num)
     except Exception:
         acquisti = {}
         st.caption("Registro IVA acquisti non ancora disponibile o da verificare: "
                    "controlla la sezione dedicata qui sotto.")
-
     st.dataframe([{
         "Mese": nome,
-        "IVA fatturata · 22% del foglio · TEST": euro(output[mese]) if mese in output else "—",
+        "IVA vendite · ipotesi 22%": euro(output[mese]) if mese in output else "—",
         "IVA detraibile auto · registrata": euro(acquisti[mese]["auto"]) if mese in acquisti else "—",
         "Altra IVA detraibile · registrata": euro(acquisti[mese]["altro"]) if mese in acquisti else "—",
         "IVA dovuta": "— · non determinata",
     } for mese, nome in enumerate(MESI, 1)], hide_index=True, width="stretch")
-    st.caption("Un mese privo di documenti non equivale a 0. IVA sulle vendite = simulazione "
-               "dal fatturato, IVA sugli acquisti = quote documentate e da te confermate. "
-               "Non sottrarre i due valori come liquidazione effettiva.")
-
+    st.caption("Un mese privo di documenti non equivale a zero. IVA sulle vendite = "
+               "simulazione dal fatturato, IVA sugli acquisti = quote documentate e "
+               "confermate. Non sottrarre i due valori come liquidazione effettiva.")
     with st.expander("Verifica il periodo di una fattura d'acquisto · senza salvataggio"):
         st.caption("Solo fattura ordinaria con IVA effettivamente detraibile e liquidazione mensile. "
                    "La detrazione per il mese dell'operazione è una possibilità, non un obbligo. "
@@ -119,5 +109,4 @@ def mostra_anteprima_iva(client: Client, anno: dict) -> None:
                     st.warning(f"Il periodo risulta nell'anno {anno_iva}, diverso dall'anno visualizzato {anno_num}.")
         st.caption("In assenza di una fattura reale e della verifica di detraibilità, "
                    "questo controllo non determina un credito IVA.")
-
     mostra_registro_iva_acquisti(client, anno)
