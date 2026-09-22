@@ -5,7 +5,6 @@ compatibilità e per individuare con precisione i record demo nel database.
 """
 from __future__ import annotations
 
-from datetime import date
 from decimal import Decimal, ROUND_HALF_UP
 
 import streamlit as st
@@ -123,7 +122,7 @@ def mostra_imposte(client, anno: dict) -> None:
     for gruppo, voci in GRUPPI:
         st.markdown(f"### {gruppo}")
         st.dataframe([{
-            "Parametro": descrizione.replace(" · scenario", "").replace(" · scenario, da aggiornare", ""),
+            "Parametro": descrizione.replace(" · scenario, da aggiornare", "").replace(" · scenario", ""),
             "Valore configurato": _formato(presenti[codice]["value"], presenti[codice]["unit"])
                 if codice in presenti else "—",
             "Stato": ("Provvisorio" if presenti[codice]["is_provisional"] else "Da verificare con la fonte")
@@ -136,36 +135,41 @@ def mostra_imposte(client, anno: dict) -> None:
                     in voci if codice not in presenti}
         if mancanti:
             with st.expander(f"Inserisci parametro mancante · {gruppo}"):
-                codice = st.selectbox("Parametro da impostare", list(mancanti),
-                    format_func=lambda c: mancanti[c][0], key=f"param_nuovo_{voci[0][0]}")
-                with st.form(f"param_form_nuovo_{codice}"):
-                    testo = st.text_input("Valore (aliquote in decimale: 0,085 = 8,5%)", value="")
-                    fonte = st.text_input("Fonte o riferimento del parametro (facoltativo)", value="", max_chars=250)
-                    conferma = st.checkbox("Confermo di aver controllato anno, valore e fonte")
-                    invia = st.form_submit_button("Salva parametro", type="primary")
-                if invia:
-                    try:
-                        anno_aperto(client, anno)
-                        if not conferma:
-                            raise ValueError("Conferma anno, importo e fonte prima di salvare.")
-                        numero = _numero(testo, mancanti[codice][1])
-                        if codice in leggi_parametri(client, anno["id"]):
-                            raise ValueError("Parametro già presente: ricarica la pagina prima di riprovare.")
-                        risposta = client.table("fiscal_parameters").insert({
-                            "fiscal_year_id": anno["id"], "code": codice,
-                            "description": mancanti[codice][0], "value": str(numero),
-                            "unit": mancanti[codice][1],
-                            "source": fonte.strip() or "Inserimento manuale, fonte da verificare",
-                            "is_provisional": True,
-                        }).execute()
-                        if len(risposta.data or []) != 1:
-                            raise RuntimeError("Inserimento non confermato")
-                    except ValueError as exc:
-                        st.warning(str(exc))
-                    except Exception:
-                        st.error("Salvataggio non confermato: controlla i parametri prima di riprovare.")
-                    else:
-                        st.rerun()
+                # Le opzioni restano stabili quando un parametro viene salvato.
+                etichette = {codice: descrizione for codice, descrizione, *_ in voci}
+                codice = st.selectbox("Parametro da impostare", list(etichette),
+                    format_func=lambda c: etichette[c], key=f"param_nuovo_{voci[0][0]}")
+                if codice not in mancanti:
+                    st.info("Parametro già configurato: scegli una voce ancora da impostare.")
+                else:
+                    with st.form(f"param_form_nuovo_{codice}"):
+                        testo = st.text_input("Valore (aliquote in decimale: 0,085 = 8,5%)", value="")
+                        fonte = st.text_input("Fonte o riferimento del parametro (facoltativo)", value="", max_chars=250)
+                        conferma = st.checkbox("Confermo di aver controllato anno, valore e fonte")
+                        invia = st.form_submit_button("Salva parametro", type="primary")
+                    if invia:
+                        try:
+                            anno_aperto(client, anno)
+                            if not conferma:
+                                raise ValueError("Conferma anno, importo e fonte prima di salvare.")
+                            numero = _numero(testo, mancanti[codice][1])
+                            if codice in leggi_parametri(client, anno["id"]):
+                                raise ValueError("Parametro già presente: ricarica la pagina prima di riprovare.")
+                            risposta = client.table("fiscal_parameters").insert({
+                                "fiscal_year_id": anno["id"], "code": codice,
+                                "description": mancanti[codice][0], "value": str(numero),
+                                "unit": mancanti[codice][1],
+                                "source": fonte.strip() or "Inserimento manuale, fonte da verificare",
+                                "is_provisional": True,
+                            }).execute()
+                            if len(risposta.data or []) != 1:
+                                raise RuntimeError("Inserimento non confermato")
+                        except ValueError as exc:
+                            st.warning(str(exc))
+                        except Exception:
+                            st.error("Salvataggio non confermato: controlla i parametri prima di riprovare.")
+                        else:
+                            st.rerun()
         modificabili = {codice: descrizione for codice, descrizione, _esempio, _unita, _cella
                        in voci if codice in presenti}
         if modificabili:
@@ -197,7 +201,6 @@ def mostra_imposte(client, anno: dict) -> None:
 
 def mostra_auto(client, anno: dict) -> None:
     """Vista mensile e contratto, senza gestione di dati dimostrativi."""
-    from auto_carburante import _euro
     st.divider()
     st.subheader("Riepilogo Auto")
     try:
@@ -231,7 +234,7 @@ def mostra_auto(client, anno: dict) -> None:
         return
     with st.expander("Imposta o modifica limite contrattuale e tariffa"):
         with st.form(f"limite_operativo_{anno['id']}_{veicolo['id']}"):
-            limite_testo = st.text_input("Limite chilometrico annuale (km)",
+            limite_testo = st.text_input("Limite chilometrico annuale (km interi)",
                 value=str(impostazioni["annual_km_limit"]).replace(".", ",")
                     if impostazioni and impostazioni.get("annual_km_limit") is not None else "")
             tariffa_testo = st.text_input("Penale per chilometro eccedente (€)",
@@ -246,9 +249,9 @@ def mostra_auto(client, anno: dict) -> None:
                     raise ValueError("Conferma i dati contrattuali prima di salvare.")
                 limite = importo_valido(limite_testo)
                 tariffa = importo_valido(tariffa_testo)
-                if limite <= 0:
-                    raise ValueError("Il limite deve essere maggiore di zero.")
-                dati = {"annual_km_limit": str(limite), "excess_km_penalty": str(tariffa),
+                if limite <= 0 or limite != int(limite):
+                    raise ValueError("Il limite deve essere un numero intero positivo di chilometri.")
+                dati = {"annual_km_limit": int(limite), "excess_km_penalty": str(tariffa),
                         "notes": "Parametri contrattuali inseriti manualmente"}
                 if impostazioni:
                     richiesta = (client.table("vehicle_year_settings").update(dati)
