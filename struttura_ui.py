@@ -1,10 +1,12 @@
-"""Completamento funzionale con componenti Streamlit standard, senza styling."""
+"""Registri documentali e scenari di cassa con componenti Streamlit standard."""
 from datetime import date
 from decimal import Decimal as D
+
 import streamlit as st
+
 from registri import leggi_tutti, salva, denaro
 from struttura_calcoli import (valida_vendita, valida_periodo, saldo_iva,
-                              data_anno, contributi_per_cassa, scenario_cassa)
+                               data_anno, contributi_per_cassa, scenario_cassa)
 from fatturato import euro, importo_valido, leggi_fatturato
 from quadro_mensile import _csv_bytes
 
@@ -62,9 +64,12 @@ def mostra_vendite(client, anno):
     if not mandanti:
         st.info("Registra prima una mandante per associare il documento IVA.")
         return
-    vista = [{"Mandante": mandanti.get(r["principal_id"], {}).get("name", "Non disponibile"), "Documento": r["invoice_number"],
-              "Data": r["invoice_date"], "Tipo": r["document_type"], "Mese IVA": r["vat_month"],
-              "Imponibile": r["taxable_amount"], "IVA": r["vat_amount"]} for r in righe]
+    vista = [{
+        "Mandante": mandanti.get(r["principal_id"], {}).get("name", "Non disponibile"),
+        "Documento": r["invoice_number"], "Data": r["invoice_date"],
+        "Tipo": r["document_type"], "Mese IVA": r["vat_month"],
+        "Imponibile": r["taxable_amount"], "IVA": r["vat_amount"],
+    } for r in righe]
     st.dataframe(vista, hide_index=True)
     st.download_button("Esporta vendite CSV", _csv_bytes(vista), f"vendite_{anno['fiscal_year']}.csv")
     if anno["status"] != "open":
@@ -124,12 +129,16 @@ def mostra_periodi_iva(client, anno):
     r = _scelta(righe, f"periodi_{anno['id']}", "Periodo da registrare o modificare")
     b = r or {}
     with st.form(f"periodo_{anno['id']}_{b.get('id', 'new')}_{b.get('version', 0)}"):
-        dati = {"frequency": st.selectbox("Periodicità", ["mensile", "trimestrale"], index=1 if b.get("frequency") == "trimestrale" else 0),
-                "month_from": st.number_input("Primo mese", 1, 12, int(b.get("month_from", 1))),
-                "month_to": st.number_input("Ultimo mese", 1, 12, int(b.get("month_to", 1)))}
+        dati = {
+            "frequency": st.selectbox("Periodicità", ["mensile", "trimestrale"], index=1 if b.get("frequency") == "trimestrale" else 0),
+            "month_from": st.number_input("Primo mese", 1, 12, int(b.get("month_from", 1))),
+            "month_to": st.number_input("Ultimo mese", 1, 12, int(b.get("month_to", 1))),
+        }
         testi = {}
-        for campo, label in (("opening_credit", "Credito precedente confermato"), ("adjustment", "Rettifiche (+ debito / − credito)"),
-                             ("interest_amount", "Interessi confermati"), ("paid_amount", "Versamento realmente effettuato")):
+        for campo, label in (("opening_credit", "Credito precedente confermato"),
+                             ("adjustment", "Rettifiche (+ debito / − credito)"),
+                             ("interest_amount", "Interessi confermati"),
+                             ("paid_amount", "Versamento realmente effettuato")):
             testi[campo] = st.text_input(label + " (€; indicare 0 se assente)", value=str(b.get(campo, "")))
         dati["payment_date"] = st.text_input("Data versamento (AAAA-MM-GG; vuota senza versamento)", value=b.get("payment_date") or "").strip() or None
         dati["documents_complete"] = st.checkbox("Ho riconciliato tutti i documenti del periodo, anche se non vi sono fatture", value=bool(b.get("documents_complete")))
@@ -189,7 +198,9 @@ def mostra_pensione(client, anno):
 
 def mostra_conto_registrato(client, anno):
     st.subheader("Conto economico · registrazioni e scenario a cassa")
-    st.warning("Variante distinta dalle formule letterali del foglio: usa contributi effettivamente versati nell'anno e fondo pensione documentato. Aliquote, limiti e ammissibilità restano scenari da verificare; nessun netto disponibile o debito definitivo.")
+    st.warning("Scenario a cassa basato sui contributi effettivamente versati nell'anno "
+               "e sul fondo pensione documentato. Aliquote, limiti e ammissibilità "
+               "restano da verificare: non è un netto disponibile o debito definitivo.")
     try:
         ricavi = leggi_fatturato(client, anno["id"])
         costi = leggi_tutti(client, "costs", fiscal_year_id=anno["id"])
@@ -214,8 +225,11 @@ def mostra_conto_registrato(client, anno):
     st.dataframe([{"Voce": k, "Importo registrato": euro(v)} for k, v in {
         "Fatturato integrale": fatturato, "Costi registrati (importi come inseriti)": spese,
         "INPS versato": contributi["INPS"], "Di cui INPS competenza precedente": contributi["INPS_AP"],
-        "Enasarco documentato": contributi["ENASARCO"], "Pensione versata": versato_pensione}.items()], hide_index=True)
-    st.caption("Le stime annuali dei costi sono escluse. Le deduzioni generiche e le detrazioni non sono applicate automaticamente: la spettanza sarà controllata nella fase successiva. L'importo deducibile dei costi è confermato qui per evitare di trattare aliquote di prova come regole fiscali.")
+        "Enasarco documentato": contributi["ENASARCO"], "Pensione versata": versato_pensione,
+    }.items()], hide_index=True)
+    st.caption("Le stime annuali dei costi sono escluse. Le deduzioni generiche e le detrazioni "
+               "non sono applicate automaticamente: la spettanza sarà controllata in seguito. "
+               "L'importo deducibile dei costi è confermato per non trattare aliquote di prova come regole fiscali.")
     costi_testo = st.text_input("Costi deducibili confermati per lo scenario (€)", key=f"cassa_costi_{anno['id']}")
     limite_testo = st.text_input("Limite pensione ipotizzato per l'anno (€; non verificato)", key=f"cassa_limite_{anno['id']}")
     conferma = st.checkbox("Ho riconciliato ricavi, costi e versamenti dell'anno; gli eventuali registri vuoti significano zero", key=f"cassa_completezza_{anno['id']}")
@@ -252,15 +266,20 @@ def mostra_riconciliazione(client, anno):
         st.error("Riconciliazione non disponibile: verificare i registri e i collegamenti.")
         return
     st.dataframe(vista, hide_index=True)
-    st.caption(f"Fatture senza collegamento: {len(fatture) - len(links)} · Costi senza collegamento: {len(costi) - len(links)}. Non tutti i costi richiedono una fattura IVA.")
+    st.caption(f"Fatture senza collegamento: {len(fatture) - len(links)} · "
+               f"Costi senza collegamento: {len(costi) - len(links)}. "
+               "Non tutti i costi richiedono una fattura IVA.")
     if anno["status"] != "open":
         return
     if links:
         scelto = st.selectbox("Collegamento da rimuovere", [r["id"] for r in links],
-                             format_func=lambda k: next(fatture[r["purchase_id"]]["invoice_number"] for r in links if r["id"] == k), key=f"link_remove_{anno['id']}")
+                             format_func=lambda k: next(fatture[r["purchase_id"]]["invoice_number"]
+                                                        for r in links if r["id"] == k),
+                             key=f"link_remove_{anno['id']}")
         if st.button("Rimuovi solo il collegamento", key=f"link_delete_{anno['id']}"):
             try:
-                salva(client, "purchase_cost_links", anno, {}, next(r for r in links if r["id"] == scelto), True)
+                salva(client, "purchase_cost_links", anno, {},
+                      next(r for r in links if r["id"] == scelto), True)
             except Exception as exc:
                 _errore(exc)
             else:
@@ -270,13 +289,16 @@ def mostra_riconciliazione(client, anno):
     if not disponibili_f or not disponibili_c:
         return
     with st.form(f"link_new_{anno['id']}"):
-        f = st.selectbox("Fattura da collegare", disponibili_f, format_func=lambda k: f"{fatture[k]['supplier']} · {fatture[k]['invoice_number']}")
-        c = st.selectbox("Costo già registrato", disponibili_c, format_func=lambda k: f"{costi[k]['description']} · {costi[k]['gross_amount']}")
+        f = st.selectbox("Fattura da collegare", disponibili_f,
+                         format_func=lambda k: f"{fatture[k]['supplier']} · {fatture[k]['invoice_number']}")
+        c = st.selectbox("Costo già registrato", disponibili_c,
+                         format_func=lambda k: f"{costi[k]['description']} · {costi[k]['gross_amount']}")
         ok = st.checkbox("Ho verificato che fattura e costo rappresentino la stessa spesa")
         invia = st.form_submit_button("Collega senza duplicare il costo")
     if invia:
         try:
-            _operazione(client, "purchase_cost_links", anno, {"purchase_id": f, "cost_id": c}, None, False, ok)
+            _operazione(client, "purchase_cost_links", anno,
+                        {"purchase_id": f, "cost_id": c}, None, False, ok)
         except Exception as exc:
             _errore(exc)
         else:
