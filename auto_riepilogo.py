@@ -1,24 +1,23 @@
 """Vista unica mensile dell'auto; legge soltanto i registri già esistenti.
 
-Il limite chilometrico è annuale: compare nel riepilogo annuo, non viene
-ripetuto sui singoli mesi. Nessuna modifica a dati o formule fiscali.
+Limite chilometrico e penale sono un'unica voce annuale sotto la tabella,
+non colonne mensili. Nessuna modifica a dati o formule fiscali.
 """
 from collections import defaultdict
-from decimal import Decimal, ROUND_HALF_UP
+from decimal import Decimal
 
 import streamlit as st
 from supabase import Client
 
 from auto import NOTA_VEICOLO_TEST, _chilometri, _formato_km, _veicoli, auto_unica
-from auto_limiti import _leggi_impostazioni, mostra_limiti_auto
+from auto_limiti import _leggi_impostazioni, calcola_sforamento, mostra_limiti_auto
 from auto_carburante import _euro
 from fatturato import MESI
 from registri import leggi_tutti
 
 D = Decimal
 CATEGORIE_AUTO = ("carburante", "autostrada", "rate_auto")
-COLONNE = ("Mese", "Percorrenza", "Carburante", "Autostrada", "Rate auto",
-           "Limite km", "Penale")
+COLONNE = ("Mese", "Percorrenza", "Carburante", "Autostrada", "Rate auto")
 
 
 def _mese_spesa(spesa: dict) -> int:
@@ -34,6 +33,7 @@ def costruisci_tabella_auto(chilometri: list[dict], spese: list[dict],
 
     Lo zero di un mese compilato è distinto dal mese non ancora compilato.
     Le spese multiple nello stesso mese contribuiscono una volta alla media.
+    Il parametro impostazioni resta accettato per compatibilità con i chiamanti.
     """
     km_mesi = {}
     for riga in chilometri:
@@ -58,37 +58,44 @@ def costruisci_tabella_auto(chilometri: list[dict], spese: list[dict],
                 "Percorrenza": _formato_km(km_mesi[mese]) if mese in km_mesi else "—"}
         for codice, etichetta in campi:
             riga[etichetta] = _euro(importi[codice][mese]) if mese in importi[codice] else "—"
-        riga["Limite km"] = "—"
-        riga["Penale"] = "—"
         righe.append(riga)
 
     km_totali = sum(km_mesi.values(), D("0"))
-    limite = tariffa = None
-    if impostazioni is not None and (impostazioni.get("annual_km_limit") is not None
-                                    and impostazioni.get("excess_km_penalty") is not None):
-        limite = D(str(impostazioni["annual_km_limit"]))
-        tariffa = D(str(impostazioni["excess_km_penalty"]))
-
-    def penale(km):
-        if km is None or limite is None or tariffa is None:
-            return "—"
-        importo = max(km - limite, D("0")) * tariffa
-        return _euro(importo.quantize(D("0.01"), rounding=ROUND_HALF_UP))
-
-    registrato = {"Mese": "Totale registrato",
-                  "Percorrenza": _formato_km(km_totali) if km_mesi else "—",
-                  "Limite km": "—", "Penale": penale(km_totali if km_mesi else None)}
     previsto_km = km_totali / len(km_mesi) * 12 if km_mesi else None
+    registrato = {"Mese": "Totale registrato",
+                  "Percorrenza": _formato_km(km_totali) if km_mesi else "—"}
     previsto = {"Mese": "Stima annua",
-                "Percorrenza": _formato_km(previsto_km) if previsto_km is not None else "—",
-                "Limite km": _formato_km(limite) if limite is not None else "—",
-                "Penale": penale(previsto_km)}
+                "Percorrenza": _formato_km(previsto_km) if previsto_km is not None else "—"}
     for codice, etichetta in campi:
         mesi = importi[codice]
         registrato[etichetta] = _euro(sum(mesi.values(), D("0"))) if mesi else "—"
         previsto[etichetta] = _euro(sum(mesi.values(), D("0")) / len(mesi) * 12) if mesi else "—"
     righe.extend([registrato, previsto])
     return [{colonna: riga[colonna] for colonna in COLONNE} for riga in righe]
+
+
+def riepilogo_limite_penale(chilometri: list[dict], impostazioni: dict | None) -> dict[str, str]:
+    """Rappresenta i parametri contrattuali senza scambiarli per costi pagati.
+
+    Riutilizza la stessa funzione di calcolo della penale della sezione Auto.
+    """
+    limite_raw = impostazioni.get("annual_km_limit") if impostazioni else None
+    tariffa_raw = impostazioni.get("excess_km_penalty") if impostazioni else None
+    limite = D(str(limite_raw)) if limite_raw is not None else None
+    tariffa = D(str(tariffa_raw)) if tariffa_raw is not None else None
+    risultato = {
+        "Limite annuo": _formato_km(limite) if limite is not None else "—",
+        "Tariffa per km eccedente": _euro(tariffa) if tariffa is not None else "—",
+        "Penale su km registrati": "—",
+        "Penale su km stimati": "—",
+    }
+    if not chilometri or limite is None or tariffa is None:
+        return risultato
+    km_totali = sum((D(str(riga["distance_km"])) for riga in chilometri), D("0"))
+    km_stimati = km_totali / len(chilometri) * 12
+    risultato["Penale su km registrati"] = _euro(calcola_sforamento(km_totali, limite, tariffa)[1])
+    risultato["Penale su km stimati"] = _euro(calcola_sforamento(km_stimati, limite, tariffa)[1])
+    return risultato
 
 
 def mostra_riepilogo_auto(client: Client, anno: dict) -> None:
@@ -104,6 +111,7 @@ def mostra_riepilogo_auto(client: Client, anno: dict) -> None:
         impostazioni = (_leggi_impostazioni(client, anno["id"], veicolo_id)
                         if veicolo_id else None)
         tabella = costruisci_tabella_auto(chilometri, spese, categorie, impostazioni)
+        limite_penale = riepilogo_limite_penale(chilometri, impostazioni)
     except ValueError as exc:
         st.error(str(exc))
         return
@@ -118,11 +126,15 @@ def mostra_riepilogo_auto(client: Client, anno: dict) -> None:
         st.warning("Sono presenti dati di prova: non rappresentano percorrenze o spese effettive.")
     st.table(tabella)
     st.caption("Le spese dello stesso mese vengono sommate. Stima annua = totale dei mesi "
-               "compilati ÷ numero di mesi compilati × 12. Il limite è annuale; "
-               "la penale è calcolata solo se limite e tariffa sono disponibili.")
-    if impostazioni and impostazioni.get("excess_km_penalty") is not None:
-        st.caption("Tariffa della penale: " + _euro(D(str(impostazioni["excess_km_penalty"])))
-                   + " per km eccedente.")
+               "compilati ÷ numero di mesi compilati × 12.")
+
+    st.subheader("Limite chilometrico e penale")
+    st.write(" · ".join(f"**{voce}:** {valore}" for voce, valore in limite_penale.items()))
+    if not impostazioni:
+        st.caption("Nessun limite e nessuna tariffa registrati per l'anno selezionato.")
+    else:
+        st.caption("La penale è un confronto contrattuale stimato, non una spesa effettivamente pagata. "
+                   "Non viene calcolata se mancano il limite, la tariffa o i chilometri.")
     # Mantieni accessibili i comandi dimostrativi preesistenti senza un altro
     # prospetto visibile nella schermata principale.
     if veicolo and veicolo.get("notes") == NOTA_VEICOLO_TEST:
