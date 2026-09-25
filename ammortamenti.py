@@ -13,7 +13,7 @@ def quota_ammortamento(costo_fiscale:D, coefficiente:D, anno_acquisto:int, anno:
     if costo_fiscale<0 or coefficiente<0 or coefficiente>D("1") or anno<anno_acquisto:
         return D("0"),D("0")
     if costo_fiscale<=SOGLIA_BENE_MINORE:
-        return (costo_fiscale,D("0")) if anno==anno_acquisto else (D("0"),costo_fiscale)
+        return (costo_fiscale,costo_fiscale) if anno==anno_acquisto else (D("0"),costo_fiscale)
     fondo=D("0")
     quota_anno=D("0")
     for y in range(anno_acquisto,anno+1):
