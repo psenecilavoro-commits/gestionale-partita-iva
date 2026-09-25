@@ -1,25 +1,81 @@
-"""Accesso ai registri: paginazione, anno aperto e aggiornamenti concorrenti."""
+"""Accesso ai registri: paginazione, anno aperto, cache per rerun e aggiornamenti concorrenti."""
 from decimal import Decimal
+
+import streamlit as st
+
+_CACHE_KEY = "_piva_run_read_cache"
+
+
+def avvia_cache_letture() -> None:
+    """Azzera la cache di lettura all'inizio di ogni rerun Streamlit.
+
+    La cache vive soltanto nella sessione corrente e soltanto per un singolo
+    rerun: serve a evitare query duplicate nello stesso caricamento senza
+    rischiare di mostrare dati vecchi dopo un salvataggio.
+    """
+    st.session_state[_CACHE_KEY] = {}
+
+
+def _cache_corrente():
+    cache = st.session_state.get(_CACHE_KEY)
+    return cache if isinstance(cache, dict) else None
+
+
+def _chiave_cache(tabella, campi, filtri):
+    return (
+        tabella,
+        campi,
+        tuple(sorted((str(k), repr(v)) for k, v in filtri.items())),
+    )
+
+
+def _copia_righe(righe):
+    return [dict(r) for r in righe]
 
 
 def leggi_tutti(client, tabella, campi="*", **filtri):
+    """Legge tutte le righe con paginazione e deduplica le letture nel rerun."""
+    cache = _cache_corrente()
+    chiave = _chiave_cache(tabella, campi, filtri)
+    if cache is not None and chiave in cache:
+        return _copia_righe(cache[chiave])
+
     righe, offset, ids = [], 0, set()
+    totale_atteso = None
     while True:
-        query = client.table(tabella).select(campi).order("id")
+        base = client.table(tabella)
+        if offset == 0:
+            try:
+                query = base.select(campi, count="exact")
+            except TypeError:
+                # Compatibilità con client/mock che non accettano il parametro count.
+                query = base.select(campi)
+        else:
+            query = base.select(campi)
+        query = query.order("id")
         for campo, valore in filtri.items():
             query = query.eq(campo, valore)
-        pagina = query.range(offset, offset + 499).execute().data
+        risposta = query.range(offset, offset + 499).execute()
+        pagina = risposta.data
         if pagina is None:
             raise RuntimeError("Lettura non confermata")
+        if totale_atteso is None:
+            totale_atteso = getattr(risposta, "count", None)
         if not pagina:
-            return righe
+            break
         for r in pagina:
             if "id" in r:
                 if r["id"] in ids:
                     raise ValueError("Lettura cambiata durante la paginazione: riprovare.")
                 ids.add(r["id"])
         righe.extend(pagina)
+        if totale_atteso is not None and len(righe) >= int(totale_atteso):
+            break
         offset += len(pagina)  # supporta anche limiti server inferiori a 500
+
+    if cache is not None:
+        cache[chiave] = _copia_righe(righe)
+    return _copia_righe(righe)
 
 
 def anno_aperto(client, anno):

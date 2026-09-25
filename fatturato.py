@@ -81,10 +81,13 @@ def riepilogo(mandanti: list[dict], righe: list[dict]) -> tuple[list[dict], Deci
 
 
 def leggi_fatturato(client: Client, anno_id: str) -> list[dict]:
-    risposta = (client.table("monthly_revenues")
-                .select("id,principal_id,month,amount,notes")
-                .eq("fiscal_year_id", anno_id).order("month").execute())
-    return risposta.data or []
+    from registri import leggi_tutti
+    righe = leggi_tutti(
+        client, "monthly_revenues",
+        campi="id,principal_id,month,amount,notes",
+        fiscal_year_id=anno_id,
+    )
+    return sorted(righe, key=lambda r: int(r["month"]))
 
 
 def salva_fatturato(client: Client, anno_id: str, mandante_id: str, mese: int,

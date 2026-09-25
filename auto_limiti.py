@@ -20,11 +20,14 @@ def calcola_sforamento(chilometri: Decimal, limite: Decimal, tariffa: Decimal) -
 
 
 def _leggi_impostazioni(client: Client, anno_id: str, veicolo_id: str) -> dict | None:
-    risposta = (client.table("vehicle_year_settings")
-                .select("id,annual_km_limit,excess_km_penalty,notes")
-                .eq("fiscal_year_id", anno_id).eq("vehicle_id", veicolo_id)
-                .limit(1).execute())
-    return risposta.data[0] if risposta.data else None
+    from registri import leggi_tutti
+    righe = leggi_tutti(
+        client, "vehicle_year_settings",
+        campi="id,annual_km_limit,excess_km_penalty,notes",
+        fiscal_year_id=anno_id,
+        vehicle_id=veicolo_id,
+    )
+    return righe[0] if righe else None
 
 
 def mostra_limiti_auto(client: Client, anno: dict) -> None:

@@ -30,6 +30,7 @@ from iva_anteprima import mostra_anteprima_iva
 from mandanti import aggiungi_mandante, elenco_mandanti
 from quadro_mensile import mostra_quadro_mensile
 from registrazioni_reali import mostra_costi_reali
+from registri import avvia_cache_letture
 from riepilogo_laterale import mostra_base
 from stile import applica_stile
 from struttura_ui import (mostra_vendite, mostra_periodi_iva, mostra_pensione,
@@ -64,6 +65,10 @@ if user is None:
             except Exception:
                 st.error("Accesso non riuscito. Controlla le credenziali e riprova.")
     st.stop()
+
+# Cache effimera: viene ricreata a ogni rerun e deduplica soltanto le letture
+# ripetute durante questo singolo caricamento della sessione corrente.
+avvia_cache_letture()
 
 with st.sidebar:
     st.caption("Utente autenticato")
@@ -118,139 +123,151 @@ st.success(
     scheda_imposte,
     scheda_detrazioni,
     scheda_ammortamenti,
-) = st.tabs([
-    "Fatturato",
-    "Costi",
-    "Auto",
-    "Tabella accantonamenti",
-    "Conto economico",
-    "Imposte",
-    "Detrazioni e deduzioni",
-    "Ammortamenti",
-])
+) = st.tabs(
+    [
+        "Fatturato",
+        "Costi",
+        "Auto",
+        "Tabella accantonamenti",
+        "Conto economico",
+        "Imposte",
+        "Detrazioni e deduzioni",
+        "Ammortamenti",
+    ],
+    key="schede_principali",
+    on_change="rerun",
+)
 
-with scheda_fatturato:
-    try:
-        mandanti = elenco_mandanti(client)
-    except Exception:
-        st.error("Impossibile leggere le mandanti. Nessuna modifica effettuata.")
-        st.stop()
+if scheda_fatturato.open:
+    with scheda_fatturato:
+        try:
+            mandanti = elenco_mandanti(client)
+        except Exception:
+            st.error("Impossibile leggere le mandanti. Nessuna modifica effettuata.")
+            st.stop()
 
-    mostra_fatturato(client, fiscal_year, mandanti)
-    if forfettario:
-        mostra_soglie_forfettario(client, fiscal_year)
-        st.info(
-            "Nel 2026 il gestionale usa il modello del regime forfettario: "
-            "il registro IVA vendite ordinario non viene utilizzato in questa annualità."
-        )
-    else:
-        mostra_vendite(client, fiscal_year)
-
-    st.subheader("Mandanti")
-    st.caption("Anagrafica delle mandanti associate alle registrazioni del fatturato.")
-    if mandanti:
-        st.dataframe(
-            [{
-                "Mandante": item["name"],
-                "Rapporto Enasarco": item["enasarco_relationship"],
-                "Stato": "Attiva" if item["active"] else "Non attiva",
-            } for item in mandanti],
-            hide_index=True, width="stretch",
-        )
-    else:
-        st.info("Non hai ancora registrato alcuna mandante.")
-
-    if fiscal_year["status"] == "open":
-        scelta = st.selectbox(
-            "Nome della mandante",
-            ["Innovagroup Caino", "Innovagroup Borgo", "Innovagroup Erbe",
-             "Innovagroup Fontanella", "Altra mandante (inserimento manuale)"],
-        )
-        with st.form("nuova_mandante"):
-            nome_personalizzato = (
-                st.text_input("Nome della nuova mandante")
-                if scelta == "Altra mandante (inserimento manuale)" else ""
+        mostra_fatturato(client, fiscal_year, mandanti)
+        if forfettario:
+            mostra_soglie_forfettario(client, fiscal_year)
+            st.info(
+                "Nel 2026 il gestionale usa il modello del regime forfettario: "
+                "il registro IVA vendite ordinario non viene utilizzato in questa annualità."
             )
-            rapporto = st.selectbox(
-                "Tipo di rapporto Enasarco", ["plurimandatario", "monomandatario"],
-                help="Controlla il tipo di rapporto prima di salvare.",
+        else:
+            mostra_vendite(client, fiscal_year)
+
+        st.subheader("Mandanti")
+        st.caption("Anagrafica delle mandanti associate alle registrazioni del fatturato.")
+        if mandanti:
+            st.dataframe(
+                [{
+                    "Mandante": item["name"],
+                    "Rapporto Enasarco": item["enasarco_relationship"],
+                    "Stato": "Attiva" if item["active"] else "Non attiva",
+                } for item in mandanti],
+                hide_index=True, width="stretch",
             )
-            salva = st.form_submit_button("Aggiungi mandante", type="primary")
-        if salva:
-            nome = nome_personalizzato if scelta == "Altra mandante (inserimento manuale)" else scelta
-            try:
-                aggiungi_mandante(client, nome, rapporto)
-            except ValueError as exc:
-                st.warning(str(exc))
-            except Exception:
-                st.error("Salvataggio non confermato. Controlla l'elenco prima di riprovare.")
-            else:
-                st.rerun()
-    else:
-        st.info("L'anno fiscale è chiuso: non è possibile aggiungere mandanti da questa schermata.")
+        else:
+            st.info("Non hai ancora registrato alcuna mandante.")
 
-with scheda_costi:
-    if forfettario:
-        mostra_costi_forfettario(client, fiscal_year)
-        mostra_costi_reali(client, fiscal_year)
-    else:
-        mostra_tabella_costi(client, fiscal_year)
-        mostra_costi_reali(client, fiscal_year)
-        mostra_riconciliazione(client, fiscal_year)
+        if fiscal_year["status"] == "open":
+            scelta = st.selectbox(
+                "Nome della mandante",
+                ["Innovagroup Caino", "Innovagroup Borgo", "Innovagroup Erbe",
+                 "Innovagroup Fontanella", "Altra mandante (inserimento manuale)"],
+            )
+            with st.form("nuova_mandante"):
+                nome_personalizzato = (
+                    st.text_input("Nome della nuova mandante")
+                    if scelta == "Altra mandante (inserimento manuale)" else ""
+                )
+                rapporto = st.selectbox(
+                    "Tipo di rapporto Enasarco", ["plurimandatario", "monomandatario"],
+                    help="Controlla il tipo di rapporto prima di salvare.",
+                )
+                salva = st.form_submit_button("Aggiungi mandante", type="primary")
+            if salva:
+                nome = nome_personalizzato if scelta == "Altra mandante (inserimento manuale)" else scelta
+                try:
+                    aggiungi_mandante(client, nome, rapporto)
+                except ValueError as exc:
+                    st.warning(str(exc))
+                except Exception:
+                    st.error("Salvataggio non confermato. Controlla l'elenco prima di riprovare.")
+                else:
+                    st.rerun()
+        else:
+            st.info("L'anno fiscale è chiuso: non è possibile aggiungere mandanti da questa schermata.")
 
-with scheda_auto:
-    prepara_auto_unica(client)
-    mostra_spese_auto(client, fiscal_year)
-    mostra_riepilogo_auto(client, fiscal_year)
+if scheda_costi.open:
+    with scheda_costi:
+        if forfettario:
+            mostra_costi_forfettario(client, fiscal_year)
+            mostra_costi_reali(client, fiscal_year)
+        else:
+            mostra_tabella_costi(client, fiscal_year)
+            mostra_costi_reali(client, fiscal_year)
+            mostra_riconciliazione(client, fiscal_year)
 
-with scheda_accantonamenti:
-    mostra_accantonamenti(client, fiscal_year)
-    mostra_carica_fatture(client, fiscal_year)
-    if forfettario:
-        st.info(
-            "Anno 2026 in regime forfettario: i prospetti IVA ordinari sono "
-            "disattivati per questa annualità."
-        )
-    else:
-        mostra_anteprima_iva(client, fiscal_year)
-        mostra_importa_xml_acquisti(client, fiscal_year)
-        mostra_quadro_mensile(client, fiscal_year)
-        mostra_periodi_iva(client, fiscal_year)
+if scheda_auto.open:
+    with scheda_auto:
+        prepara_auto_unica(client)
+        mostra_spese_auto(client, fiscal_year)
+        mostra_riepilogo_auto(client, fiscal_year)
 
-with scheda_conto_economico:
-    if forfettario:
-        mostra_conto_forfettario(client, fiscal_year)
-    else:
-        mostra_conto_economico(client, fiscal_year)
-        st.divider()
-        mostra_conto_registrato(client, fiscal_year)
+if scheda_accantonamenti.open:
+    with scheda_accantonamenti:
+        mostra_accantonamenti(client, fiscal_year)
+        mostra_carica_fatture(client, fiscal_year)
+        if forfettario:
+            st.info(
+                "Anno 2026 in regime forfettario: i prospetti IVA ordinari sono "
+                "disattivati per questa annualità."
+            )
+        else:
+            mostra_anteprima_iva(client, fiscal_year)
+            mostra_importa_xml_acquisti(client, fiscal_year)
+            mostra_quadro_mensile(client, fiscal_year)
+            mostra_periodi_iva(client, fiscal_year)
 
-with scheda_imposte:
-    if forfettario:
-        mostra_imposte_forfettario(client, fiscal_year)
-    else:
-        mostra_imposte(client, fiscal_year)
-    mostra_contributi_versati(client, fiscal_year)
+if scheda_conto_economico.open:
+    with scheda_conto_economico:
+        if forfettario:
+            mostra_conto_forfettario(client, fiscal_year)
+        else:
+            mostra_conto_economico(client, fiscal_year)
+            st.divider()
+            mostra_conto_registrato(client, fiscal_year)
 
-with scheda_detrazioni:
-    if forfettario:
-        st.info(
-            "Nel modello 2026 del file Excel non vengono applicate qui le ordinarie "
-            "detrazioni/deduzioni IRPEF. I contributi previdenziali rilevanti sono "
-            "gestiti nel prospetto forfettario dedicato."
-        )
-    else:
-        mostra_detrazioni_unificate(client, fiscal_year)
-        mostra_pensione(client, fiscal_year)
+if scheda_imposte.open:
+    with scheda_imposte:
+        if forfettario:
+            mostra_imposte_forfettario(client, fiscal_year)
+        else:
+            mostra_imposte(client, fiscal_year)
+        mostra_contributi_versati(client, fiscal_year)
 
-with scheda_ammortamenti:
-    if forfettario:
-        st.info(
-            "Nel regime forfettario 2026 gli ammortamenti analitici non determinano "
-            "il reddito imponibile del modello; la scheda resta disponibile dagli anni ordinari."
-        )
-    else:
-        mostra_ammortamenti(client, fiscal_year)
+if scheda_detrazioni.open:
+    with scheda_detrazioni:
+        if forfettario:
+            st.info(
+                "Nel modello 2026 del file Excel non vengono applicate qui le ordinarie "
+                "detrazioni/deduzioni IRPEF. I contributi previdenziali rilevanti sono "
+                "gestiti nel prospetto forfettario dedicato."
+            )
+        else:
+            mostra_detrazioni_unificate(client, fiscal_year)
+            mostra_pensione(client, fiscal_year)
+
+if scheda_ammortamenti.open:
+    with scheda_ammortamenti:
+        if forfettario:
+            st.info(
+                "Nel regime forfettario 2026 gli ammortamenti analitici non determinano "
+                "il reddito imponibile del modello; la scheda resta disponibile dagli anni ordinari."
+            )
+        else:
+            mostra_ammortamenti(client, fiscal_year)
 
 
 # Il riepilogo usa gli stessi input/calcoli della scheda Conto economico.

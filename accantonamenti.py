@@ -13,14 +13,13 @@ from fatturato import CENT, MESI, NOTA_TEST, euro, importo_valido, leggi_fattura
 
 
 def leggi_accantonamenti(client: Client, anno_id: str) -> list[dict]:
-    risposta = (
-        client.table("monthly_reserves")
-        .select("id,month,reserved_amount,notes")
-        .eq("fiscal_year_id", anno_id)
-        .order("month")
-        .execute()
+    from registri import leggi_tutti
+    righe = leggi_tutti(
+        client, "monthly_reserves",
+        campi="id,month,reserved_amount,notes",
+        fiscal_year_id=anno_id,
     )
-    return risposta.data or []
+    return sorted(righe, key=lambda r: int(r["month"]))
 
 
 def calcola_tabella(

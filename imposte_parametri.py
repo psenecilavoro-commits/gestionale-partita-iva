@@ -75,13 +75,13 @@ def _numero(testo: str, unita: str) -> Decimal:
 
 
 def _leggi(client: Client, anno_id: str) -> dict[str, dict]:
-    risposta = (
-        client.table("fiscal_parameters")
-        .select("id,code,description,value,unit,source,source_date,is_provisional")
-        .eq("fiscal_year_id", anno_id)
-        .execute()
+    from registri import leggi_tutti
+    righe = leggi_tutti(
+        client, "fiscal_parameters",
+        campi="id,code,description,value,unit,source,source_date,is_provisional",
+        fiscal_year_id=anno_id,
     )
-    return {r["code"]: r for r in (risposta.data or [])}
+    return {r["code"]: r for r in righe}
 
 
 def _carica_gruppo(client: Client, anno_id: str, voci: tuple, presenti: dict) -> int:
