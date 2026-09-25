@@ -5,6 +5,7 @@ from datetime import date
 import streamlit as st
 
 from accantonamenti_completi import mostra_accantonamenti
+from ammortamenti import mostra_ammortamenti
 from auth import current_user, get_client, sign_in, sign_out, reset_fiscal_inputs
 from auto import prepara_auto_unica
 from auto_spese_reali import mostra_spese_auto
@@ -105,6 +106,7 @@ mostra_base(client, fiscal_year, conto_slot)
     scheda_conto_economico,
     scheda_imposte,
     scheda_detrazioni,
+    scheda_ammortamenti,
 ) = st.tabs([
     "Fatturato",
     "Costi",
@@ -113,6 +115,7 @@ mostra_base(client, fiscal_year, conto_slot)
     "Conto economico",
     "Imposte",
     "Detrazioni e deduzioni",
+    "Ammortamenti",
 ])
 
 with scheda_fatturato:
@@ -198,3 +201,6 @@ with scheda_imposte:
 with scheda_detrazioni:
     mostra_detrazioni_unificate(client, fiscal_year)
     mostra_pensione(client, fiscal_year)
+
+with scheda_ammortamenti:
+    mostra_ammortamenti(client, fiscal_year)
