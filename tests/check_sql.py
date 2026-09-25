@@ -137,6 +137,7 @@ create table public.principals(
 );
 create table public.monthly_revenues(
   id uuid primary key default gen_random_uuid(),
+  user_id uuid not null default auth.uid(),
   fiscal_year_id uuid not null references public.fiscal_years(id),
   principal_id uuid not null references public.principals(id),
   month integer not null,
@@ -145,6 +146,7 @@ create table public.monthly_revenues(
 );
 create table public.monthly_reserves(
   id uuid primary key default gen_random_uuid(),
+  user_id uuid not null default auth.uid(),
   fiscal_year_id uuid not null references public.fiscal_years(id),
   month integer not null,
   reserved_amount numeric(14,2) not null,
@@ -152,6 +154,7 @@ create table public.monthly_reserves(
 );
 create table public.monthly_net_commissions(
   id uuid primary key default gen_random_uuid(),
+  user_id uuid not null default auth.uid(),
   fiscal_year_id uuid not null references public.fiscal_years(id),
   month integer not null,
   amount numeric(14,2) not null
@@ -164,6 +167,7 @@ create table public.vehicles(
 );
 create table public.vehicle_monthly(
   id uuid primary key default gen_random_uuid(),
+  user_id uuid not null default auth.uid(),
   fiscal_year_id uuid not null references public.fiscal_years(id),
   vehicle_id uuid not null references public.vehicles(id),
   month integer not null,
@@ -172,6 +176,7 @@ create table public.vehicle_monthly(
 );
 create table public.vehicle_year_settings(
   id uuid primary key default gen_random_uuid(),
+  user_id uuid not null default auth.uid(),
   fiscal_year_id uuid not null references public.fiscal_years(id),
   vehicle_id uuid not null references public.vehicles(id),
   annual_km_limit integer,
@@ -180,6 +185,7 @@ create table public.vehicle_year_settings(
 );
 create table public.cost_categories(
   id uuid primary key default gen_random_uuid(),
+  user_id uuid not null default auth.uid(),
   fiscal_year_id uuid not null references public.fiscal_years(id),
   code text not null,
   name text not null,
@@ -191,6 +197,7 @@ create table public.cost_categories(
 );
 create table public.annual_cost_estimates(
   id uuid primary key default gen_random_uuid(),
+  user_id uuid not null default auth.uid(),
   fiscal_year_id uuid not null references public.fiscal_years(id),
   category_id uuid not null references public.cost_categories(id),
   estimated_gross_amount numeric(14,2) not null,
@@ -199,6 +206,7 @@ create table public.annual_cost_estimates(
 );
 create table public.costs(
   id uuid primary key default gen_random_uuid(),
+  user_id uuid not null default auth.uid(),
   fiscal_year_id uuid not null references public.fiscal_years(id),
   category_id uuid not null references public.cost_categories(id),
   vehicle_id uuid references public.vehicles(id),
@@ -214,6 +222,7 @@ create table public.costs(
 );
 create table public.fiscal_parameters(
   id uuid primary key default gen_random_uuid(),
+  user_id uuid not null default auth.uid(),
   fiscal_year_id uuid not null references public.fiscal_years(id),
   code text not null,
   description text not null,
@@ -232,6 +241,7 @@ import_2026 = import_2026.replace("= 'DA_CONFERMARE'", "= 'CONFERMO_IMPORT_2026'
 sql(import_2026)
 assert sql("select count(*) from public.fiscal_years where fiscal_year=2026 and status='open'").endswith("1")
 assert sql("select sum(amount) from public.monthly_revenues r join public.fiscal_years f on f.id=r.fiscal_year_id where f.fiscal_year=2026").endswith("78816.98")
+assert sql("select count(*) from public.monthly_revenues r join public.fiscal_years f on f.id=r.fiscal_year_id where f.fiscal_year=2026 and r.user_id='00000000-0000-0000-0000-000000000001'").endswith("32")
 assert sql("select count(distinct month) from public.monthly_revenues r join public.fiscal_years f on f.id=r.fiscal_year_id where f.fiscal_year=2026").endswith("8")
 assert sql("select count(*) from public.monthly_revenues r join public.fiscal_years f on f.id=r.fiscal_year_id where f.fiscal_year=2026").endswith("32")
 assert sql("select count(*) from public.monthly_net_commissions r join public.fiscal_years f on f.id=r.fiscal_year_id where f.fiscal_year=2026").endswith("9")

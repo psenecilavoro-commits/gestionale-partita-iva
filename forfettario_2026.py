@@ -81,14 +81,14 @@ def calcola_modello_2026(*, fatturato_registrato: D, mesi_compilati: int,
         eccedente = ((soglia - minimale) * p["inps_aliquota_prima_foglio"]
                      + (redditivita - soglia) * p["inps_aliquota_seconda_foglio"])
 
-    inps_totale = p["inps_fisso_foglio"] + eccedente
-    # Replica LETTERALE del foglio: la riduzione del 35% è applicata
-    # soltanto alla quota eccedente. Viene mostrata come confronto, non
-    # come regola fiscale certificata.
-    inps_ridotto_file = (
-        p["inps_fisso_foglio"]
-        + eccedente * (D("1") - p["forfettario_riduzione_inps"])
+    # Nel 2026 la riduzione contributiva del 35% è già stata scelta.
+    # La quota fissa di 3.031,76 € importata dal file incorpora già la riduzione;
+    # sulla quota eccedente applichiamo quindi il 35% una sola volta.
+    inps_senza_riduzione_eccedente = p["inps_fisso_foglio"] + eccedente
+    inps_eccedente_agevolato = (
+        eccedente * (D("1") - p["forfettario_riduzione_inps"])
     )
+    inps_totale = p["inps_fisso_foglio"] + inps_eccedente_agevolato
     base_sostitutiva_file = max(
         redditivita - p["forfettario_contributi_ap"] - p["inps_fisso_foglio"],
         D("0"),
@@ -96,12 +96,13 @@ def calcola_modello_2026(*, fatturato_registrato: D, mesi_compilati: int,
     imposta = base_sostitutiva_file * p["forfettario_aliquota_sostitutiva"]
 
     netto = fatturato_stimato - inps_totale - enasarco - costi_annui - imposta
-    netto_ridotto_file = (
-        fatturato_stimato - inps_ridotto_file - enasarco - costi_annui - imposta
+    netto_senza_riduzione_eccedente = (
+        fatturato_stimato - inps_senza_riduzione_eccedente
+        - enasarco - costi_annui - imposta
     )
     netto_no_costi = fatturato_stimato - inps_totale - enasarco - imposta
-    netto_no_costi_ridotto_file = (
-        fatturato_stimato - inps_ridotto_file - enasarco - imposta
+    netto_no_costi_senza_riduzione_eccedente = (
+        fatturato_stimato - inps_senza_riduzione_eccedente - enasarco - imposta
     )
     return {
         "fatturato_registrato": fatturato_registrato,
@@ -109,17 +110,19 @@ def calcola_modello_2026(*, fatturato_registrato: D, mesi_compilati: int,
         "fatturato_stimato": fatturato_stimato,
         "redditivita": redditivita,
         "inps_eccedente": eccedente,
+        "inps_eccedente_agevolato": inps_eccedente_agevolato,
         "inps_totale": inps_totale,
-        "inps_ridotto_file": inps_ridotto_file,
+        "inps_senza_riduzione_eccedente": inps_senza_riduzione_eccedente,
         "enasarco": enasarco,
         "costi_annui": costi_annui,
         "imposta_sostitutiva": imposta,
         "netto": netto,
         "netto_mese": netto / D("12"),
-        "netto_ridotto_file": netto_ridotto_file,
-        "netto_ridotto_file_mese": netto_ridotto_file / D("12"),
+        "netto_senza_riduzione_eccedente": netto_senza_riduzione_eccedente,
+        "netto_senza_riduzione_eccedente_mese": netto_senza_riduzione_eccedente / D("12"),
         "netto_no_costi_mese": netto_no_costi / D("12"),
-        "netto_no_costi_ridotto_file_mese": netto_no_costi_ridotto_file / D("12"),
+        "netto_no_costi_senza_riduzione_eccedente_mese":
+            netto_no_costi_senza_riduzione_eccedente / D("12"),
     }
 
 
@@ -305,25 +308,23 @@ def mostra_conto_economico(client, anno: dict) -> None:
         {"Voce": f"Fatturato stimato file · {int(p['forfettario_mesi_proiezione'])} mesi",
          "Importo": _fmt(valori["fatturato_stimato"])},
         {"Voce": "Reddito forfettario · coefficiente 62%", "Importo": _fmt(valori["redditivita"])},
-        {"Voce": "INPS stimato", "Importo": _fmt(valori["inps_totale"])},
+        {"Voce": "INPS eccedente prima della riduzione", "Importo": _fmt(valori["inps_eccedente"])},
+        {"Voce": "INPS eccedente con riduzione 35%", "Importo": _fmt(valori["inps_eccedente_agevolato"])},
+        {"Voce": "INPS totale stimato · riduzione 35% attiva", "Importo": _fmt(valori["inps_totale"])},
         {"Voce": "Enasarco stimato", "Importo": _fmt(valori["enasarco"])},
         {"Voce": "Costi economici annui", "Importo": _fmt(valori["costi_annui"])},
         {"Voce": "Imposta sostitutiva · modello file", "Importo": _fmt(valori["imposta_sostitutiva"])},
-        {"Voce": "Netto annuo stimato", "Importo": _fmt(valori["netto"])},
-        {"Voce": "Netto medio / 12", "Importo": _fmt(valori["netto_mese"])},
-        {"Voce": "Netto / 12 senza costi", "Importo": _fmt(valori["netto_no_costi_mese"])},
-        {"Voce": "Netto annuo · scenario -35% INPS del file",
-         "Importo": _fmt(valori["netto_ridotto_file"])},
-        {"Voce": "Netto / 12 · scenario -35% INPS del file",
-         "Importo": _fmt(valori["netto_ridotto_file_mese"])},
-        {"Voce": "Netto / 12 senza costi · scenario -35% del file",
-         "Importo": _fmt(valori["netto_no_costi_ridotto_file_mese"])},
+        {"Voce": "Netto annuo stimato · regime INPS -35%", "Importo": _fmt(valori["netto"])},
+        {"Voce": "Netto medio / 12 · regime INPS -35%", "Importo": _fmt(valori["netto_mese"])},
+        {"Voce": "Netto / 12 senza costi · regime INPS -35%", "Importo": _fmt(valori["netto_no_costi_mese"])},
+        {"Voce": "Netto annuo senza riduzione sulla quota eccedente · confronto",
+         "Importo": _fmt(valori["netto_senza_riduzione_eccedente"])},
     ], hide_index=True, width="stretch")
-    st.warning(
-        "Lo scenario «-35% INPS» è mantenuto esattamente come nel file 2026: "
-        "la seconda simulazione lascia invariata la voce INPS fissa e riduce del 35% "
-        "la quota eccedente. Prima di usarla fiscalmente va verificato se l'importo "
-        "fisso del file incorpora già l'agevolazione contributiva."
+    st.info(
+        "Per il 2026 il gestionale considera attiva la riduzione INPS del 35%, "
+        "come da scelta già effettuata. La quota fissa di 3.031,76 € del file è "
+        "già ridotta; il 35% viene quindi applicato soltanto alla quota eccedente "
+        "calcolata dal modello, senza ridurre nuovamente la quota fissa."
     )
 
 

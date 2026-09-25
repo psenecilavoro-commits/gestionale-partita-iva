@@ -91,6 +91,17 @@ begin
   from public.fiscal_years
   where fiscal_year = 2027;
 
+  -- Lo SQL Editor non esegue come utente autenticato, quindi auth.uid() è NULL.
+  -- Le tabelle storiche del gestionale hanno user_id NOT NULL con default auth.uid().
+  -- Impostiamo il subject della richiesta SOLO per questa transazione, usando
+  -- l'owner già verificato del 2027. In questo modo i default user_id restano
+  -- coerenti con quelli usati normalmente dall'app.
+  perform set_config('request.jwt.claim.sub', owner_id::text, true);
+
+  if auth.uid() is distinct from owner_id then
+    raise exception 'Impossibile impostare il contesto utente per l''import 2026';
+  end if;
+
   select id into y2026
   from public.fiscal_years
   where fiscal_year = 2026 and user_id = owner_id
@@ -383,8 +394,8 @@ begin
     (y2026,'forfettario_limite_uscita_immediata','Limite uscita immediata',100000,'EUR','IMPORTATO DA FILE 2026',false),
     (y2026,'forfettario_mesi_proiezione','Numero mesi usati dalla proiezione del file',11,'EUR','IMPORTATO DA FILE 2026',true),
     (y2026,'forfettario_contributi_ap','Contributi anni precedenti nel file',0,'EUR','IMPORTATO DA FILE 2026',false),
-    (y2026,'forfettario_riduzione_inps','Scenario riduzione INPS del file',0.35,'RATE','IMPORTATO DA FILE 2026 · confronto da verificare',true),
-    (y2026,'inps_fisso_foglio','INPS fisso del file',3031.76,'EUR','IMPORTATO DA FILE 2026',true),
+    (y2026,'forfettario_riduzione_inps','Riduzione INPS scelta per il 2026',0.35,'RATE','SCELTA 2026 CONFERMATA DALL''UTENTE IL 25/09/2026',false),
+    (y2026,'inps_fisso_foglio','INPS fisso del file già comprensivo della riduzione 35%',3031.76,'EUR','FILE 2026 · riduzione già incorporata, confermato dall''utente il 25/09/2026',false),
     (y2026,'inps_minimale_foglio','Minimale INPS del file',18808.01,'EUR','IMPORTATO DA FILE 2026',true),
     (y2026,'inps_aliquota_prima_foglio','Aliquota INPS prima fascia',0.2448,'RATE','IMPORTATO DA FILE 2026',true),
     (y2026,'inps_soglia_seconda_foglio','Soglia seconda fascia INPS',56224,'EUR','IMPORTATO DA FILE 2026',true),

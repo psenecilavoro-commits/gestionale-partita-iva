@@ -41,11 +41,12 @@ class TestForfettario2026(unittest.TestCase):
         self.assertEqual(r["fatturato_stimato"], D("108373.3475"))
         self.assertEqual(r["redditivita"], D("67191.475450"))
         self.assertEqual(r["inps_eccedente"], D("11953.9470966600"))
-        self.assertEqual(r["inps_totale"], D("14985.7070966600"))
-        self.assertEqual(r["inps_ridotto_file"], D("10801.825612829000"))
+        self.assertEqual(r["inps_eccedente_agevolato"], D("7770.065612829000"))
+        self.assertEqual(r["inps_totale"], D("10801.825612829000"))
+        self.assertEqual(r["inps_senza_riduzione_eccedente"], D("14985.7070966600"))
         self.assertEqual(r["imposta_sostitutiva"], D("9623.95731750"))
-        self.assertEqual(r["netto"], D("65540.3902558400"))
-        self.assertEqual(r["netto_ridotto_file"], D("69724.271739671000"))
+        self.assertEqual(r["netto"], D("69724.271739671000"))
+        self.assertEqual(r["netto_senza_riduzione_eccedente"], D("65540.3902558400"))
 
 
 if __name__ == "__main__":
