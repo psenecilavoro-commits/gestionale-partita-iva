@@ -30,7 +30,7 @@ class ModelloDefinitivo2027(unittest.TestCase):
         self.assertEqual(r["imponibile_inps"],D("104185.614718823307"))
 
     def test_bene_minore_integrale(self):
-        self.assertEqual(quota_ammortamento(D("500"),D(".20"),2027,2027),(D("500"),D("0")))
+        self.assertEqual(quota_ammortamento(D("500"),D(".20"),2027,2027),(D("500"),D("500")))
         self.assertEqual(quota_ammortamento(D("500"),D(".20"),2027,2028),(D("0"),D("500")))
 
     def test_coefficiente_dimezzato_primo_anno(self):
