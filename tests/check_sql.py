@@ -59,6 +59,18 @@ grant select on public.costs, public.purchase_vat_invoices to authenticated;
 insert into public.costs values ('20000000-0000-0000-0000-000000000001','{YA}'), ('20000000-0000-0000-0000-000000000002','{YB}');
 insert into public.purchase_vat_invoices values ('30000000-0000-0000-0000-000000000001','{YA}');
 """)
+chiusura = (Path(__file__).parents[1] / "SQL_CHIUSURA_ANNO.sql").read_text(encoding="utf-8")
+sql(chiusura, ok=False)
+chiusura = chiusura.replace("= 'DA_CONFERMARE'", "= 'CONFERMO_CHIUSURA_ANNO'")
+sql(chiusura)
+sql(chiusura)
+user(f"update public.fiscal_years set status='closed' where id='{YA}'")
+assert user(f"select status from public.fiscal_years where id='{YA}'").endswith("closed")
+assert user(f"update public.fiscal_years set status='closed' where id='{YB}' returning id").endswith("UPDATE 0")
+user(f"update public.fiscal_years set status='open' where id='{YA}'")
+assert user(f"select status from public.fiscal_years where id='{YA}'").endswith("open")
+user(f"update public.fiscal_years set fiscal_year=2099 where id='{YA}'", ok=False)
+
 sql((Path(__file__).parents[1] / "SQL_IVA_VENDITE.sql").read_text(encoding="utf-8"))
 user(f"insert into public.sales_vat_invoices(fiscal_year_id,principal_id,invoice_number,invoice_date,document_type,taxable_amount,vat_amount) values('{YA}','40000000-0000-0000-0000-000000000001','LEGACY',current_date,'fattura',100,22)")
 migrazione = (Path(__file__).parents[1] / "SQL_COMPLETAMENTO_STRUTTURA.sql").read_text(encoding="utf-8")
@@ -253,4 +265,4 @@ assert sql("select count(*) from public.fiscal_parameters r join public.fiscal_y
 assert sql("select count(*) from public.fiscal_years where fiscal_year=2027 and status='open'").endswith("1")
 sql(import_2026, ok=False)
 
-print("SQL OK: guardia, idempotenza, RLS, anno chiuso, versioni, duplicati, collegamenti, ammortamenti, reset 2027 e import 2026.")
+print("SQL OK: guardia, idempotenza, RLS, chiusura/riapertura anno, anno chiuso, versioni, duplicati, collegamenti, ammortamenti, reset 2027 e import 2026.")

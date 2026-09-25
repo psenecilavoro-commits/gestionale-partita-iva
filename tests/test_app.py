@@ -66,6 +66,15 @@ mostra_vendite(None, {"id": "test", "fiscal_year": date.today().year, "status": 
         self.assertEqual(list(app.exception), [])
         self.assertFalse(any(x.label == "Conferma documento IVA" for x in app.button))
 
+    def test_sidebar_mostra_solo_azione_coerente_con_lo_stato(self):
+        aperto = self.run_app(status="open")
+        self.assertTrue(any(x.label == "Chiusura anno fiscale" for x in aperto.button))
+        self.assertFalse(any(x.label == "Riapri anno fiscale" for x in aperto.button))
+
+        chiuso = self.run_app(status="closed")
+        self.assertTrue(any(x.label == "Riapri anno fiscale" for x in chiuso.button))
+        self.assertFalse(any(x.label == "Chiusura anno fiscale" for x in chiuso.button))
+
     def test_login_non_espone_registri(self):
         app = self.run_app(logged=False)
         self.assertEqual(list(app.exception), [])

@@ -20,6 +20,7 @@ from forfettario_2026 import (
 )
 from regime_fiscale import e_forfettario, etichetta_regime
 from database import create_fiscal_year, get_fiscal_year
+from gestione_anno import mostra_gestione_anno
 from fatture_acquisto_xml import mostra_importa_xml_acquisti
 from fatture_provvigioni import mostra_carica_fatture
 from sanitarie_unificate import mostra_detrazioni_unificate
@@ -252,3 +253,7 @@ with scheda_ammortamenti:
         )
     else:
         mostra_ammortamenti(client, fiscal_year)
+
+
+# Controlli finali nella sidebar: vengono renderizzati in fondo alla colonna sinistra.
+mostra_gestione_anno(client, fiscal_year)
