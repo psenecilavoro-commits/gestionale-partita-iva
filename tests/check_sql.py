@@ -117,4 +117,130 @@ sql(f"update public.fiscal_years set status='closed' where id='{YA}'")
 for table in ("sales_vat_invoices", "vat_periods", "pension_payments", "purchase_cost_links"):
     assert user(f"delete from public.{table} returning id").endswith("DELETE 0")
     assert user(f"update public.{table} set version=99 returning id").endswith("UPDATE 0")
-print("SQL OK: guardia, idempotenza, RLS, anno chiuso, versioni, duplicati, collegamenti, ammortamenti e reset 2027.")
+
+# Import 2026: prova in un nuovo schema minimale e isolato.
+sql("""
+drop schema public cascade;
+create schema public;
+create table public.fiscal_years(
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null,
+  fiscal_year integer not null,
+  status text not null
+);
+create table public.principals(
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null,
+  name text not null,
+  enasarco_relationship text not null,
+  active boolean not null default true
+);
+create table public.monthly_revenues(
+  id uuid primary key default gen_random_uuid(),
+  fiscal_year_id uuid not null references public.fiscal_years(id),
+  principal_id uuid not null references public.principals(id),
+  month integer not null,
+  amount numeric(14,2) not null,
+  notes text
+);
+create table public.monthly_reserves(
+  id uuid primary key default gen_random_uuid(),
+  fiscal_year_id uuid not null references public.fiscal_years(id),
+  month integer not null,
+  reserved_amount numeric(14,2) not null,
+  notes text
+);
+create table public.monthly_net_commissions(
+  id uuid primary key default gen_random_uuid(),
+  fiscal_year_id uuid not null references public.fiscal_years(id),
+  month integer not null,
+  amount numeric(14,2) not null
+);
+create table public.vehicles(
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null,
+  label text not null,
+  notes text
+);
+create table public.vehicle_monthly(
+  id uuid primary key default gen_random_uuid(),
+  fiscal_year_id uuid not null references public.fiscal_years(id),
+  vehicle_id uuid not null references public.vehicles(id),
+  month integer not null,
+  distance_km numeric(14,2) not null,
+  notes text
+);
+create table public.vehicle_year_settings(
+  id uuid primary key default gen_random_uuid(),
+  fiscal_year_id uuid not null references public.fiscal_years(id),
+  vehicle_id uuid not null references public.vehicles(id),
+  annual_km_limit integer,
+  excess_km_penalty numeric(14,2),
+  notes text
+);
+create table public.cost_categories(
+  id uuid primary key default gen_random_uuid(),
+  fiscal_year_id uuid not null references public.fiscal_years(id),
+  code text not null,
+  name text not null,
+  vat_rate numeric(9,6) not null,
+  vat_deductible_rate numeric(9,6) not null,
+  cost_deductible_rate numeric(9,6) not null,
+  deductible_limit numeric(14,2),
+  notes text
+);
+create table public.annual_cost_estimates(
+  id uuid primary key default gen_random_uuid(),
+  fiscal_year_id uuid not null references public.fiscal_years(id),
+  category_id uuid not null references public.cost_categories(id),
+  estimated_gross_amount numeric(14,2) not null,
+  amount_includes_vat boolean not null,
+  notes text
+);
+create table public.costs(
+  id uuid primary key default gen_random_uuid(),
+  fiscal_year_id uuid not null references public.fiscal_years(id),
+  category_id uuid not null references public.cost_categories(id),
+  vehicle_id uuid references public.vehicles(id),
+  expense_date date not null,
+  description text not null,
+  gross_amount numeric(14,2) not null check (gross_amount >= 0),
+  amount_includes_vat boolean not null,
+  vat_rate numeric(9,6) not null,
+  vat_deductible_rate numeric(9,6) not null,
+  cost_deductible_rate numeric(9,6) not null,
+  fiscal_competence_year integer not null,
+  notes text
+);
+create table public.fiscal_parameters(
+  id uuid primary key default gen_random_uuid(),
+  fiscal_year_id uuid not null references public.fiscal_years(id),
+  code text not null,
+  description text not null,
+  value numeric(18,6) not null,
+  unit text not null,
+  source text,
+  source_date date,
+  is_provisional boolean not null default true
+);
+insert into public.fiscal_years(user_id,fiscal_year,status)
+values ('00000000-0000-0000-0000-000000000001',2027,'open');
+""")
+import_2026 = (Path(__file__).parents[1] / "SQL_IMPORTA_2026_FORFETTARIO.sql").read_text(encoding="utf-8")
+sql(import_2026, ok=False)
+import_2026 = import_2026.replace("= 'DA_CONFERMARE'", "= 'CONFERMO_IMPORT_2026'")
+sql(import_2026)
+assert sql("select count(*) from public.fiscal_years where fiscal_year=2026 and status='open'").endswith("1")
+assert sql("select sum(amount) from public.monthly_revenues r join public.fiscal_years f on f.id=r.fiscal_year_id where f.fiscal_year=2026").endswith("78816.98")
+assert sql("select count(distinct month) from public.monthly_revenues r join public.fiscal_years f on f.id=r.fiscal_year_id where f.fiscal_year=2026").endswith("8")
+assert sql("select count(*) from public.monthly_revenues r join public.fiscal_years f on f.id=r.fiscal_year_id where f.fiscal_year=2026").endswith("32")
+assert sql("select count(*) from public.monthly_net_commissions r join public.fiscal_years f on f.id=r.fiscal_year_id where f.fiscal_year=2026").endswith("9")
+assert sql("select count(*) from public.monthly_reserves r join public.fiscal_years f on f.id=r.fiscal_year_id where f.fiscal_year=2026").endswith("9")
+assert sql("select count(*) from public.vehicle_monthly r join public.fiscal_years f on f.id=r.fiscal_year_id where f.fiscal_year=2026").endswith("8")
+assert sql("select count(*) from public.costs r join public.fiscal_years f on f.id=r.fiscal_year_id where f.fiscal_year=2026").endswith("27")
+assert sql("select count(*) from public.annual_cost_estimates r join public.fiscal_years f on f.id=r.fiscal_year_id where f.fiscal_year=2026").endswith("11")
+assert sql("select count(*) from public.fiscal_parameters r join public.fiscal_years f on f.id=r.fiscal_year_id where f.fiscal_year=2026").endswith("15")
+assert sql("select count(*) from public.fiscal_years where fiscal_year=2027 and status='open'").endswith("1")
+sql(import_2026, ok=False)
+
+print("SQL OK: guardia, idempotenza, RLS, anno chiuso, versioni, duplicati, collegamenti, ammortamenti, reset 2027 e import 2026.")
