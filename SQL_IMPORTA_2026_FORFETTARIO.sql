@@ -91,6 +91,17 @@ begin
   from public.fiscal_years
   where fiscal_year = 2027;
 
+  -- Lo SQL Editor non esegue come utente autenticato, quindi auth.uid() è NULL.
+  -- Le tabelle storiche del gestionale hanno user_id NOT NULL con default auth.uid().
+  -- Impostiamo il subject della richiesta SOLO per questa transazione, usando
+  -- l'owner già verificato del 2027. In questo modo i default user_id restano
+  -- coerenti con quelli usati normalmente dall'app.
+  perform set_config('request.jwt.claim.sub', owner_id::text, true);
+
+  if auth.uid() is distinct from owner_id then
+    raise exception 'Impossibile impostare il contesto utente per l''import 2026';
+  end if;
+
   select id into y2026
   from public.fiscal_years
   where fiscal_year = 2026 and user_id = owner_id
