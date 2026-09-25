@@ -211,7 +211,7 @@ def mostra_costi(client, anno: dict) -> None:
         st.error("Impossibile leggere i costi 2026.")
         return
 
-    st.dataframe(righe, hide_index=True, width="stretch")
+    st.dataframe(righe, hide_index=True, width="stretch", height="content")
     st.metric("Totale costi annui del modello 2026", _fmt(totale))
     st.caption(
         "Carburante, autostrada e rate auto sono proiettati dai mesi registrati; "
@@ -319,7 +319,7 @@ def mostra_conto_economico(client, anno: dict) -> None:
         {"Voce": "Netto / 12 senza costi · regime INPS -35%", "Importo": _fmt(valori["netto_no_costi_mese"])},
         {"Voce": "Netto annuo senza riduzione sulla quota eccedente · confronto",
          "Importo": _fmt(valori["netto_senza_riduzione_eccedente"])},
-    ], hide_index=True, width="stretch")
+    ], hide_index=True, width="stretch", height="content")
     st.info(
         "Per il 2026 il gestionale considera attiva la riduzione INPS del 35%, "
         "come da scelta già effettuata. La quota fissa di 3.031,76 € del file è "
@@ -364,7 +364,7 @@ def mostra_imposte(client, anno: dict) -> None:
             else:
                 valore = f"{numero:g}"
         righe.append({"Parametro": nome, "Valore importato": valore})
-    st.dataframe(righe, hide_index=True, width="stretch")
+    st.dataframe(righe, hide_index=True, width="stretch", height="content")
     st.caption(
         "I parametri sono quelli del file 2026 caricato dall'utente. "
         "Il prospetto serve a replicare e monitorare quel modello."
