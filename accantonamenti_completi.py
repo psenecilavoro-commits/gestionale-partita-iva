@@ -137,11 +137,22 @@ def mostra_accantonamenti(client: Client, anno: dict) -> None:
     c1.metric("Provvigioni nette inserite", euro(totale_nette) if nette_disponibili else "—")
     c2.metric("Accantonamenti annotati", euro(totale_riserve))
     c3.metric("Differenza parziale · mesi completi", euro(residuo_parziale) if nette_disponibili and completi else "—")
-    st.caption(f"Mesi con nette e accantonamenti compilati: {completi}/12. "
-               "La differenza è PRIMA dell'IVA dovuta e non rappresenta il netto disponibile. "
-               "Un mese vuoto non equivale a zero; annotare un accantonamento non sposta denaro.")
-    st.info("Il netto mensile ipotetico è visibile nel quadro mensile, ma non rappresenta "
-            "il denaro disponibile. Le liquidazioni IVA documentali sono separate e da verificare.")
+    if int(anno["fiscal_year"]) == 2026:
+        st.caption(
+            f"Mesi con nette e accantonamenti compilati: {completi}/12. "
+            "La differenza non rappresenta il netto disponibile: contributi, Enasarco, "
+            "imposta sostitutiva e costi restano separati. Un mese vuoto non equivale a zero."
+        )
+        st.info(
+            "Per il 2026 in regime forfettario gli accantonamenti sono un controllo di cassa; "
+            "non viene costruita una liquidazione IVA ordinaria."
+        )
+    else:
+        st.caption(f"Mesi con nette e accantonamenti compilati: {completi}/12. "
+                   "La differenza è PRIMA dell'IVA dovuta e non rappresenta il netto disponibile. "
+                   "Un mese vuoto non equivale a zero; annotare un accantonamento non sposta denaro.")
+        st.info("Il netto mensile ipotetico è visibile nel quadro mensile, ma non rappresenta "
+                "il denaro disponibile. Le liquidazioni IVA documentali sono separate e da verificare.")
     if anno["status"] != "open":
         st.info("Anno chiuso: dati in sola lettura.")
         return

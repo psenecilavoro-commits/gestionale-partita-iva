@@ -92,7 +92,14 @@ def mostra_veicoli_reali(client, anno):
 
 def mostra_costi_reali(client, anno):
     st.subheader("Registro delle spese effettive · tutte le categorie")
-    st.caption("Le spese documentate sono distinte dalle stime annuali e non le sostituiscono. L'IVA acquisti va registrata e riconciliata nel registro dedicato. Percentuali fiscali da verificare.")
+    if int(anno["fiscal_year"]) == 2026:
+        st.caption(
+            "Le spese documentate sono distinte dalle stime annuali. Nel modello forfettario "
+            "2026 servono al controllo economico e di cassa, ma non riducono analiticamente "
+            "il reddito determinato con il coefficiente di redditività."
+        )
+    else:
+        st.caption("Le spese documentate sono distinte dalle stime annuali e non le sostituiscono. L'IVA acquisti va registrata e riconciliata nel registro dedicato. Percentuali fiscali da verificare.")
     try:
         costi = leggi_tutti(client, "costs", fiscal_year_id=anno["id"])
         categorie = leggi_tutti(client, "cost_categories", fiscal_year_id=anno["id"])
