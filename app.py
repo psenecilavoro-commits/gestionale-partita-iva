@@ -109,8 +109,6 @@ st.success(
     f"Anno {fiscal_year['fiscal_year']} presente · {etichetta_regime(fiscal_year)} · "
     f"stato: {fiscal_year['status']}."
 )
-mostra_base(client, fiscal_year, conto_slot)
-
 (
     scheda_fatturato,
     scheda_costi,
@@ -254,6 +252,10 @@ with scheda_ammortamenti:
     else:
         mostra_ammortamenti(client, fiscal_year)
 
+
+# Il riepilogo usa gli stessi input/calcoli della scheda Conto economico.
+# Il placeholder mantiene la tabella nella parte alta della sidebar.
+mostra_base(client, fiscal_year, conto_slot)
 
 # Controlli finali nella sidebar: vengono renderizzati in fondo alla colonna sinistra.
 mostra_gestione_anno(client, fiscal_year)
