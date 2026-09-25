@@ -14,7 +14,8 @@ from imposte_parametri import GRUPPI
 from conto_economico import calcola_conto_foglio, detrazioni_anteprima_foglio
 from auto_rate import quota_deducibile_test
 from imposte_enasarco import calcola_confronto
-from accantonamenti_confronto import obiettivo_annuo_foglio, quota_mesi_vuoti_foglio
+from accantonamenti_confronto import (obiettivo_annuo_foglio, quota_mesi_vuoti_foglio,
+                                        ripartisci_residuo)
 
 PARAMETRI = {r[0]: D(r[2]) for _, gruppo in GRUPPI for r in gruppo}
 
@@ -52,6 +53,18 @@ class FormuleFoglio(unittest.TestCase):
         self.assertEqual(obiettivo_annuo_foglio(D(1000), D(300), D(200), D(10), D(5), D(50)), D(350))
         self.assertEqual(quota_mesi_vuoti_foglio(D(350), D(0), 1), D(350) / 11)
         self.assertIsNone(quota_mesi_vuoti_foglio(D(350), D(350), 12))
+
+    def test_riparto_residuo_operativo(self):
+        r = ripartisci_residuo(D("12000"), D("6000"), 6)
+        self.assertEqual(r["residuo"], D("6000"))
+        self.assertEqual(r["eccedenza"], D("0"))
+        self.assertEqual(r["mesi_restanti"], 6)
+        self.assertEqual(r["quota_mensile"], D("1000"))
+
+        coperto = ripartisci_residuo(D("5000"), D("6500"), 9)
+        self.assertEqual(coperto["residuo"], D("0"))
+        self.assertEqual(coperto["eccedenza"], D("1500"))
+        self.assertEqual(coperto["quota_mensile"], D("0"))
 
     def test_zero_conta_vuoto_no(self):
         m = [{"id": "a", "name": "A"}]
