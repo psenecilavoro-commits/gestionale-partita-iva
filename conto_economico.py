@@ -12,6 +12,8 @@ from mandanti import elenco_mandanti
 from riepilogo_costi import VOCI, calcola_riepilogo
 
 CENT=D("0.01")
+DEFAULT_CONTRIBUTI_AP=D("8000")
+DEFAULT_FONDO_PENSIONE=D("5300")
 RICHIESTI=(
  "enasarco_tasso_foglio","enasarco_massimale_pluri",
  "inps_fisso_foglio","inps_minimale_foglio","inps_aliquota_prima_foglio",
@@ -83,31 +85,52 @@ VOCI_CONTO=(
  ("B22","Netto teorico senza costi / 12"),
 )
 
+def valori_conto_corrente(client:Client,anno:dict,contributi_ap:D,fondo:D)->dict[str,D]:
+    """Restituisce gli stessi valori esposti nella tabella Conto economico."""
+    presenti=leggi_parametri(client,anno["id"])
+    if any(k not in presenti for k in RICHIESTI):
+        raise ValueError("Completa i parametri nella scheda Imposte.")
+    mandanti=elenco_mandanti(client)
+    ricavi=leggi_fatturato(client,anno["id"])
+    dati,_,fatturato=riepilogo(mandanti,ricavi)
+    if fatturato is None or any(x["mesi"]==0 for x in dati):
+        raise ValueError("Completa almeno un mese per ogni mandante.")
+    p={k:D(str(presenti[k]["value"])) for k in RICHIESTI}
+    _,enasarco,mono=calcola_confronto(
+        mandanti,ricavi,p["enasarco_tasso_foglio"],p["enasarco_massimale_pluri"]
+    )
+    if mono:
+        raise ValueError("Completa la gestione Enasarco monomandataria prima del prospetto.")
+    costi,mancanti,non_test=calcola_riepilogo(client,anno["id"])
+    if mancanti or non_test or len(costi)!=len(VOCI):
+        raise ValueError("Il confronto automatico richiede le voci del modello complete.")
+    iva=sum((r["IVA"] for r in costi),D("0"))
+    netto=sum((r["Netto"] for r in costi),D("0"))
+    ded=sum((r["Deducibile"] for r in costi),D("0"))
+    return calcola_conto_foglio(
+        fatturato,iva,netto,ded,enasarco,contributi_ap,fondo,
+        detrazioni_anteprima_foglio(),p
+    )
+
+
 def mostra_conto_economico(client:Client,anno:dict,sidebar_slot=None)->None:
     st.subheader("Conto economico · modello definitivo")
     st.caption("Il prospetto replica il modello 2027 approvato. I parametri fiscali annuali restano configurabili finché non saranno ufficiali.")
+    ap=st.number_input(
+        "Contributi anni precedenti effettivamente pagati nell'anno (€)",
+        min_value=0.0,value=float(DEFAULT_CONTRIBUTI_AP),step=100.0,
+        key=f"conto_contributi_ap_{anno['id']}",
+    )
+    fondo=st.number_input(
+        "Fondo pensione deducibile (€)",
+        min_value=0.0,value=float(DEFAULT_FONDO_PENSIONE),step=100.0,
+        key=f"conto_fondo_pensione_{anno['id']}",
+    )
     try:
-        presenti=leggi_parametri(client,anno["id"])
-        if any(k not in presenti for k in RICHIESTI):
-            st.info("Completa i parametri nella scheda Imposte."); return
-        mandanti=elenco_mandanti(client); ricavi=leggi_fatturato(client,anno["id"])
-        dati,_,fatturato=riepilogo(mandanti,ricavi)
-        if fatturato is None or any(x["mesi"]==0 for x in dati):
-            st.info("Completa almeno un mese per ogni mandante."); return
-        p={k:D(str(presenti[k]["value"])) for k in RICHIESTI}
-        _,enasarco,mono=calcola_confronto(mandanti,ricavi,p["enasarco_tasso_foglio"],p["enasarco_massimale_pluri"])
-        if mono:
-            st.info("Completa la gestione Enasarco monomandataria prima del prospetto."); return
-        costi,mancanti,non_test=calcola_riepilogo(client,anno["id"])
-        if mancanti or non_test or len(costi)!=len(VOCI):
-            st.info("Il confronto automatico richiede le voci del modello complete."); return
-        iva=sum((r["IVA"] for r in costi),D("0"))
-        netto=sum((r["Netto"] for r in costi),D("0"))
-        ded=sum((r["Deducibile"] for r in costi),D("0"))
+        valori=valori_conto_corrente(client,anno,D(str(ap)),D(str(fondo)))
+    except ValueError as exc:
+        st.info(str(exc)); return
     except Exception:
         st.error("Impossibile costruire il conto economico."); return
-    ap=st.number_input("Contributi anni precedenti effettivamente pagati nell'anno (€)",min_value=0.0,value=8000.0,step=100.0)
-    fondo=st.number_input("Fondo pensione deducibile (€)",min_value=0.0,value=5300.0,step=100.0)
-    valori=calcola_conto_foglio(fatturato,iva,netto,ded,enasarco,D(str(ap)),D(str(fondo)),detrazioni_anteprima_foglio(),p)
     st.dataframe([{"Voce":nome,"Importo":_valuta(valori[codice])} for codice,nome in VOCI_CONTO],hide_index=True,width="stretch")
     st.caption("Deduzioni e fondo pensione incidono sulla base IRPEF e non vengono sottratti una seconda volta dal netto.")
