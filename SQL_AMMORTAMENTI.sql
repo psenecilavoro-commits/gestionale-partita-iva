@@ -1,20 +1,34 @@
 -- Eseguire SOLO nel Supabase del Gestionale Partita IVA (secondo account).
--- Tabella globale per i beni: fiscal_year_id identifica l'anno di acquisto;
--- le quote restano visibili negli anni successivi senza duplicare il bene.
+-- Script idempotente: può essere rieseguito anche se la tabella esiste già.
+-- fiscal_year_id identifica l'anno di acquisto o di acquisto previsto.
 begin;
 
 create table if not exists public.depreciable_assets (
   id uuid primary key default gen_random_uuid(),
   fiscal_year_id uuid not null references public.fiscal_years(id) on delete restrict,
   description text not null check (length(btrim(description)) between 1 and 200),
-  purchase_date date not null check (purchase_date <= current_date),
+  purchase_date date not null,
   gross_amount numeric(14,2) not null check (gross_amount >= 0),
   deductible_vat numeric(14,2) not null check (deductible_vat >= 0 and deductible_vat <= gross_amount),
   depreciation_rate numeric(9,6) not null check (depreciation_rate > 0 and depreciation_rate <= 1),
   first_fiscal_year integer not null check (first_fiscal_year between 2000 and 2100),
+  is_planned boolean not null default false,
   notes text check (notes is null or length(notes) <= 500),
   version integer not null default 1
 );
+
+alter table public.depreciable_assets
+  add column if not exists is_planned boolean not null default false;
+
+-- La versione precedente impediva qualsiasi data futura.
+-- Ora una data futura è ammessa SOLO per un bene classificato come previsto.
+alter table public.depreciable_assets
+  drop constraint if exists depreciable_assets_purchase_date_check;
+alter table public.depreciable_assets
+  drop constraint if exists depreciable_assets_purchase_date_status_check;
+alter table public.depreciable_assets
+  add constraint depreciable_assets_purchase_date_status_check
+  check (is_planned or purchase_date <= current_date);
 
 alter table public.depreciable_assets enable row level security;
 revoke all on table public.depreciable_assets from public, anon, authenticated;
@@ -32,6 +46,9 @@ begin
   if extract(year from new.purchase_date) <> fy.fiscal_year
      or new.first_fiscal_year <> fy.fiscal_year then
     raise exception 'Data/anno del bene non coerenti con anno di acquisto';
+  end if;
+  if not new.is_planned and new.purchase_date > current_date then
+    raise exception 'Un bene acquistato non può avere una data futura';
   end if;
   if tg_op='UPDATE' then
     if new.fiscal_year_id is distinct from old.fiscal_year_id then
