@@ -139,12 +139,19 @@ def costi_forfettario(client, anno_id: str) -> tuple[list[dict], D]:
     for categoria in sorted(categorie, key=lambda r: (r["name"] or "").casefold()):
         cid = categoria["id"]
         elenco = spese_per_cat.get(cid, [])
-        registrato = None
-        stima = None
-        if elenco:
-            registrato, stima = _proietta(elenco)
-        elif cid in stime_per_cat:
-            stima = D(str(stime_per_cat[cid]["estimated_gross_amount"]))
+        registrato = (
+            sum((D(str(r["gross_amount"])) for r in elenco), D("0"))
+            if elenco else None
+        )
+        stima_record = stime_per_cat.get(cid)
+        if stima_record is not None:
+            # Nel 2026 il file contiene già una stima annua per le voci Auto:
+            # la conserviamo come riferimento, anche quando sono presenti mesi reali.
+            stima = D(str(stima_record["estimated_gross_amount"]))
+        elif elenco:
+            _registrato, stima = _proietta(elenco)
+        else:
+            stima = None
         if stima is None:
             continue
         totale += stima
