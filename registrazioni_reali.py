@@ -102,7 +102,6 @@ def mostra_costi_reali(client, anno):
     st.dataframe([{
         "Data": r["expense_date"], "Descrizione": r["description"],
         "Importo": r["gross_amount"], "IVA compresa": r["amount_includes_vat"],
-        "Origine": _origine(r),
     } for r in costi], hide_index=True)
     from quadro_mensile import _csv_bytes
     st.download_button("Esporta spese registrate CSV",

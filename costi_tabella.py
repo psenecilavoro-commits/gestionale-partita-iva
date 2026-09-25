@@ -166,7 +166,7 @@ def _tabella(categorie, stime, spese, impostazioni, km):
             "Voce": cat["name"] if cat else nome, "Registrato": _euro(registrato),
             "Totale annuo stimato": _euro(lordo), "IVA scorporata": _euro(iva),
             "Costo netto": _euro(netto), "% deducibilità": percentuale,
-            "Da dedurre": _euro(deducibile), "Origine": origine,
+            "Da dedurre": _euro(deducibile),
         })
     if presenti:
         tabella.append({"Voce": "TOTALE SPESE", "Registrato": "—",
@@ -174,8 +174,7 @@ def _tabella(categorie, stime, spese, impostazioni, km):
                         "IVA scorporata": "—" if incompleti else _euro(totali["iva"]),
                         "Costo netto": "—" if incompleti else _euro(totali["netto"]),
                         "% deducibilità": "—",
-                        "Da dedurre": "—" if incompleti else _euro(totali["deducibile"]),
-                        "Origine": "Riepilogo, senza duplicazioni"})
+                        "Da dedurre": "—" if incompleti else _euro(totali["deducibile"])})
     return tabella, incompleti, origini
 
 

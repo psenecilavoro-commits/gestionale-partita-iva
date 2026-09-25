@@ -141,8 +141,6 @@ def mostra_imposte(client: Client, anno: dict) -> None:
             "Valore di prova": _formato(valore, unita),
             "Valore configurato": _formato(presenti[codice]["value"], presenti[codice]["unit"])
             if codice in presenti else "—",
-            "Stato": ("Provvisorio" if presenti[codice]["is_provisional"] else "Da verificare fonte")
-            if codice in presenti else "Non caricato",
         } for codice, descrizione, valore, unita, _cella in voci],
             hide_index=True, width="stretch")
         if nome_gruppo == "INPS":

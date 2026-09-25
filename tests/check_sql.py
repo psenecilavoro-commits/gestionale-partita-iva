@@ -90,8 +90,19 @@ for table in ("sales_vat_invoices", "vat_periods", "pension_payments", "purchase
     assert user(f"select count(*) from public.{table}", B).endswith("0")
     assert user(f"delete from public.{table} returning id", B).endswith("DELETE 0")
     sql(f"set role anon; select * from public.{table}", ok=False)
+
+ammortamenti = (Path(__file__).parents[1] / "SQL_AMMORTAMENTI.sql").read_text(encoding="utf-8")
+sql(ammortamenti)
+sql(ammortamenti)
+user(f"""insert into public.depreciable_assets
+(fiscal_year_id,description,purchase_date,gross_amount,deductible_vat,depreciation_rate,first_fiscal_year,is_planned)
+values('{YA}','Bene previsto',current_date,500,0,1,extract(year from current_date),true)""")
+assert user("select is_planned from public.depreciable_assets where description='Bene previsto'").endswith("t")
+assert user("select count(*) from public.depreciable_assets", B).endswith("0")
+sql("set role anon; select * from public.depreciable_assets", ok=False)
+
 sql(f"update public.fiscal_years set status='closed' where id='{YA}'")
 for table in ("sales_vat_invoices", "vat_periods", "pension_payments", "purchase_cost_links"):
     assert user(f"delete from public.{table} returning id").endswith("DELETE 0")
     assert user(f"update public.{table} set version=99 returning id").endswith("UPDATE 0")
-print("SQL OK: guardia, idempotenza, RLS, anno chiuso, versioni, duplicati e collegamenti.")
+print("SQL OK: guardia, idempotenza, RLS, anno chiuso, versioni, duplicati, collegamenti e ammortamenti.")

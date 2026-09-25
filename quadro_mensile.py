@@ -80,9 +80,6 @@ def costruisci_quadro(fatturati: list[dict], nette: list[dict],
             (riserva is not None, "accantonato"),
             (documenti is not None, "fatture acquisto"),
         ) if not presente]
-        stato = "Dati di prova" if mese in prova else (
-            "Da completare" if mancanti else "Confronto compilabile, non validato"
-        )
         righe.append({
             "Mese": nome,
             "Fatturato senza IVA": euro(ricavi[mese]) if mese in ricavi else "—",
@@ -92,7 +89,6 @@ def costruisci_quadro(fatturati: list[dict], nette: list[dict],
             "IVA acquisti registrata (PARZIALE)": euro(iva_acquisti) if iva_acquisti is not None else "—",
             "Differenza IVA · ipotesi (NON dovuta)": euro(differenza_iva) if differenza_iva is not None else "—",
             "Netto foglio · ipotesi (NON disponibile)": euro(simulazione_netto) if simulazione_netto is not None else "—",
-            "Stato": stato,
         })
         controlli.append({
             "Mese": nome,

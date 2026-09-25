@@ -1,7 +1,7 @@
 import unittest
 from decimal import Decimal as D
 
-from ammortamenti import quota_ammortamento
+from ammortamenti import quota_ammortamento, _coefficiente
 from calcoli_fiscali import deduzione_agenti, calcola_inps_previsionale
 from imposte_parametri import GRUPPI
 
@@ -38,6 +38,11 @@ class ModelloDefinitivo2027(unittest.TestCase):
         q2,f2=quota_ammortamento(D("1000"),D(".20"),2027,2028)
         self.assertEqual((q1,f1),(D("100"),D("100")))
         self.assertEqual((q2,f2),(D("200"),D("300")))
+
+    def test_coefficiente_non_richiesto_sotto_soglia(self):
+        self.assertEqual(_coefficiente("", D("516.46")), D("1"))
+        with self.assertRaises(ValueError):
+            _coefficiente("", D("516.47"))
 
 if __name__=="__main__":
     unittest.main()
