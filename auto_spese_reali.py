@@ -248,5 +248,11 @@ def mostra_spese_auto(client: Client, anno: dict) -> None:
         _maschera_percorrenza(client, anno, reale_id)
     else:
         _maschera_spesa(client, anno, reale_id, tipo)
-    st.caption("Le spese effettive non equivalgono a fatture IVA documentate. "
-               "I parametri fiscali per il 2027 restano da verificare.")
+    if int(anno["fiscal_year"]) == 2026:
+        st.caption(
+            "Le spese auto 2026 sono registrate per il controllo economico del regime "
+            "forfettario e non per calcolare una deduzione analitica dal reddito."
+        )
+    else:
+        st.caption("Le spese effettive non equivalgono a fatture IVA documentate. "
+                   "I parametri fiscali per il 2027 restano da verificare.")
