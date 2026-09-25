@@ -21,6 +21,7 @@ B = "00000000-0000-0000-0000-000000000002"
 YA = "10000000-0000-0000-0000-000000000001"
 YB = "10000000-0000-0000-0000-000000000002"
 YC = "10000000-0000-0000-0000-000000000003"
+YD = "10000000-0000-0000-0000-000000000004"
 
 
 def user(query, who=A, ok=True):
@@ -38,7 +39,8 @@ create table public.fiscal_years(id uuid primary key, user_id uuid not null, fis
 insert into public.fiscal_years values
 ('{YA}','{A}',extract(year from current_date),'open'),
 ('{YB}','{B}',extract(year from current_date),'open'),
-('{YC}','{A}',extract(year from current_date),'closed');
+('{YC}','{A}',extract(year from current_date),'closed'),
+('{YD}','{A}',2027,'open');
 alter table public.fiscal_years enable row level security;
 create policy owner on public.fiscal_years to authenticated using (user_id = auth.uid());
 grant select on public.fiscal_years to authenticated;
@@ -101,8 +103,18 @@ assert user("select is_planned from public.depreciable_assets where description=
 assert user("select count(*) from public.depreciable_assets", B).endswith("0")
 sql("set role anon; select * from public.depreciable_assets", ok=False)
 
+# Reset operativo 2027: deve cancellare i dati annuali e conservare la riga dell'anno.
+sql(f"insert into public.costs values ('20000000-0000-0000-0000-000000000003','{YD}')")
+sql(f"insert into public.purchase_vat_invoices values ('30000000-0000-0000-0000-000000000002','{YD}')")
+reset = (Path(__file__).parents[1] / "SQL_RESET_OPERATIVO_2027.sql").read_text(encoding="utf-8")
+reset = reset.replace("= 'DA_CONFERMARE'", "= 'CONFERMO_RESET_2027'")
+sql(reset)
+assert sql(f"select count(*) from public.fiscal_years where id='{YD}' and fiscal_year=2027 and status='open'").endswith("1")
+assert sql(f"select count(*) from public.costs where fiscal_year_id='{YD}'").endswith("0")
+assert sql(f"select count(*) from public.purchase_vat_invoices where fiscal_year_id='{YD}'").endswith("0")
+
 sql(f"update public.fiscal_years set status='closed' where id='{YA}'")
 for table in ("sales_vat_invoices", "vat_periods", "pension_payments", "purchase_cost_links"):
     assert user(f"delete from public.{table} returning id").endswith("DELETE 0")
     assert user(f"update public.{table} set version=99 returning id").endswith("UPDATE 0")
-print("SQL OK: guardia, idempotenza, RLS, anno chiuso, versioni, duplicati, collegamenti e ammortamenti.")
+print("SQL OK: guardia, idempotenza, RLS, anno chiuso, versioni, duplicati, collegamenti, ammortamenti e reset 2027.")
