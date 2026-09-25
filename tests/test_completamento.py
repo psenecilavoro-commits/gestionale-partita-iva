@@ -8,7 +8,7 @@ from unittest.mock import Mock, patch
 
 from struttura_calcoli import (contributi_per_cassa, scenario_cassa, saldo_iva,
                               valida_vendita, valida_periodo)
-from registri import leggi_tutti, salva, denaro
+from registri import leggi_tutti, salva, denaro, avvia_cache_letture
 from fatturato import riepilogo, importo_valido
 from imposte_parametri import GRUPPI
 from conto_economico import calcola_conto_foglio, detrazioni_anteprima_foglio
@@ -160,6 +160,29 @@ class AccessoDati(unittest.TestCase):
             def execute(self): return SimpleNamespace(data=[{"id": n} for n in range(self.start, min(self.start + 137, 1205))])
         client = SimpleNamespace(table=lambda _: Query())
         self.assertEqual(len(leggi_tutti(client, "test")), 1205)
+
+    def test_cache_per_rerun_e_count_evitano_query_duplicate(self):
+        import registri
+        contatore = {"execute": 0}
+        class Query:
+            def select(self, *_, **__): return self
+            def order(self, *_): return self
+            def eq(self, *_): return self
+            def range(self, start, end): self.start = start; return self
+            def execute(self):
+                contatore["execute"] += 1
+                return SimpleNamespace(
+                    data=[{"id": "1"}, {"id": "2"}, {"id": "3"}],
+                    count=3,
+                )
+        client = SimpleNamespace(table=lambda _: Query())
+        stato = {}
+        with patch.object(registri.st, "session_state", stato):
+            avvia_cache_letture()
+            prima = leggi_tutti(client, "test", fiscal_year_id="anno")
+            seconda = leggi_tutti(client, "test", fiscal_year_id="anno")
+        self.assertEqual(prima, seconda)
+        self.assertEqual(contatore["execute"], 1)
 
     def test_blocco_anno_chiuso_e_concorrenza(self):
         client = Mock()
