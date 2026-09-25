@@ -12,6 +12,13 @@ from auto_spese_reali import mostra_spese_auto
 from contributi_versati import mostra_contributi_versati
 from conto_economico import mostra_conto_economico
 from costi_scheda import mostra_tabella_costi
+from forfettario_2026 import (
+    mostra_soglie_fatturato as mostra_soglie_forfettario,
+    mostra_costi as mostra_costi_forfettario,
+    mostra_conto_economico as mostra_conto_forfettario,
+    mostra_imposte as mostra_imposte_forfettario,
+)
+from regime_fiscale import e_forfettario, etichetta_regime
 from database import create_fiscal_year, get_fiscal_year
 from fatture_acquisto_xml import mostra_importa_xml_acquisti
 from fatture_provvigioni import mostra_carica_fatture
@@ -67,8 +74,8 @@ with st.sidebar:
     conto_slot = st.empty()
 
 st.subheader("Anno fiscale")
-anni = list(range(2027, 2051))
-anno_corrente = min(max(date.today().year, 2027), anni[-1])
+anni = list(range(2026, 2051))
+anno_corrente = min(max(date.today().year, 2026), anni[-1])
 anno_selezionato = st.selectbox("Anno da visualizzare", anni,
                                index=anni.index(anno_corrente), key="anno_fiscale_selezionato",
                                on_change=reset_fiscal_inputs)
@@ -96,7 +103,11 @@ if fiscal_year is None:
             st.rerun()
     st.stop()
 
-st.success(f"Anno {fiscal_year['fiscal_year']} presente · stato: {fiscal_year['status']}.")
+forfettario = e_forfettario(fiscal_year)
+st.success(
+    f"Anno {fiscal_year['fiscal_year']} presente · {etichetta_regime(fiscal_year)} · "
+    f"stato: {fiscal_year['status']}."
+)
 mostra_base(client, fiscal_year, conto_slot)
 
 (
@@ -127,7 +138,14 @@ with scheda_fatturato:
         st.stop()
 
     mostra_fatturato(client, fiscal_year, mandanti)
-    mostra_vendite(client, fiscal_year)
+    if forfettario:
+        mostra_soglie_forfettario(client, fiscal_year)
+        st.info(
+            "Nel 2026 il gestionale usa il modello del regime forfettario: "
+            "il registro IVA vendite ordinario non viene utilizzato in questa annualità."
+        )
+    else:
+        mostra_vendite(client, fiscal_year)
 
     st.subheader("Mandanti")
     st.caption("Anagrafica delle mandanti associate alle registrazioni del fatturato.")
@@ -173,9 +191,13 @@ with scheda_fatturato:
         st.info("L'anno fiscale è chiuso: non è possibile aggiungere mandanti da questa schermata.")
 
 with scheda_costi:
-    mostra_tabella_costi(client, fiscal_year)
-    mostra_costi_reali(client, fiscal_year)
-    mostra_riconciliazione(client, fiscal_year)
+    if forfettario:
+        mostra_costi_forfettario(client, fiscal_year)
+        mostra_costi_reali(client, fiscal_year)
+    else:
+        mostra_tabella_costi(client, fiscal_year)
+        mostra_costi_reali(client, fiscal_year)
+        mostra_riconciliazione(client, fiscal_year)
 
 with scheda_auto:
     prepara_auto_unica(client)
@@ -185,23 +207,48 @@ with scheda_auto:
 with scheda_accantonamenti:
     mostra_accantonamenti(client, fiscal_year)
     mostra_carica_fatture(client, fiscal_year)
-    mostra_anteprima_iva(client, fiscal_year)
-    mostra_importa_xml_acquisti(client, fiscal_year)
-    mostra_quadro_mensile(client, fiscal_year)
-    mostra_periodi_iva(client, fiscal_year)
+    if forfettario:
+        st.info(
+            "Anno 2026 in regime forfettario: i prospetti IVA ordinari sono "
+            "disattivati per questa annualità."
+        )
+    else:
+        mostra_anteprima_iva(client, fiscal_year)
+        mostra_importa_xml_acquisti(client, fiscal_year)
+        mostra_quadro_mensile(client, fiscal_year)
+        mostra_periodi_iva(client, fiscal_year)
 
 with scheda_conto_economico:
-    mostra_conto_economico(client, fiscal_year)
-    st.divider()
-    mostra_conto_registrato(client, fiscal_year)
+    if forfettario:
+        mostra_conto_forfettario(client, fiscal_year)
+    else:
+        mostra_conto_economico(client, fiscal_year)
+        st.divider()
+        mostra_conto_registrato(client, fiscal_year)
 
 with scheda_imposte:
-    mostra_imposte(client, fiscal_year)
+    if forfettario:
+        mostra_imposte_forfettario(client, fiscal_year)
+    else:
+        mostra_imposte(client, fiscal_year)
     mostra_contributi_versati(client, fiscal_year)
 
 with scheda_detrazioni:
-    mostra_detrazioni_unificate(client, fiscal_year)
-    mostra_pensione(client, fiscal_year)
+    if forfettario:
+        st.info(
+            "Nel modello 2026 del file Excel non vengono applicate qui le ordinarie "
+            "detrazioni/deduzioni IRPEF. I contributi previdenziali rilevanti sono "
+            "gestiti nel prospetto forfettario dedicato."
+        )
+    else:
+        mostra_detrazioni_unificate(client, fiscal_year)
+        mostra_pensione(client, fiscal_year)
 
 with scheda_ammortamenti:
-    mostra_ammortamenti(client, fiscal_year)
+    if forfettario:
+        st.info(
+            "Nel regime forfettario 2026 gli ammortamenti analitici non determinano "
+            "il reddito imponibile del modello; la scheda resta disponibile dagli anni ordinari."
+        )
+    else:
+        mostra_ammortamenti(client, fiscal_year)
