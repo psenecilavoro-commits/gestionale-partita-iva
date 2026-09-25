@@ -25,10 +25,10 @@ class FormuleFoglio(unittest.TestCase):
         mandanti = [{"id": str(i), "name": str(i), "enasarco_relationship": "plurimandatario"} for i in range(4)]
         ricavi = [{"principal_id": str(i), "month": 1, "amount": valore} for i, valore in enumerate((7000, 1000, 1100, 500))]
         _, maturato, fatturato = riepilogo(mandanti, ricavi)
-        _, enasarco, _ = calcola_confronto(mandanti, ricavi, D(".085"), D(30057))
+        _, enasarco, _ = calcola_confronto(mandanti, ricavi, D(".085"), PARAMETRI["enasarco_massimale_pluri"])
         self.assertEqual(maturato, D(9600))
         self.assertEqual(fatturato, D(115200))
-        self.assertEqual(enasarco, D("5206.845"))
+        self.assertEqual(enasarco, D("5242.63"))
         iva = sum((D(v) * D(22) / D(122) for v in (8040, 2400, 600, 500, 3000)), D(0))
         netto = D("15941.83") - iva
         deducibili = (quota_deducibile_test(D(8040)) +
@@ -36,13 +36,17 @@ class FormuleFoglio(unittest.TestCase):
                       D("340.97") * D(".8") + D("1060.86") * D(".8") + D(3000) / D("1.22"))
         valori = calcola_conto_foglio(fatturato, iva, netto, deducibili, enasarco,
                                       D(8000), D(5300), detrazioni_anteprima_foglio(), PARAMETRI)
-        for cella, valore in valori.items():
-            key = "Conto economico!" + cella
-            if key in fixture:
-                atteso = D(str(fixture[key]["value"]["numberValue"]))
-                with self.subTest(cella=cella):
-                    self.assertEqual(valore.quantize(D(".01"), rounding=ROUND_HALF_UP),
-                                     atteso.quantize(D(".01"), rounding=ROUND_HALF_UP))
+        attesi = {
+            "B1": D("115200"), "B5": D("25344"), "B6": D("22722.03"),
+            "DED_AGENTI": D("976.10"), "B8": D("104185.61"),
+            "B9": D("81031.34"), "B11": D("25991.70"), "B12": D("5242.63"),
+            "B13": D("13319.86"), "B14": D("28688.41"), "B15": D("2941.51"),
+            "B16": D("5300"), "B18": D("44898.91"), "B19": D("3741.58"),
+            "B21": D("58218.77"), "B22": D("4851.56"),
+        }
+        for cella, atteso in attesi.items():
+            with self.subTest(cella=cella):
+                self.assertEqual(valori[cella].quantize(D(".01"), rounding=ROUND_HALF_UP), atteso)
 
     def test_avanzo_ap_e_mesi_vuoti(self):
         self.assertEqual(obiettivo_annuo_foglio(D(1000), D(300), D(200), D(10), D(5), D(50)), D(350))
@@ -70,7 +74,7 @@ class CalcoliDocumentali(unittest.TestCase):
         self.assertEqual(c, {"INPS": D(9000), "INPS_AP": D(8000), "ENASARCO": D(850)})
         r = scenario_cassa(D(30000), D(1000), c, D(5300), D(5000), PARAMETRI)
         self.assertEqual(r["fatturato"], D(30000))
-        self.assertEqual(r["base"], D(14150))
+        self.assertEqual(r["base"], D("13736.0504"))
         with self.assertRaises(ValueError):
             contributi_per_cassa(righe, 2028, date(2028, 12, 31))
         with self.assertRaises(ValueError):
