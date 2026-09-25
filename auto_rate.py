@@ -1,6 +1,6 @@
 """Rate auto: test matematico del foglio, non trattamento fiscale validato.
 
-I 39.900 € di costo veicolo e 25.882,84 € di limite sono SOLO valori
+I 39.900 € di costo veicolo e 25.822,84 € di limite sono SOLO valori
 benchmark: non vengono memorizzati come caratteristiche di un veicolo reale.
 """
 from decimal import Decimal
@@ -16,7 +16,7 @@ CODICE = "rate_auto"
 NOTA_CATEGORIA = "Parametri di confronto dal foglio; verificare prima dell'uso reale."
 NOTA_TEST = "DATI DI PROVA - rata auto gennaio 2027 dal foglio originale"
 COSTO_AUTO_TEST = Decimal("39900.00")
-LIMITE_TEST = Decimal("25882.84")
+LIMITE_TEST = Decimal("25822.84")
 IVA_TEST = Decimal("0.22")
 DEDUCIBILITA_TEST = Decimal("0.8")
 

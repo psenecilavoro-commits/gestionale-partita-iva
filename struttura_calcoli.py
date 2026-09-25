@@ -69,24 +69,23 @@ def contributi_per_cassa(righe, anno, oggi=None):
 
 
 def scenario_cassa(ricavi, costi_deducibili, contributi, pensione, limite_pensione, p):
-    """Variante esplicita a cassa, distinta dalla riproduzione letterale del foglio.
+    """Scenario IRPEF per cassa sulle registrazioni effettive.
 
-    INPS A.P. è già nel totale INPS. Enasarco è sottratto una volta nella
-    base, mai dal fatturato. Nessuna stima INPS viene dedotta come versamento.
+    La deduzione agenti riduce il reddito d'impresa; INPS ed Enasarco entrano
+    nella base IRPEF soltanto per gli importi effettivamente pagati/trattenuti
+    nell'anno. Il fondo pensione è limitato ma non viene sottratto dal netto.
     """
+    from calcoli_fiscali import deduzione_agenti, calcola_irpef_da_base, parametri_agenti, parametri_irpef
     pensione_deducibile = min(denaro(pensione), denaro(limite_pensione))
-    base = (denaro(ricavi) - denaro(costi_deducibili)
-            - denaro(contributi["INPS"]) - denaro(contributi["ENASARCO"]) - pensione_deducibile)
-    from imposte_irpef import calcola_irpef_foglio
-    # Conserva la base negativa come perdita; nessuna imposta negativa nella variante.
-    _, irpef, regionale, comunale, totale = calcola_irpef_foglio(
-        max(base, D(0)), D(0), D(0), D(0), D(0), D(0),
-        *(p[k] for k in ("irpef_aliquota_1_foglio", "irpef_soglia_2_foglio",
-                         "irpef_aliquota_2_foglio", "irpef_soglia_3_foglio",
-                         "irpef_aliquota_3_foglio", "addizionale_veneto_foglio",
-                         "addizionale_verona_foglio")))
-    return {"fatturato": denaro(ricavi), "base": base, "pensione": pensione_deducibile,
-            "irpef": irpef, "regionale": regionale, "comunale": comunale, "totale": totale}
+    reddito = denaro(ricavi) - denaro(costi_deducibili)
+    ded_agenti = deduzione_agenti(max(reddito, D(0)), *parametri_agenti(p))
+    base = (reddito - ded_agenti - denaro(contributi["INPS"])
+            - denaro(contributi["ENASARCO"]) - pensione_deducibile)
+    tax = calcola_irpef_da_base(max(base, D(0)), **parametri_irpef(p))
+    return {"fatturato": denaro(ricavi), "deduzione_agenti": ded_agenti,
+            "base": base, "pensione": pensione_deducibile,
+            "irpef": tax["irpef_lorda"], "regionale": tax["addizionale_regionale"],
+            "comunale": tax["addizionale_comunale"], "totale": tax["imposte_lorde"]}
 
 
 def valida_periodo(r, anno, altri, oggi=None):

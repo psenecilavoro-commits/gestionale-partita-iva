@@ -5,10 +5,12 @@ from datetime import date
 import streamlit as st
 
 from accantonamenti_completi import mostra_accantonamenti
+from ammortamenti import mostra_ammortamenti
 from auth import current_user, get_client, sign_in, sign_out, reset_fiscal_inputs
 from auto import prepara_auto_unica
 from auto_spese_reali import mostra_spese_auto
 from contributi_versati import mostra_contributi_versati
+from conto_economico import mostra_conto_economico
 from costi_scheda import mostra_tabella_costi
 from database import create_fiscal_year, get_fiscal_year
 from fatture_acquisto_xml import mostra_importa_xml_acquisti
@@ -105,6 +107,7 @@ mostra_base(client, fiscal_year, conto_slot)
     scheda_conto_economico,
     scheda_imposte,
     scheda_detrazioni,
+    scheda_ammortamenti,
 ) = st.tabs([
     "Fatturato",
     "Costi",
@@ -113,6 +116,7 @@ mostra_base(client, fiscal_year, conto_slot)
     "Conto economico",
     "Imposte",
     "Detrazioni e deduzioni",
+    "Ammortamenti",
 ])
 
 with scheda_fatturato:
@@ -187,8 +191,8 @@ with scheda_accantonamenti:
     mostra_periodi_iva(client, fiscal_year)
 
 with scheda_conto_economico:
-    # La simulazione legacy richiedeva esclusivamente fatture e costi fittizi.
-    # Rimane testata internamente, ma non compare nell'interfaccia operativa.
+    mostra_conto_economico(client, fiscal_year)
+    st.divider()
     mostra_conto_registrato(client, fiscal_year)
 
 with scheda_imposte:
@@ -198,3 +202,6 @@ with scheda_imposte:
 with scheda_detrazioni:
     mostra_detrazioni_unificate(client, fiscal_year)
     mostra_pensione(client, fiscal_year)
+
+with scheda_ammortamenti:
+    mostra_ammortamenti(client, fiscal_year)

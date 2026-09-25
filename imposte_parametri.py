@@ -19,16 +19,24 @@ D = Decimal
 GRUPPI = (
     ("Enasarco", (
         ("enasarco_tasso_foglio", "Aliquota quota personale · scenario", "0.085", "RATE", "Fatturato!B19/E19/H19/K19"),
-        ("enasarco_massimale_pluri", "Massimale plurimandatario · scenario", "30057", "EUR", "Imposte!E1"),
-        ("enasarco_massimale_mono", "Massimale monomandatario · scenario", "45085", "EUR", "Imposte!E2"),
+        ("enasarco_massimale_pluri", "Massimale plurimandatario · riferimento 2026 provvisorio", "30478", "EUR", "Imposte!E1"),
+        ("enasarco_massimale_mono", "Massimale monomandatario · riferimento 2026 provvisorio", "45717", "EUR", "Imposte!E2"),
     )),
     ("INPS", (
         ("inps_fisso_foglio", "INPS fisso · scenario", "4611.64", "EUR", "Imposte!B5"),
-        ("inps_minimale_foglio", "Minimale · scenario", "18808.01", "EUR", "Imposte!E6"),
+        ("inps_minimale_foglio", "Minimale · riferimento 2026 provvisorio", "18808", "EUR", "Imposte!E6"),
         ("inps_aliquota_prima_foglio", "Aliquota prima fascia · scenario", "0.2448", "RATE", "Imposte!F6"),
         ("inps_soglia_seconda_foglio", "Soglia seconda fascia · scenario", "56224", "EUR", "Imposte!E7"),
         ("inps_aliquota_seconda_foglio", "Aliquota seconda fascia · scenario", "0.2548", "RATE", "Imposte!F7"),
         ("inps_massimale_foglio", "Massimale · scenario, da aggiornare", "122295", "EUR", "Imposte!E8"),
+    )),
+    ("Deduzione forfettaria agenti", (
+        ("agenti_soglia_1_foglio", "Prima soglia · modello definitivo", "6197.48", "EUR", "Imposte!E16"),
+        ("agenti_aliquota_1_foglio", "Aliquota prima fascia · modello definitivo", "0.03", "RATE", "Imposte!F16"),
+        ("agenti_soglia_2_foglio", "Seconda soglia · modello definitivo", "77468.53", "EUR", "Imposte!E17"),
+        ("agenti_aliquota_2_foglio", "Aliquota seconda fascia · modello definitivo", "0.01", "RATE", "Imposte!F17"),
+        ("agenti_soglia_3_foglio", "Terza soglia · modello definitivo", "92962.24", "EUR", "Imposte!E18"),
+        ("agenti_aliquota_3_foglio", "Aliquota terza fascia · modello definitivo", "0.005", "RATE", "Imposte!F18"),
     )),
     ("IRPEF e addizionali", (
         ("irpef_aliquota_1_foglio", "Aliquota prima fascia · scenario", "0.23", "RATE", "Imposte!F10"),
@@ -138,12 +146,11 @@ def mostra_imposte(client: Client, anno: dict) -> None:
         } for codice, descrizione, valore, unita, _cella in voci],
             hide_index=True, width="stretch")
         if nome_gruppo == "INPS":
-            st.caption("Il massimale 122.295 € è un parametro provvisorio di prova, "
-                       "non confermato per il 2027. I contributi di anni precedenti "
-                       "di 8.000 € sono un esempio, non pagamenti effettivi.")
+            st.caption("Minimale, soglia, aliquote e massimale sono riferimenti 2026 usati provvisoriamente per il 2027. "
+                       "I contributi di anni precedenti si deducono solo se effettivamente pagati nell'anno selezionato.")
         if nome_gruppo == "Enasarco":
-            st.caption("L'8,5% è un parametro di scenario: non è una trattenuta "
-                       "da applicare automaticamente al fatturato registrato.")
+            st.caption("L'8,5% è la quota personale del modello. I massimali 30.478 € / 45.717 € sono riferimenti 2026 "
+                       "provvisori per il 2027 e restano modificabili per anno.")
         if anno["status"] != "open":
             continue
         mancanti = [v for v in voci if v[0] not in presenti]

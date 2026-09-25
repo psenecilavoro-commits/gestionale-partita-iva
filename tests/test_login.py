@@ -59,7 +59,7 @@ class LoginTest(unittest.TestCase):
             app.text_input[1].set_value("test-password")
             app.button[0].click().run()
             self.assertEqual(list(app.exception), [])
-            self.assertEqual(len(app.tabs), 7)
+            self.assertEqual(len(app.tabs), 8)
             next(x for x in app.button if x.label == "Esci").click().run()
             self.assertEqual(list(app.exception), [])
             self.assertEqual(len(app.tabs), 0)
