@@ -53,7 +53,7 @@ def mostra_fatturato(client, anno: dict, mandanti: list[dict]) -> None:
                 importi.append(valore)
         riga["Totale mese"] = euro(sum(importi, D("0"))) if importi else "—"
         vista.append(riga)
-    st.dataframe(vista, hide_index=True, width="stretch")
+    st.dataframe(vista, hide_index=True, width="stretch", height="content")
     st.markdown("**Riepilogo per mandante**")
     st.dataframe([{
         "Mandante": r["nome"], "Mesi compilati": r["mesi"],
