@@ -262,6 +262,35 @@ def mostra_costi(client, anno: dict) -> None:
                 st.rerun()
 
 
+def valori_conto_2026(client, anno: dict) -> dict[str, D]:
+    """Restituisce gli stessi valori usati dalla tabella Conto economico 2026."""
+    p = _valori_parametri(client, anno["id"])
+    if p is None:
+        raise ValueError("Mancano i parametri importati dal file 2026.")
+    ricavi = leggi_fatturato(client, anno["id"])
+    if not ricavi:
+        raise ValueError("Non ci sono ancora ricavi 2026.")
+    fatturato = sum((D(str(r["amount"])) for r in ricavi), D("0"))
+    mesi = _mesi_compilati(ricavi)
+    mandanti = elenco_mandanti(client)
+    _righe, enasarco, mono = calcola_confronto(
+        mandanti, ricavi,
+        p["enasarco_tasso_foglio"], p["enasarco_massimale_pluri"],
+    )
+    if mono:
+        raise ValueError("Il confronto Enasarco del file richiede rapporti plurimandatari.")
+    _costi, totale_costi = costi_forfettario(client, anno["id"])
+    valori = calcola_modello_2026(
+        fatturato_registrato=fatturato,
+        mesi_compilati=mesi,
+        costi_annui=totale_costi,
+        enasarco=enasarco,
+        p=p,
+    )
+    valori["_mesi_proiezione"] = p["forfettario_mesi_proiezione"]
+    return valori
+
+
 def mostra_conto_economico(client, anno: dict) -> None:
     st.subheader("Conto economico · regime forfettario 2026")
     st.caption(
@@ -269,34 +298,10 @@ def mostra_conto_economico(client, anno: dict) -> None:
         "e costi economici separati dal reddito forfettario."
     )
     try:
-        p = _valori_parametri(client, anno["id"])
-        if p is None:
-            st.info("Mancano i parametri importati dal file 2026.")
-            return
-        ricavi = leggi_fatturato(client, anno["id"])
-        if not ricavi:
-            st.info("Non ci sono ancora ricavi 2026.")
-            return
-        fatturato = sum((D(str(r["amount"])) for r in ricavi), D("0"))
-        mesi = _mesi_compilati(ricavi)
-        mandanti = elenco_mandanti(client)
-        _righe, enasarco, mono = calcola_confronto(
-            mandanti, ricavi,
-            p["enasarco_tasso_foglio"], p["enasarco_massimale_pluri"],
-        )
-        if mono:
-            st.info("Il confronto Enasarco del file richiede rapporti plurimandatari.")
-            return
-        _costi, totale_costi = costi_forfettario(client, anno["id"])
-        valori = calcola_modello_2026(
-            fatturato_registrato=fatturato,
-            mesi_compilati=mesi,
-            costi_annui=totale_costi,
-            enasarco=enasarco,
-            p=p,
-        )
+        valori = valori_conto_2026(client, anno)
+        mesi_proiezione = valori["_mesi_proiezione"]
     except ValueError as exc:
-        st.warning(str(exc))
+        st.info(str(exc))
         return
     except Exception:
         st.error("Impossibile costruire il conto economico 2026.")
@@ -305,7 +310,7 @@ def mostra_conto_economico(client, anno: dict) -> None:
     st.dataframe([
         {"Voce": "Fatturato registrato", "Importo": _fmt(valori["fatturato_registrato"])},
         {"Voce": "Proiezione annualizzata 12 mesi", "Importo": _fmt(valori["proiezione_12_mesi"])},
-        {"Voce": f"Fatturato stimato file · {int(p['forfettario_mesi_proiezione'])} mesi",
+        {"Voce": f"Fatturato stimato file · {int(mesi_proiezione)} mesi",
          "Importo": _fmt(valori["fatturato_stimato"])},
         {"Voce": "Reddito forfettario · coefficiente 62%", "Importo": _fmt(valori["redditivita"])},
         {"Voce": "INPS eccedente prima della riduzione", "Importo": _fmt(valori["inps_eccedente"])},
