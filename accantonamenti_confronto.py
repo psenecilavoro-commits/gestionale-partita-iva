@@ -114,7 +114,7 @@ def mostra_confronto_accantonamenti(client: Client, anno: dict) -> None:
     st.divider()
     st.subheader("Residuo da accantonare")
     st.caption(
-        "Il calcolo usa gli stessi valori previsionalii del Conto economico e gli "
+        "Il calcolo usa gli stessi valori previsionali del Conto economico e gli "
         "accantonamenti già registrati. Non modifica automaticamente nessun mese."
     )
 
