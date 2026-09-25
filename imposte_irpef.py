@@ -1,179 +1,80 @@
-"""Scenario IRPEF e addizionali: nessun importo da versare calcolato.
-
-I contributi degli anni precedenti e il fondo pensione dimostrativi non sono
-pagamenti documentati e non sono salvati dal modulo.
-"""
-from decimal import Decimal, ROUND_HALF_UP
-
+"""Previsione IRPEF/addizionali allineata al modello definitivo 2027."""
+from decimal import Decimal as D, ROUND_HALF_UP
 import streamlit as st
 from supabase import Client
 
-from costi_tabella import _penale
-from fatturato import NOTA_TEST, euro, importo_valido, leggi_fatturato, riepilogo
+from calcoli_fiscali import calcola_inps_previsionale, calcola_irpef_da_base, parametri_agenti, parametri_irpef
+from fatturato import euro, importo_valido, leggi_fatturato, riepilogo
 from imposte_enasarco import calcola_confronto
 from imposte_inps import _nessun_altro_costo
 from mandanti import elenco_mandanti
 from riepilogo_costi import VOCI as VOCI_COSTI_TEST, calcola_riepilogo
 
-D = Decimal
-CENT = D("0.01")
-PARAMETRI = (
-    "enasarco_tasso_foglio", "enasarco_massimale_pluri", "inps_fisso_foglio",
-    "irpef_aliquota_1_foglio", "irpef_soglia_2_foglio", "irpef_aliquota_2_foglio",
-    "irpef_soglia_3_foglio", "irpef_aliquota_3_foglio",
-    "addizionale_veneto_foglio", "addizionale_verona_foglio",
+CENT=D("0.01")
+PARAMETRI=(
+ "enasarco_tasso_foglio","enasarco_massimale_pluri",
+ "inps_fisso_foglio","inps_minimale_foglio","inps_aliquota_prima_foglio",
+ "inps_soglia_seconda_foglio","inps_aliquota_seconda_foglio","inps_massimale_foglio",
+ "agenti_soglia_1_foglio","agenti_aliquota_1_foglio","agenti_soglia_2_foglio",
+ "agenti_aliquota_2_foglio","agenti_soglia_3_foglio","agenti_aliquota_3_foglio",
+ "irpef_aliquota_1_foglio","irpef_soglia_2_foglio","irpef_aliquota_2_foglio",
+ "irpef_soglia_3_foglio","irpef_aliquota_3_foglio",
+ "addizionale_veneto_foglio","addizionale_verona_foglio",
 )
 
+def calcola_irpef_foglio(base:D, prima:D,soglia_due:D,seconda:D,soglia_tre:D,
+                         terza:D,aliquota_veneto:D,aliquota_verona:D):
+    r=calcola_irpef_da_base(base,aliquota1=prima,soglia2=soglia_due,aliquota2=seconda,
+                            soglia3=soglia_tre,aliquota3=terza,
+                            addizionale_regionale=aliquota_veneto,
+                            addizionale_comunale=aliquota_verona)
+    return (r["imponibile_irpef"],r["irpef_lorda"],r["addizionale_regionale"],
+            r["addizionale_comunale"],r["imposte_lorde"])
 
-def calcola_irpef_foglio(
-    fatturato: D, deducibili: D, enasarco: D, contributi_ap: D,
-    inps_fisso: D, fondo_pensione: D, prima: D, soglia_due: D,
-    seconda: D, soglia_tre: D, terza: D, aliquota_veneto: D,
-    aliquota_verona: D,
-) -> tuple[D, D, D, D, D]:
-    """Formula di scenario senza arrotondamenti intermedi."""
-    valori = (
-        fatturato, deducibili, enasarco, contributi_ap, inps_fisso,
-        fondo_pensione, prima, soglia_due, seconda, soglia_tre, terza,
-        aliquota_veneto, aliquota_verona,
-    )
-    if any(not valore.is_finite() or valore < 0 for valore in valori):
-        raise ValueError("Valori non validi: servono importi e aliquote non negativi e finiti.")
-    if not D("0") < soglia_due < soglia_tre or any(
-        aliquota > D("1") for aliquota in
-        (prima, seconda, terza, aliquota_veneto, aliquota_verona)
-    ):
-        raise ValueError("Soglie o aliquote non coerenti: confrontiamole prima di continuare.")
-    imponibile = (fatturato - deducibili - enasarco - contributi_ap
-                  - inps_fisso - fondo_pensione)
-    if imponibile < soglia_due:
-        irpef = imponibile * prima
-    elif imponibile < soglia_tre:
-        irpef = soglia_due * prima + (imponibile - soglia_due) * seconda
-    else:
-        irpef = (soglia_due * prima + (soglia_tre - soglia_due) * seconda
-                 + (imponibile - soglia_tre) * terza)
-    veneto = imponibile * aliquota_veneto
-    verona = imponibile * aliquota_verona
-    return imponibile, irpef, veneto, verona, irpef + veneto + verona
+def _fmt(x): return euro(x.quantize(CENT,rounding=ROUND_HALF_UP))
 
-
-def _valuta(valore: D) -> str:
-    return euro(valore.quantize(CENT, rounding=ROUND_HALF_UP))
-
-
-def mostra_confronto_irpef(client: Client, anno: dict, presenti: dict) -> None:
-    st.divider()
-    st.subheader("IRPEF e addizionali · scenario")
-    st.caption("Imponibile ipotetico, IRPEF per scaglioni e addizionali Veneto e Verona. "
-               "Non determina imposte effettivamente dovute né un netto disponibile.")
-    if any(codice not in presenti for codice in PARAMETRI):
-        st.info("Per lo scenario occorrono i parametri Enasarco, INPS fisso e IRPEF.")
-        return
-    st.warning("I contributi precedenti di 8.000 € e il fondo pensione di 5.300 € sono "
-               "importi DIMOSTRATIVI, non pagamenti o deduzioni verificate per il 2027.")
-    if st.button("Usa importi dimostrativi (8.000 € e 5.300 €)", key="irpef_scenario_test"):
-        st.session_state["irpef_ap_confronto"] = "8000,00"
-        st.session_state["irpef_fondo_confronto"] = "5300,00"
-    c1, c2 = st.columns(2)
-    with c1:
-        testo_ap = st.text_input(
-            "Contributi anni precedenti versati nell'anno (€) · scenario",
-            key="irpef_ap_confronto", placeholder="Lascia vuoto finché non scegli lo scenario",
-        )
-    with c2:
-        testo_fondo = st.text_input(
-            "Fondo pensione (€) · scenario",
-            key="irpef_fondo_confronto", placeholder="Lascia vuoto finché non scegli lo scenario",
-        )
-    st.caption("Puoi modificare gli importi soltanto per una simulazione: nessuna cifra "
-               "viene salvata. Per indicare uno zero esplicito, scrivi 0.")
-    if not testo_ap.strip() or not testo_fondo.strip():
-        st.info("Inserisci entrambi gli importi oppure usa i valori dimostrativi.")
-        return
+def mostra_confronto_irpef(client:Client,anno:dict,presenti:dict)->None:
+    st.divider(); st.subheader("IRPEF e addizionali · previsione")
+    if any(k not in presenti for k in PARAMETRI):
+        st.info("Completa prima parametri INPS, Enasarco, deduzione agenti e IRPEF."); return
+    st.caption("La base IRPEF usa i contributi effettivamente pagati nell'anno. Qui puoi usare importi di scenario per confrontare il foglio definitivo.")
+    ap_txt=st.text_input("Contributi INPS di anni precedenti pagati nell'anno · scenario (€)",key="irpef_ap",placeholder="es. 8000,00")
+    fondo_txt=st.text_input("Fondo pensione deducibile · scenario (€)",key="irpef_fondo",placeholder="es. 5300,00")
+    if not ap_txt.strip() or not fondo_txt.strip(): return
     try:
-        ap = importo_valido(testo_ap)
-        fondo = importo_valido(testo_fondo)
-        mandanti = elenco_mandanti(client)
-        ricavi = leggi_fatturato(client, anno["id"])
-        if not mandanti or not ricavi or any(r.get("notes") != NOTA_TEST for r in ricavi):
-            st.info("Scenario sospeso: occorrono esclusivamente i fatturati di prova.")
-            return
-        risultati, _registrato, fatturato = riepilogo(mandanti, ricavi)
-        if fatturato is None or any(r["mesi"] == 0 for r in risultati):
-            st.info("Ogni mandante deve avere almeno un mese compilato.")
-            return
-        _dettagli, enasarco, mono = calcola_confronto(
-            mandanti, ricavi,
-            D(str(presenti["enasarco_tasso_foglio"]["value"])),
-            D(str(presenti["enasarco_massimale_pluri"]["value"])),
-        )
-        if mono:
-            st.info("Mandante monomandataria presente: serve un parametro specifico.")
-            return
-        costi, mancanti, non_test = calcola_riepilogo(client, anno["id"])
-        if non_test or mancanti or len(costi) != len(VOCI_COSTI_TEST) or not _nessun_altro_costo(client, anno["id"]):
-            st.info("Per lo scenario servono le sette voci di costo di prova, senza altre spese.")
-            return
-        impostazioni = (client.table("vehicle_year_settings")
-                        .select("vehicle_id,annual_km_limit,excess_km_penalty")
-                        .eq("fiscal_year_id", anno["id"]).execute()).data or []
-        km = (client.table("vehicle_monthly")
-              .select("vehicle_id,month,distance_km")
-              .eq("fiscal_year_id", anno["id"]).execute()).data or []
-        penale = _penale(impostazioni, km)
-        if penale is not None and penale != 0:
-            st.info("Penale chilometrica diversa da zero: completa i costi prima dello scenario.")
-            return
-        deducibili = sum((r["Deducibile"] for r in costi), D("0"))
-        p = {codice: D(str(presenti[codice]["value"])) for codice in PARAMETRI}
-        imponibile, irpef, veneto, verona, totale = calcola_irpef_foglio(
-            fatturato, deducibili, enasarco, ap, p["inps_fisso_foglio"], fondo,
-            p["irpef_aliquota_1_foglio"], p["irpef_soglia_2_foglio"],
-            p["irpef_aliquota_2_foglio"], p["irpef_soglia_3_foglio"],
-            p["irpef_aliquota_3_foglio"], p["addizionale_veneto_foglio"],
-            p["addizionale_verona_foglio"],
-        )
+        ap=importo_valido(ap_txt); fondo=importo_valido(fondo_txt)
+        mandanti=elenco_mandanti(client); ricavi=leggi_fatturato(client,anno["id"])
+        dati,_,fatturato=riepilogo(mandanti,ricavi)
+        if fatturato is None or any(x["mesi"]==0 for x in dati): st.info("Completa il fatturato."); return
+        p={k:D(str(presenti[k]["value"])) for k in PARAMETRI}
+        _,enasarco,mono=calcola_confronto(mandanti,ricavi,p["enasarco_tasso_foglio"],p["enasarco_massimale_pluri"])
+        if mono: st.info("Mandante monomandataria presente: completa i parametri specifici prima del confronto."); return
+        costi,mancanti,non_test=calcola_riepilogo(client,anno["id"])
+        if non_test or mancanti or len(costi)!=len(VOCI_COSTI_TEST) or not _nessun_altro_costo(client,anno["id"]):
+            st.info("Il confronto richiede le voci del modello complete."); return
+        ded=sum((r["Deducibile"] for r in costi),D("0"))
+        inps=calcola_inps_previsionale(fatturato,ded,fisso=p["inps_fisso_foglio"],
+             minimale=p["inps_minimale_foglio"],aliquota_prima=p["inps_aliquota_prima_foglio"],
+             soglia_seconda=p["inps_soglia_seconda_foglio"],aliquota_seconda=p["inps_aliquota_seconda_foglio"],
+             massimale=p["inps_massimale_foglio"],agenti=parametri_agenti(p))
+        # Il modello definitivo considera deducibili qui solo gli importi pagati:
+        # scenario = AP + quota fissa INPS assunta pagata nell'anno.
+        base=inps["imponibile_inps"]-enasarco-ap-p["inps_fisso_foglio"]-fondo
+        tax=calcola_irpef_da_base(base,**parametri_irpef(p))
     except ValueError as exc:
-        st.warning(str(exc))
-        return
+        st.warning(str(exc)); return
     except Exception:
-        st.error("Impossibile costruire lo scenario IRPEF. Nessun dato modificato.")
-        return
+        st.error("Impossibile costruire la previsione IRPEF."); return
     st.dataframe([
-        {"Passaggio": "Fatturato stimato invariato", "Importo": _valuta(fatturato)},
-        {"Passaggio": "Costi deducibili di prova", "Importo": _valuta(deducibili)},
-        {"Passaggio": "Enasarco separato", "Importo": _valuta(enasarco)},
-        {"Passaggio": "Contributi precedenti · scenario", "Importo": _valuta(ap)},
-        {"Passaggio": "INPS fisso · scenario", "Importo": _valuta(p["inps_fisso_foglio"])},
-        {"Passaggio": "Fondo pensione · scenario", "Importo": _valuta(fondo)},
-        {"Passaggio": "1 · Imponibile IRPEF · scenario", "Importo": _valuta(imponibile)},
-        {"Passaggio": "2 · IRPEF a scaglioni · scenario", "Importo": _valuta(irpef)},
-        {"Passaggio": "3 · Addizionale Veneto · scenario", "Importo": _valuta(veneto)},
-        {"Passaggio": "3 · Addizionale Verona · scenario", "Importo": _valuta(verona)},
-        {"Passaggio": "IRPEF e addizionali · totale ipotetico", "Importo": _valuta(totale)},
-    ], hide_index=True, width="stretch")
-    st.caption("Base ipotetica = fatturato − costi deducibili − Enasarco − "
-               "contributi anni precedenti − INPS fisso − fondo pensione. "
-               "Il fatturato registrato resta invariato.")
-    if (ap == D("8000") and fondo == D("5300") and
-            all(p[chiave] == valore for chiave, valore in (
-                ("enasarco_tasso_foglio", D("0.085")),
-                ("enasarco_massimale_pluri", D("30057")),
-                ("inps_fisso_foglio", D("4611.64")),
-                ("irpef_aliquota_1_foglio", D("0.23")),
-                ("irpef_soglia_2_foglio", D("28000")),
-                ("irpef_aliquota_2_foglio", D("0.33")),
-                ("irpef_soglia_3_foglio", D("50000")),
-                ("irpef_aliquota_3_foglio", D("0.43")),
-                ("addizionale_veneto_foglio", D("0.0123")),
-                ("addizionale_verona_foglio", D("0.008")),
-            ))):
-        attesi = (D("82033.56"), D("27474.43"), D("1009.01"), D("656.27"), D("29139.71"))
-        if all(val.quantize(CENT, rounding=ROUND_HALF_UP) == atteso
-               for val, atteso in zip((imponibile, irpef, veneto, verona, totale), attesi)):
-            st.success("Verifica numerica del caso dimostrativo riuscita.")
-        else:
-            st.warning("Il caso dimostrativo presenta differenze: controlla i dati a monte.")
-    st.warning("Prospetto di prova: non utilizzare i numeri come imposte da pagare "
-               "o come netto mensile. Versamenti e deduzioni vanno verificati separatamente.")
+      {"Passaggio":"Imponibile INPS di partenza","Importo":_fmt(inps["imponibile_inps"])},
+      {"Passaggio":"Enasarco stimato","Importo":_fmt(enasarco)},
+      {"Passaggio":"INPS anni precedenti pagato","Importo":_fmt(ap)},
+      {"Passaggio":"INPS fisso assunto pagato","Importo":_fmt(p["inps_fisso_foglio"])},
+      {"Passaggio":"Fondo pensione deducibile","Importo":_fmt(fondo)},
+      {"Passaggio":"Imponibile IRPEF","Importo":_fmt(tax["imponibile_irpef"])},
+      {"Passaggio":"IRPEF lorda","Importo":_fmt(tax["irpef_lorda"])},
+      {"Passaggio":"Addizionale Veneto","Importo":_fmt(tax["addizionale_regionale"])},
+      {"Passaggio":"Addizionale Verona","Importo":_fmt(tax["addizionale_comunale"])},
+      {"Passaggio":"IRPEF + addizionali prima delle detrazioni","Importo":_fmt(tax["imposte_lorde"])},
+    ],hide_index=True,width="stretch")
+    st.caption("L'INPS eccedente maturato ma non ancora pagato non viene dedotto dalla base IRPEF. Le detrazioni riducono l'imposta successivamente.")
