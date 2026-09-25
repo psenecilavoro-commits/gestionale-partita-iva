@@ -5,6 +5,8 @@ from decimal import Decimal
 import streamlit as st
 from supabase import Client
 
+from registri import leggi_tutti
+
 from auto_rate import CODICE as CODICE_RATE, NOTA_TEST as NOTA_RATE, quota_deducibile_test
 from costi import NOTA_CATEGORIA_TEST, _calcola, _euro_arrotondato
 
@@ -33,17 +35,23 @@ def _somma_mensile_per_veicolo(righe: list[dict]) -> Decimal:
 
 
 def calcola_riepilogo(client: Client, anno_id: str) -> tuple[list[dict], list[str], bool]:
-    cat = (client.table("cost_categories")
-           .select("id,code,name,vat_rate,vat_deductible_rate,cost_deductible_rate,deductible_limit,notes")
-           .eq("fiscal_year_id", anno_id).execute()).data or []
+    cat = leggi_tutti(
+        client, "cost_categories",
+        campi="id,code,name,vat_rate,vat_deductible_rate,cost_deductible_rate,deductible_limit,notes",
+        fiscal_year_id=anno_id,
+    )
     categorie = {c["code"]: c for c in cat if c["code"] in VOCI}
-    stime = (client.table("annual_cost_estimates")
-             .select("category_id,estimated_gross_amount,amount_includes_vat,notes")
-             .eq("fiscal_year_id", anno_id).execute()).data or []
+    stime = leggi_tutti(
+        client, "annual_cost_estimates",
+        campi="category_id,estimated_gross_amount,amount_includes_vat,notes",
+        fiscal_year_id=anno_id,
+    )
     per_categoria = {r["category_id"]: r for r in stime}
-    spese = (client.table("costs")
-             .select("category_id,vehicle_id,expense_date,gross_amount,amount_includes_vat,notes")
-             .eq("fiscal_year_id", anno_id).execute()).data or []
+    spese = leggi_tutti(
+        client, "costs",
+        campi="category_id,vehicle_id,expense_date,gross_amount,amount_includes_vat,notes",
+        fiscal_year_id=anno_id,
+    )
     spese_per_categoria = defaultdict(list)
     for r in spese:
         spese_per_categoria[r["category_id"]].append(r)
