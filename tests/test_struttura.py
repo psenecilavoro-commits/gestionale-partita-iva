@@ -66,6 +66,7 @@ class TestQuadro(unittest.TestCase):
         self.assertEqual(tabella[0]["Netto foglio · ipotesi (NON disponibile)"], "391,00 €")
         self.assertEqual(controlli[0]["Fatture IVA acquisti registrate"], 1)
         self.assertEqual(tabella[1]["Provvigioni nette"], "—")
+        self.assertNotIn("Stato", tabella[0])
 
     def test_senza_fatture_non_inventa_iva_zero(self):
         tabella, _ = costruisci_quadro(self.fatturati, self.nette, self.riserve, [], 2027)
