@@ -40,6 +40,7 @@ class TestRipartizioneSpese(unittest.TestCase):
         carburante = next(r for r in tabella if r["Voce"] == "Carburante")
         self.assertNotEqual(carburante["Registrato"], "—")
         self.assertNotEqual(carburante["Totale annuo stimato"], "—")
+        self.assertNotIn("Origine", carburante)
 
     def test_spesa_auto_solo_anno_e_data_non_futura(self):
         valida_spesa_auto("carburante", date(2027, 1, 3), Decimal("25.00"), 2027,
