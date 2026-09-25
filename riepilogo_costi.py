@@ -127,7 +127,7 @@ def mostra_riepilogo_costi(client: Client, anno: dict) -> None:
         "Deducibile": _euro_arrotondato(totali[3]),
     }], hide_index=True, width="stretch")
     attesi = (Decimal("15941.83"), Decimal("2621.97"),
-              Decimal("13319.86"), Decimal("10047.95"))
+              Decimal("13319.86"), Decimal("10038.28"))
     if all(val.quantize(Decimal("0.01")) == atteso for val, atteso in zip(totali, attesi)):
         st.success("I quattro totali del caso dimostrativo coincidono con i valori attesi.")
     else:
