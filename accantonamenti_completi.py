@@ -15,9 +15,13 @@ TABELLA_NETTE = "monthly_net_commissions"
 
 
 def leggi_provvigioni_nette(client: Client, anno_id: str) -> list[dict]:
-    risultato = (client.table(TABELLA_NETTE).select("id,month,amount")
-                 .eq("fiscal_year_id", anno_id).order("month").execute())
-    return risultato.data or []
+    from registri import leggi_tutti
+    righe = leggi_tutti(
+        client, TABELLA_NETTE,
+        campi="id,month,amount",
+        fiscal_year_id=anno_id,
+    )
+    return sorted(righe, key=lambda r: int(r["month"]))
 
 
 def salva_provvigione_netta(client: Client, anno_id: str, mese: int,
