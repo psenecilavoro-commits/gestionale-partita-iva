@@ -53,7 +53,7 @@ mostra_vendite(None, {"id": "test", "fiscal_year": date.today().year, "status": 
     def test_tutte_le_sezioni_vuote(self):
         app = self.run_app()
         self.assertEqual(list(app.exception), [])
-        self.assertEqual(len(app.tabs), 7)
+        self.assertEqual(len(app.tabs), 8)
         self.assertTrue(any("IVA vendite" in x.value for x in app.subheader))
 
     def test_migrazioni_assenti_degradano_senza_crash(self):
