@@ -320,9 +320,10 @@ def mostra_conto_economico(client, anno: dict) -> None:
          "Importo": _fmt(valori["netto_no_costi_ridotto_file_mese"])},
     ], hide_index=True, width="stretch")
     st.warning(
-        "Lo scenario «-35% INPS» è mantenuto esattamente come nel file 2026 e riduce "
-        "solo la quota eccedente. Va considerato un confronto del foglio, non una "
-        "certificazione della contribuzione effettivamente dovuta."
+        "Lo scenario «-35% INPS» è mantenuto esattamente come nel file 2026: "
+        "la seconda simulazione lascia invariata la voce INPS fissa e riduce del 35% "
+        "la quota eccedente. Prima di usarla fiscalmente va verificato se l'importo "
+        "fisso del file incorpora già l'agevolazione contributiva."
     )
 
 
