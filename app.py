@@ -5,6 +5,7 @@ from datetime import date
 import streamlit as st
 
 from accantonamenti_completi import mostra_accantonamenti
+from accantonamenti_confronto import mostra_confronto_accantonamenti
 from ammortamenti import mostra_ammortamenti
 from auth import current_user, get_client, sign_in, sign_out, reset_fiscal_inputs
 from auto import prepara_auto_unica
@@ -128,7 +129,7 @@ st.success(
         "Fatturato",
         "Costi",
         "Auto",
-        "Tabella accantonamenti",
+        "Accantonamenti",
         "Conto economico",
         "Imposte",
         "Detrazioni e deduzioni",
@@ -218,6 +219,7 @@ if scheda_auto.open:
 if scheda_accantonamenti.open:
     with scheda_accantonamenti:
         mostra_accantonamenti(client, fiscal_year)
+        mostra_confronto_accantonamenti(client, fiscal_year)
         mostra_carica_fatture(client, fiscal_year)
         if forfettario:
             st.info(
