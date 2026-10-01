@@ -1,6 +1,16 @@
 # Migrazione React / Cloudflare — checkpoint 2026-10-01
 
-## Ultimo stato verificato — leggere prima
+## Sessione collaudo gratuito — stato prioritario
+Supabase riconnesso: usare link_id link_6abe5d9a48cc81919d5364d1ffb82d7c (Primary, organizzazione Personale). L'altro collegamento è Lavoro: non usarlo.
+Utente ha autorizzato progetto separato GRATUITO. get_cost project ha restituito 0/mese, confermato; creato gestionale-partita-iva-collaudo, ref gbtvscldenpmvcvwognw, eu-west-1, ACTIVE_HEALTHY. NON creata branch Supabase a pagamento.
+Applicata migration personale_schema_staging_clone: 20 tabelle, 160 constraint, 82 policy identiche alla baseline, due funzioni piva e trigger originali. SQL in staging-schema.sql, colonne in staging-columns.json. Produzione letta solo per metadati. Nessun dato reale copiato.
+Due utenti artificiali di test creati nel solo nuovo progetto. Credenziali random locali in web/.staging-test-users.json, ignorate da Git. Non committare/pubblicare password. Dati sintetici demo-owner copiati all'utente test 0 con UUID nuovi; unit EUR nelle fixture dei parametri (nessuna formula modificata); solo 20 tabelle esistenti, nessuna delle 4 mancanti creata.
+Verifiche PASS: SQL ruolo authenticated isolamento SELECT/INSERT, identità anno immutabile, close/reopen. Node tests/staging-live.mjs: reale Auth password/JWT/getUser, isolamento utenti, insert cross-owner negato, close/reopen dal trasporto, anon senza dati, logout. Quattro test Node base e build passati. Seed-staging.mjs è UNA TANTUM, non rieseguirlo su DB già popolato.
+Cloudflare Pages collaudo configurato staging con nuova URL e chiave publishable; demo precedente sostituita al prossimo deploy. Nessuna chiave privilegiata. In main.jsx corretti limite spread file grandi e busy al cambio sessione; banner esplicito staging.
+AVVISO PARITÀ: RLS originale di monthly_reserves è owner-only, senza guardia anno chiuso; preservata identica. Il blocco UI dell'anno chiuso va collaudato; non attribuire al database protezioni assenti e non cambiarle senza richiesta. Quattro tabelle IVA/pensione citate sotto ancora assenti anche in staging; preservati errori originali.
+Prossimo passo: verificare deploy del checkpoint su gestionale-partita-iva-collaudo.pages.dev, login con utente sintetico locale, tutte le 16 viste e flussi scrittura, anno chiuso/riaperto UI; completare PDF/OCR e controlli concorrenza/mutazioni prima di produzione. Mai ricreare progetto o ripetere seed. Stato migrazione ancora incompleto.
+
+## Stato sessione precedente — contesto
 
 Collaudo Cloudflare pubblicato: https://gestionale-partita-iva-collaudo.pages.dev/ . Progetto Pages separato gestionale-partita-iva-collaudo, deployment 991f691f-3428-457b-9603-8f5798d8fbf7, sorgente d09f661a3804f60aa0ab6d112ea738fbee6c1dd7. Browser remoto verificato: motore locale avviato, Fatturato e Accantonamenti 2026; residuo sintetico 4.271,16 / 4 = 1.067,79. Nessun backend reale collegato.
 

@@ -22,3 +22,5 @@ web/node_modules/
 web/dist/
 web/public/runtime/
 web/public/engine.json
+web/.staging-test-users.json
+web/.env.local
