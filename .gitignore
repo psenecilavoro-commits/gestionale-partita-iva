@@ -16,3 +16,9 @@ venv/
 Thumbs.db
 .vscode/
 .idea/
+
+# React build and browser runtime
+web/node_modules/
+web/dist/
+web/public/runtime/
+web/public/engine.json

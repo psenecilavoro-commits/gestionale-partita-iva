@@ -1,5 +1,23 @@
 # Migrazione React / Cloudflare — checkpoint 2026-10-01
 
+## Aggiornamento della seconda sessione — leggere prima
+
+La migrazione ha ora un frontend React compilabile in web/, con tutte le otto schede rese attraverso un adattatore dichiarativo. Le formule dei 48 moduli Python della baseline sono eseguite localmente con Pyodide/Decimal in un Web Worker; nessun server Streamlit e nessuna riscrittura delle formule. Hash sorgenti in engine-manifest.json. Asset engine.json.gz ricostruibile con migration/build_engine.py.
+
+Il riferimento Ordini effettivamente in produzione NON è main: Cloudflare usa release/produzione-050-prospect, commit 19a7f7122af3ca74f5dc5845ac7ab67d9cd031ab. Ispezionata quella branch in sola lettura: React 18.3.1, Vite 6.4.3, Supabase JS 2.117.2, sidebar responsive e build separate. Il vecchio paragrafo su main più sotto è solo lo stato della prima sessione.
+
+Account Cloudflare verificato: 38e2b19e30fa3cead0657000448218d2. Nessuna modifica a Ordini o ai suoi database. Strumenti Cloudflare ora disponibili e OAuth funzionante.
+
+Validazione eseguita: 50 test originali CPython; 3 test bridge CPython (16 viste, entrambi i regimi, niente errori); 4 test Node (runtime Pyodide su 16 viste, riparto Decimal, isolamento config staging/production, paginazione); build Vite riuscita. Browser locale verificato Fatturato 2026, sidebar con conto economico e Accantonamenti con riparto automatico sui quattro mesi vuoti, usando esclusivamente dati sintetici.
+
+Modalità demo di default: nessuna credenziale, nessun collegamento a Supabase, modifiche solo in memoria e reset ricaricando. Trasporto Supabase predisposto con publishable key, getUser prima delle scritture, JWT utente/RLS esistente, filtri versione, verifica righe restituite e rimappatura ID dei record nuovi. NON ancora collaudato con un Supabase di staging: non abilitare produzione.
+
+Limiti da risolvere: PDF/OCR (pypdf/pypdfium2/PIL/pytesseract originali non ancora adattati al browser); validazione live auth/RLS/concorrenza/mutazioni multiple e flussi completi. Quattro tabelle usate dal codice originale risultano assenti dal database attuale: sales_vat_invoices, vat_periods, pension_payments, purchase_cost_links. In demo sono vuote per collaudare le viste; in produzione non creare nulla e conservare gli errori originali finché non si chiarisce la discrepanza.
+
+Il tool Supabase get_cost ha restituito Unknown tool, non un prezzo: non assumere la disponibilità/costo di branching e non creare risorse a pagamento. Prima del live collaudo serve un backend separato Personale con schema/policy identici e soli dati sintetici. Nessun dato o policy di produzione modificato.
+
+Prossimo passo: pubblicare/verificare il progetto Pages distinto gestionale-partita-iva-collaudo dalla branch migration/react-cloudflare con root web, build pnpm build, output dist e modalità demo; poi completare PDF/OCR e il backend di staging. Aggiornare qui URL e commit del deploy quando verificati. Il server preview locale va fermato prima di finire la sessione; nessun lavoro in background.
+
 ## Riprendere qui, senza ricominciare
 
 - Repository: psenecilavoro-commits/gestionale-partita-iva.

@@ -1,0 +1,97 @@
+import React,{useState,useEffect,useRef} from 'react';
+import {createRoot} from 'react-dom/client';
+import {Calculator,Menu,ShieldCheck} from 'lucide-react';
+import {configuredClient,readTable,applyMutations} from './data.js';
+import './style.css';
+
+const NAV=['Fatturato','Costi','Auto','Accantonamenti','Conto economico','Imposte','Detrazioni e deduzioni','Ammortamenti'];
+const client=configuredClient();
+function Table({records}){
+  if(!Array.isArray(records))return <p>Nessuna riga disponibile.</p>;
+  const cols=[...new Set(records.flatMap(r=>Object.keys(r)))];
+  return <div className="table-scroll"><table><thead><tr>{cols.map(c=><th key={c}>{c}</th>)}</tr></thead><tbody>{records.map((r,i)=><tr key={i}>{cols.map(c=><td key={c}>{r[c]===null?'—':String(r[c]??'')}</td>)}</tr>)}</tbody></table></div>;
+}
+function Nodes({nodes=[],values,onChange,onClick,busy}){
+  return nodes.map(n=>{
+    const children=<Nodes nodes={n.children} values={values} onChange={onChange} onClick={onClick} busy={busy}/>;
+    const value=values[n.key]??n.value;
+    const change=v=>onChange(n.key,v);
+    let el;
+    switch(n.kind){
+      case 'title':el=<h1>{n.label}</h1>;break;
+      case 'subheader':el=<h2>{n.label}</h2>;break;
+      case 'caption':el=<p className="caption">{n.label}</p>;break;
+      case 'markdown':case 'write':case 'code':el=<p style={{whiteSpace:'pre-wrap'}}>{n.label}</p>;break;
+      case 'info':case 'warning':case 'error':case 'success':el=<p role={n.kind==='error'?'alert':undefined} className={`notice ${n.kind}`}>{n.label}</p>;break;
+      case 'table':el=<Table records={n.records}/>;break;
+      case 'metric':el=<div className="metric"><small>{n.label}</small><strong>{String(n.value)}</strong></div>;break;
+      case 'divider':el=<hr/>;break;
+      case 'button':el=<button disabled={busy||n.disabled} onClick={()=>onClick(n.key)}>{n.label}</button>;break;
+      case 'text_input':case 'number_input':case 'date_input':el=<label>{n.label}<input disabled={busy||n.disabled} type={n.kind==='date_input'?'date':n.kind==='number_input'?'number':n.type==='password'?'password':'text'} value={value??''} min={n.min_value} max={n.max_value} step={n.step} placeholder={n.placeholder} onChange={e=>change(n.kind==='number_input'?Number(e.target.value):e.target.value)}/></label>;break;
+      case 'checkbox':el=<label className="check"><input type="checkbox" disabled={busy||n.disabled} checked={Boolean(value)} onChange={e=>change(e.target.checked)}/>{n.label}</label>;break;
+      case 'radio':case 'selectbox':el=<label>{n.label}<select disabled={busy||n.disabled} value={n.options.findIndex(o=>o===value)} onChange={e=>change(n.options[Number(e.target.value)])}>{n.options.map((o,i)=><option key={i} value={i}>{n.option_labels[i]}</option>)}</select></label>;break;
+      case 'file_uploader':el=<label>{n.label}<input type="file" multiple={n.accept_multiple_files} disabled={busy} onChange={async e=>{const files=await Promise.all([...e.target.files].map(async f=>({name:f.name,base64:btoa(String.fromCharCode(...new Uint8Array(await f.arrayBuffer())))})));change(n.accept_multiple_files?files:files[0]);}}/></label>;break;
+      case 'tabs':el=n.key==='schede_principali'?null:<div className="columns">{n.options.map(o=><button key={o} disabled={busy} onClick={()=>onChange(n.key,o)}>{o}</button>)}</div>;break;
+      case 'tab':el=n.hidden?null:<section className="card">{children}</section>;break;
+      case 'form':el=<div className="form">{children}</div>;break;
+      case 'expander':case 'popover':el=<details><summary>{n.label}</summary>{children}</details>;break;
+      case 'columns':el=<div className="columns">{children}</div>;break;
+      case 'column':case 'container':case 'placeholder':case 'spinner':el=<div>{children}</div>;break;
+      case 'link':el=<a href={n.url} target="_blank" rel="noreferrer">{n.label}</a>;break;
+      case 'download':el=<button onClick={()=>{const bytes=Uint8Array.from(atob(n.data.base64),c=>c.charCodeAt(0));const url=URL.createObjectURL(new Blob([bytes],{type:n.mime}));const a=document.createElement('a');a.href=url;a.download=n.file_name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}}>{n.label}</button>;break;
+      default:el=<p role="alert">Elemento da completare: {n.kind}</p>;
+    }
+    return <React.Fragment key={n.id}>{el}</React.Fragment>;
+  });
+}
+function App(){
+  const [user,setUser]=useState(client?null:{id:'demo-owner',email:'Collaudo · dati sintetici'});
+  const [result,setResult]=useState(null),[values,setValues]=useState({}),[busy,setBusy]=useState(false),[error,setError]=useState(''),[mobile,setMobile]=useState(false);
+  const worker=useRef(),tables=useRef(),pending=useRef(new Map()),seq=useRef(0),epoch=useRef(0);
+  const currentValues=useRef({});
+  useEffect(()=>{
+    worker.current=new Worker(new URL('./engine.worker.js',import.meta.url),{type:'module'});
+    worker.current.onmessage=({data})=>{const p=pending.current.get(data.id);pending.current.delete(data.id);if(data.error)p?.reject(Error(data.error));else p?.resolve(data.result);};
+    return()=>worker.current.terminate();
+  },[]);
+  useEffect(()=>{
+    if(!client)return;
+    client.auth.getUser().then(({data})=>setUser(data.user));
+    const {data}=client.auth.onAuthStateChange((_event,session)=>{epoch.current++;tables.current=null;currentValues.current={};setValues({});setResult(null);setUser(session?.user??null);});
+    return()=>data.subscription.unsubscribe();
+  },[]);
+  async function load(){
+    if(!client){tables.current=await (await fetch('/demo.json')).json();return;}
+    const schema=await (await fetch('/schema.json')).json();
+    const pairs=await Promise.all(schema.tables.map(async t=>[t.name,await readTable(client,t.name)]));
+    tables.current=Object.fromEntries(pairs);
+  }
+  async function run(event,inputs=currentValues.current){
+    const ticket=epoch.current;setBusy(true);setError('');
+    try{
+      if(!tables.current)await load();
+      const evaluate=()=>new Promise((resolve,reject)=>{const id=++seq.current;pending.current.set(id,{resolve,reject});worker.current.postMessage({id,request:{tables:tables.current,user,event,inputs}});});
+      let next=await evaluate();
+      if(ticket!==epoch.current)return;
+      if(next.mutations.length){
+        if(client){await applyMutations(client,next.mutations);await load();}
+        else tables.current=next.tables;
+        event=null;next=await evaluate();
+      }
+      if(ticket===epoch.current){setResult(next);currentValues.current=next.inputs;setValues(next.inputs);}
+    }catch(e){if(ticket===epoch.current)setError(e.message);}
+    finally{if(ticket===epoch.current)setBusy(false);}
+  }
+  useEffect(()=>{if(user)run(null);},[user]);
+  function change(key,value){
+    if(key==='anno_fiscale_selezionato'){currentValues.current={};setResult(null);}
+    currentValues.current={...currentValues.current,[key]:value};setValues(currentValues.current);
+    if(key==='anno_fiscale_selezionato'||key==='schede_principali'||typeof value==='boolean'||Array.isArray(value)||typeof value==='number')run(null);
+    else if(['selectbox','radio','tabs','file_uploader'].includes(findKind(result?.tree,key)))run(null);
+  }
+  function findKind(nodes,key){for(const n of nodes||[]){if(n.key===key)return n.kind;const found=findKind(n.children,key);if(found)return found;}return null;}
+  async function login(e){e.preventDefault();setBusy(true);setError('');const f=new FormData(e.target);const {error}=await client.auth.signInWithPassword({email:String(f.get('email')).trim(),password:String(f.get('password'))});e.target.reset();setBusy(false);if(error)setError('Accesso non riuscito. Controlla le credenziali.');}
+  const page=values.schede_principali||'Fatturato';
+  return <div className="shell"><aside className={mobile?'sidebar shown':'sidebar'}><div className="brand"><Calculator/><div><strong>Gestionale</strong><small>Partita IVA · Personale</small></div></div><nav>{NAV.map(p=><button key={p} className={page===p?'active':''} aria-current={page===p?'page':undefined} disabled={busy||!user} onClick={()=>{change('schede_principali',p);setMobile(false);}}>{p}</button>)}</nav><Nodes nodes={result?.sidebar.filter(n=>!['Utente autenticato',user?.email,'Esci'].includes(n.label))} values={values} onChange={change} onClick={event=>run(event)} busy={busy}/><footer><ShieldCheck size={16}/> {client?'Accesso protetto':'Collaudo isolato'}<small>{user?.email}</small></footer></aside><main><button className="menu" onClick={()=>setMobile(!mobile)} aria-label="Apri menu"><Menu/></button><div className="banner">{client?'Gestionale Partita IVA':'AMBIENTE DI COLLAUDO · dati sintetici · nessun collegamento al database reale'}</div>{client&&user&&<button onClick={async()=>{await client.auth.signOut({scope:'local'});}}>Esci</button>}{error&&<p role="alert" className="notice error">{error}</p>}{!user?<form onSubmit={login} className="login"><h1>Accedi</h1><label>Email<input name="email" type="email" required autoComplete="username"/></label><label>Password<input name="password" type="password" required autoComplete="current-password"/></label><button disabled={busy}>Accedi</button></form>:<>{busy&&<p role="status">{result?'Aggiornamento…':'Preparazione del gestionale e del motore di calcolo…'}</p>}<Nodes nodes={result?.tree} values={values} onChange={change} onClick={event=>run(event)} busy={busy}/><button disabled={busy} onClick={()=>run(null)}>Aggiorna prospetto</button></>}</main></div>;
+}
+createRoot(document.getElementById('root')).render(<App/>);

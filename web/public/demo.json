@@ -1,0 +1,1333 @@
+{
+  "annual_cost_estimates": [
+    {
+      "id": "demo-year-2026-cat-commercialista-estimate",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2026",
+      "category_id": "demo-year-2026-cat-commercialista",
+      "estimated_gross_amount": "3000.00",
+      "amount_includes_vat": true,
+      "notes": "DATI DI PROVA - costo Commercialista dal foglio originale"
+    },
+    {
+      "id": "demo-year-2026-cat-bollo-estimate",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2026",
+      "category_id": "demo-year-2026-cat-bollo",
+      "estimated_gross_amount": "340.97",
+      "amount_includes_vat": true,
+      "notes": "DATI DI PROVA - costo Bollo dal foglio originale"
+    },
+    {
+      "id": "demo-year-2026-cat-assicurazione-estimate",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2026",
+      "category_id": "demo-year-2026-cat-assicurazione",
+      "estimated_gross_amount": "1060.86",
+      "amount_includes_vat": true,
+      "notes": "DATI DI PROVA - costo Assicurazione dal foglio originale"
+    },
+    {
+      "id": "demo-year-2027-cat-commercialista-estimate",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2027",
+      "category_id": "demo-year-2027-cat-commercialista",
+      "estimated_gross_amount": "3000.00",
+      "amount_includes_vat": true,
+      "notes": "DATI DI PROVA - costo Commercialista dal foglio originale"
+    },
+    {
+      "id": "demo-year-2027-cat-bollo-estimate",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2027",
+      "category_id": "demo-year-2027-cat-bollo",
+      "estimated_gross_amount": "340.97",
+      "amount_includes_vat": true,
+      "notes": "DATI DI PROVA - costo Bollo dal foglio originale"
+    },
+    {
+      "id": "demo-year-2027-cat-assicurazione-estimate",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2027",
+      "category_id": "demo-year-2027-cat-assicurazione",
+      "estimated_gross_amount": "1060.86",
+      "amount_includes_vat": true,
+      "notes": "DATI DI PROVA - costo Assicurazione dal foglio originale"
+    }
+  ],
+  "annual_settings": [],
+  "contributions": [],
+  "cost_categories": [
+    {
+      "id": "demo-year-2026-cat-commercialista",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2026",
+      "code": "commercialista",
+      "name": "Commercialista",
+      "vat_rate": "0.22",
+      "vat_deductible_rate": "1",
+      "cost_deductible_rate": "1",
+      "deductible_limit": null,
+      "active": true,
+      "notes": "Parametri di confronto dal foglio; verificare prima dell'uso reale."
+    },
+    {
+      "id": "demo-year-2026-cat-bollo",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2026",
+      "code": "bollo",
+      "name": "Bollo",
+      "vat_rate": "0",
+      "vat_deductible_rate": "0",
+      "cost_deductible_rate": "0.8",
+      "deductible_limit": null,
+      "active": true,
+      "notes": "Parametri di confronto dal foglio; verificare prima dell'uso reale."
+    },
+    {
+      "id": "demo-year-2026-cat-assicurazione",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2026",
+      "code": "assicurazione",
+      "name": "Assicurazione",
+      "vat_rate": "0",
+      "vat_deductible_rate": "0",
+      "cost_deductible_rate": "0.8",
+      "deductible_limit": null,
+      "active": true,
+      "notes": "Parametri di confronto dal foglio; verificare prima dell'uso reale."
+    },
+    {
+      "id": "demo-year-2026-cat-carburante",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2026",
+      "code": "carburante",
+      "name": "Carburante",
+      "vat_rate": "0.22",
+      "vat_deductible_rate": "1",
+      "cost_deductible_rate": "0.8",
+      "deductible_limit": null,
+      "active": true,
+      "notes": "Parametri di confronto dal foglio; verificare prima dell'uso reale."
+    },
+    {
+      "id": "demo-year-2026-cat-autostrada",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2026",
+      "code": "autostrada",
+      "name": "Autostrada",
+      "vat_rate": "0.22",
+      "vat_deductible_rate": "1",
+      "cost_deductible_rate": "0.8",
+      "deductible_limit": null,
+      "active": true,
+      "notes": "Parametri di confronto dal foglio; verificare prima dell'uso reale."
+    },
+    {
+      "id": "demo-year-2026-cat-rate_auto",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2026",
+      "code": "rate_auto",
+      "name": "Rate Auto",
+      "vat_rate": "0.22",
+      "vat_deductible_rate": "1",
+      "cost_deductible_rate": "0.8",
+      "deductible_limit": null,
+      "active": true,
+      "notes": "Parametri di confronto dal foglio; verificare prima dell'uso reale."
+    },
+    {
+      "id": "demo-year-2027-cat-commercialista",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2027",
+      "code": "commercialista",
+      "name": "Commercialista",
+      "vat_rate": "0.22",
+      "vat_deductible_rate": "1",
+      "cost_deductible_rate": "1",
+      "deductible_limit": null,
+      "active": true,
+      "notes": "Parametri di confronto dal foglio; verificare prima dell'uso reale."
+    },
+    {
+      "id": "demo-year-2027-cat-bollo",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2027",
+      "code": "bollo",
+      "name": "Bollo",
+      "vat_rate": "0",
+      "vat_deductible_rate": "0",
+      "cost_deductible_rate": "0.8",
+      "deductible_limit": null,
+      "active": true,
+      "notes": "Parametri di confronto dal foglio; verificare prima dell'uso reale."
+    },
+    {
+      "id": "demo-year-2027-cat-assicurazione",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2027",
+      "code": "assicurazione",
+      "name": "Assicurazione",
+      "vat_rate": "0",
+      "vat_deductible_rate": "0",
+      "cost_deductible_rate": "0.8",
+      "deductible_limit": null,
+      "active": true,
+      "notes": "Parametri di confronto dal foglio; verificare prima dell'uso reale."
+    },
+    {
+      "id": "demo-year-2027-cat-carburante",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2027",
+      "code": "carburante",
+      "name": "Carburante",
+      "vat_rate": "0.22",
+      "vat_deductible_rate": "1",
+      "cost_deductible_rate": "0.8",
+      "deductible_limit": null,
+      "active": true,
+      "notes": "Parametri di confronto dal foglio; verificare prima dell'uso reale."
+    },
+    {
+      "id": "demo-year-2027-cat-autostrada",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2027",
+      "code": "autostrada",
+      "name": "Autostrada",
+      "vat_rate": "0.22",
+      "vat_deductible_rate": "1",
+      "cost_deductible_rate": "0.8",
+      "deductible_limit": null,
+      "active": true,
+      "notes": "Parametri di confronto dal foglio; verificare prima dell'uso reale."
+    },
+    {
+      "id": "demo-year-2027-cat-rate_auto",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2027",
+      "code": "rate_auto",
+      "name": "Rate Auto",
+      "vat_rate": "0.22",
+      "vat_deductible_rate": "1",
+      "cost_deductible_rate": "0.8",
+      "deductible_limit": null,
+      "active": true,
+      "notes": "Parametri di confronto dal foglio; verificare prima dell'uso reale."
+    }
+  ],
+  "costs": [
+    {
+      "id": "demo-year-2026-cat-carburante-cost",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2026",
+      "category_id": "demo-year-2026-cat-carburante",
+      "vehicle_id": "demo-vehicle",
+      "expense_date": "2026-01-01",
+      "payment_date": null,
+      "description": "DATI SINTETICI DI COLLAUDO",
+      "gross_amount": "100.00",
+      "amount_includes_vat": true,
+      "vat_rate": "0.22",
+      "vat_deductible_rate": "1",
+      "cost_deductible_rate": "0.8",
+      "deductible_limit": null,
+      "fiscal_competence_year": 2026,
+      "notes": "DATI DI PROVA - carburante gennaio 2027 dal foglio originale"
+    },
+    {
+      "id": "demo-year-2026-cat-autostrada-cost",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2026",
+      "category_id": "demo-year-2026-cat-autostrada",
+      "vehicle_id": "demo-vehicle",
+      "expense_date": "2026-01-01",
+      "payment_date": null,
+      "description": "DATI SINTETICI DI COLLAUDO",
+      "gross_amount": "100.00",
+      "amount_includes_vat": true,
+      "vat_rate": "0.22",
+      "vat_deductible_rate": "1",
+      "cost_deductible_rate": "0.8",
+      "deductible_limit": null,
+      "fiscal_competence_year": 2026,
+      "notes": "DATI DI PROVA - autostrada gennaio 2027 dal foglio originale"
+    },
+    {
+      "id": "demo-year-2026-cat-rate_auto-cost",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2026",
+      "category_id": "demo-year-2026-cat-rate_auto",
+      "vehicle_id": "demo-vehicle",
+      "expense_date": "2026-01-01",
+      "payment_date": null,
+      "description": "DATI SINTETICI DI COLLAUDO",
+      "gross_amount": "100.00",
+      "amount_includes_vat": true,
+      "vat_rate": "0.22",
+      "vat_deductible_rate": "1",
+      "cost_deductible_rate": "0.8",
+      "deductible_limit": null,
+      "fiscal_competence_year": 2026,
+      "notes": "DATI DI PROVA - rata auto gennaio 2027 dal foglio originale"
+    },
+    {
+      "id": "demo-year-2027-cat-carburante-cost",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2027",
+      "category_id": "demo-year-2027-cat-carburante",
+      "vehicle_id": "demo-vehicle",
+      "expense_date": "2027-01-01",
+      "payment_date": null,
+      "description": "DATI SINTETICI DI COLLAUDO",
+      "gross_amount": "100.00",
+      "amount_includes_vat": true,
+      "vat_rate": "0.22",
+      "vat_deductible_rate": "1",
+      "cost_deductible_rate": "0.8",
+      "deductible_limit": null,
+      "fiscal_competence_year": 2027,
+      "notes": "DATI DI PROVA - carburante gennaio 2027 dal foglio originale"
+    },
+    {
+      "id": "demo-year-2027-cat-autostrada-cost",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2027",
+      "category_id": "demo-year-2027-cat-autostrada",
+      "vehicle_id": "demo-vehicle",
+      "expense_date": "2027-01-01",
+      "payment_date": null,
+      "description": "DATI SINTETICI DI COLLAUDO",
+      "gross_amount": "100.00",
+      "amount_includes_vat": true,
+      "vat_rate": "0.22",
+      "vat_deductible_rate": "1",
+      "cost_deductible_rate": "0.8",
+      "deductible_limit": null,
+      "fiscal_competence_year": 2027,
+      "notes": "DATI DI PROVA - autostrada gennaio 2027 dal foglio originale"
+    },
+    {
+      "id": "demo-year-2027-cat-rate_auto-cost",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2027",
+      "category_id": "demo-year-2027-cat-rate_auto",
+      "vehicle_id": "demo-vehicle",
+      "expense_date": "2027-01-01",
+      "payment_date": null,
+      "description": "DATI SINTETICI DI COLLAUDO",
+      "gross_amount": "100.00",
+      "amount_includes_vat": true,
+      "vat_rate": "0.22",
+      "vat_deductible_rate": "1",
+      "cost_deductible_rate": "0.8",
+      "deductible_limit": null,
+      "fiscal_competence_year": 2027,
+      "notes": "DATI DI PROVA - rata auto gennaio 2027 dal foglio originale"
+    }
+  ],
+  "depreciable_assets": [],
+  "estimate_monthly_allocations": [],
+  "fiscal_parameters": [
+    {
+      "id": "demo-year-2026-p-enasarco_tasso_foglio",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2026",
+      "code": "enasarco_tasso_foglio",
+      "value": "0.085",
+      "description": "enasarco_tasso_foglio",
+      "unit": "numero",
+      "source": "DATI SINTETICI DI COLLAUDO",
+      "is_provisional": true
+    },
+    {
+      "id": "demo-year-2026-p-enasarco_massimale_pluri",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2026",
+      "code": "enasarco_massimale_pluri",
+      "value": "30478",
+      "description": "enasarco_massimale_pluri",
+      "unit": "numero",
+      "source": "DATI SINTETICI DI COLLAUDO",
+      "is_provisional": true
+    },
+    {
+      "id": "demo-year-2026-p-enasarco_massimale_mono",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2026",
+      "code": "enasarco_massimale_mono",
+      "value": "45717",
+      "description": "enasarco_massimale_mono",
+      "unit": "numero",
+      "source": "DATI SINTETICI DI COLLAUDO",
+      "is_provisional": true
+    },
+    {
+      "id": "demo-year-2026-p-inps_fisso_foglio",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2026",
+      "code": "inps_fisso_foglio",
+      "value": "3031.76",
+      "description": "inps_fisso_foglio",
+      "unit": "numero",
+      "source": "DATI SINTETICI DI COLLAUDO",
+      "is_provisional": true
+    },
+    {
+      "id": "demo-year-2026-p-inps_minimale_foglio",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2026",
+      "code": "inps_minimale_foglio",
+      "value": "18808.01",
+      "description": "inps_minimale_foglio",
+      "unit": "numero",
+      "source": "DATI SINTETICI DI COLLAUDO",
+      "is_provisional": true
+    },
+    {
+      "id": "demo-year-2026-p-inps_aliquota_prima_foglio",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2026",
+      "code": "inps_aliquota_prima_foglio",
+      "value": "0.2448",
+      "description": "inps_aliquota_prima_foglio",
+      "unit": "numero",
+      "source": "DATI SINTETICI DI COLLAUDO",
+      "is_provisional": true
+    },
+    {
+      "id": "demo-year-2026-p-inps_soglia_seconda_foglio",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2026",
+      "code": "inps_soglia_seconda_foglio",
+      "value": "56224",
+      "description": "inps_soglia_seconda_foglio",
+      "unit": "numero",
+      "source": "DATI SINTETICI DI COLLAUDO",
+      "is_provisional": true
+    },
+    {
+      "id": "demo-year-2026-p-inps_aliquota_seconda_foglio",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2026",
+      "code": "inps_aliquota_seconda_foglio",
+      "value": "0.2548",
+      "description": "inps_aliquota_seconda_foglio",
+      "unit": "numero",
+      "source": "DATI SINTETICI DI COLLAUDO",
+      "is_provisional": true
+    },
+    {
+      "id": "demo-year-2026-p-inps_massimale_foglio",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2026",
+      "code": "inps_massimale_foglio",
+      "value": "122295",
+      "description": "inps_massimale_foglio",
+      "unit": "numero",
+      "source": "DATI SINTETICI DI COLLAUDO",
+      "is_provisional": true
+    },
+    {
+      "id": "demo-year-2026-p-agenti_soglia_1_foglio",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2026",
+      "code": "agenti_soglia_1_foglio",
+      "value": "6197.48",
+      "description": "agenti_soglia_1_foglio",
+      "unit": "numero",
+      "source": "DATI SINTETICI DI COLLAUDO",
+      "is_provisional": true
+    },
+    {
+      "id": "demo-year-2026-p-agenti_aliquota_1_foglio",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2026",
+      "code": "agenti_aliquota_1_foglio",
+      "value": "0.03",
+      "description": "agenti_aliquota_1_foglio",
+      "unit": "numero",
+      "source": "DATI SINTETICI DI COLLAUDO",
+      "is_provisional": true
+    },
+    {
+      "id": "demo-year-2026-p-agenti_soglia_2_foglio",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2026",
+      "code": "agenti_soglia_2_foglio",
+      "value": "77468.53",
+      "description": "agenti_soglia_2_foglio",
+      "unit": "numero",
+      "source": "DATI SINTETICI DI COLLAUDO",
+      "is_provisional": true
+    },
+    {
+      "id": "demo-year-2026-p-agenti_aliquota_2_foglio",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2026",
+      "code": "agenti_aliquota_2_foglio",
+      "value": "0.01",
+      "description": "agenti_aliquota_2_foglio",
+      "unit": "numero",
+      "source": "DATI SINTETICI DI COLLAUDO",
+      "is_provisional": true
+    },
+    {
+      "id": "demo-year-2026-p-agenti_soglia_3_foglio",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2026",
+      "code": "agenti_soglia_3_foglio",
+      "value": "92962.24",
+      "description": "agenti_soglia_3_foglio",
+      "unit": "numero",
+      "source": "DATI SINTETICI DI COLLAUDO",
+      "is_provisional": true
+    },
+    {
+      "id": "demo-year-2026-p-agenti_aliquota_3_foglio",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2026",
+      "code": "agenti_aliquota_3_foglio",
+      "value": "0.005",
+      "description": "agenti_aliquota_3_foglio",
+      "unit": "numero",
+      "source": "DATI SINTETICI DI COLLAUDO",
+      "is_provisional": true
+    },
+    {
+      "id": "demo-year-2026-p-irpef_aliquota_1_foglio",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2026",
+      "code": "irpef_aliquota_1_foglio",
+      "value": "0.23",
+      "description": "irpef_aliquota_1_foglio",
+      "unit": "numero",
+      "source": "DATI SINTETICI DI COLLAUDO",
+      "is_provisional": true
+    },
+    {
+      "id": "demo-year-2026-p-irpef_soglia_2_foglio",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2026",
+      "code": "irpef_soglia_2_foglio",
+      "value": "28000",
+      "description": "irpef_soglia_2_foglio",
+      "unit": "numero",
+      "source": "DATI SINTETICI DI COLLAUDO",
+      "is_provisional": true
+    },
+    {
+      "id": "demo-year-2026-p-irpef_aliquota_2_foglio",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2026",
+      "code": "irpef_aliquota_2_foglio",
+      "value": "0.33",
+      "description": "irpef_aliquota_2_foglio",
+      "unit": "numero",
+      "source": "DATI SINTETICI DI COLLAUDO",
+      "is_provisional": true
+    },
+    {
+      "id": "demo-year-2026-p-irpef_soglia_3_foglio",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2026",
+      "code": "irpef_soglia_3_foglio",
+      "value": "50000",
+      "description": "irpef_soglia_3_foglio",
+      "unit": "numero",
+      "source": "DATI SINTETICI DI COLLAUDO",
+      "is_provisional": true
+    },
+    {
+      "id": "demo-year-2026-p-irpef_aliquota_3_foglio",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2026",
+      "code": "irpef_aliquota_3_foglio",
+      "value": "0.43",
+      "description": "irpef_aliquota_3_foglio",
+      "unit": "numero",
+      "source": "DATI SINTETICI DI COLLAUDO",
+      "is_provisional": true
+    },
+    {
+      "id": "demo-year-2026-p-addizionale_veneto_foglio",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2026",
+      "code": "addizionale_veneto_foglio",
+      "value": "0.0123",
+      "description": "addizionale_veneto_foglio",
+      "unit": "numero",
+      "source": "DATI SINTETICI DI COLLAUDO",
+      "is_provisional": true
+    },
+    {
+      "id": "demo-year-2026-p-addizionale_verona_foglio",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2026",
+      "code": "addizionale_verona_foglio",
+      "value": "0.008",
+      "description": "addizionale_verona_foglio",
+      "unit": "numero",
+      "source": "DATI SINTETICI DI COLLAUDO",
+      "is_provisional": true
+    },
+    {
+      "id": "demo-year-2026-p-forfettario_coeff_redditivita",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2026",
+      "code": "forfettario_coeff_redditivita",
+      "value": "0.62",
+      "description": "forfettario_coeff_redditivita",
+      "unit": "numero",
+      "source": "DATI SINTETICI DI COLLAUDO",
+      "is_provisional": true
+    },
+    {
+      "id": "demo-year-2026-p-forfettario_aliquota_sostitutiva",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2026",
+      "code": "forfettario_aliquota_sostitutiva",
+      "value": "0.15",
+      "description": "forfettario_aliquota_sostitutiva",
+      "unit": "numero",
+      "source": "DATI SINTETICI DI COLLAUDO",
+      "is_provisional": true
+    },
+    {
+      "id": "demo-year-2026-p-forfettario_limite_ragguagliato",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2026",
+      "code": "forfettario_limite_ragguagliato",
+      "value": "82205",
+      "description": "forfettario_limite_ragguagliato",
+      "unit": "numero",
+      "source": "DATI SINTETICI DI COLLAUDO",
+      "is_provisional": true
+    },
+    {
+      "id": "demo-year-2026-p-forfettario_limite_uscita_immediata",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2026",
+      "code": "forfettario_limite_uscita_immediata",
+      "value": "100000",
+      "description": "forfettario_limite_uscita_immediata",
+      "unit": "numero",
+      "source": "DATI SINTETICI DI COLLAUDO",
+      "is_provisional": true
+    },
+    {
+      "id": "demo-year-2026-p-forfettario_mesi_proiezione",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2026",
+      "code": "forfettario_mesi_proiezione",
+      "value": "11",
+      "description": "forfettario_mesi_proiezione",
+      "unit": "numero",
+      "source": "DATI SINTETICI DI COLLAUDO",
+      "is_provisional": true
+    },
+    {
+      "id": "demo-year-2026-p-forfettario_contributi_ap",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2026",
+      "code": "forfettario_contributi_ap",
+      "value": "0",
+      "description": "forfettario_contributi_ap",
+      "unit": "numero",
+      "source": "DATI SINTETICI DI COLLAUDO",
+      "is_provisional": true
+    },
+    {
+      "id": "demo-year-2026-p-forfettario_riduzione_inps",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2026",
+      "code": "forfettario_riduzione_inps",
+      "value": "0.35",
+      "description": "forfettario_riduzione_inps",
+      "unit": "numero",
+      "source": "DATI SINTETICI DI COLLAUDO",
+      "is_provisional": true
+    },
+    {
+      "id": "demo-year-2027-p-enasarco_tasso_foglio",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2027",
+      "code": "enasarco_tasso_foglio",
+      "value": "0.085",
+      "description": "enasarco_tasso_foglio",
+      "unit": "numero",
+      "source": "DATI SINTETICI DI COLLAUDO",
+      "is_provisional": true
+    },
+    {
+      "id": "demo-year-2027-p-enasarco_massimale_pluri",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2027",
+      "code": "enasarco_massimale_pluri",
+      "value": "30478",
+      "description": "enasarco_massimale_pluri",
+      "unit": "numero",
+      "source": "DATI SINTETICI DI COLLAUDO",
+      "is_provisional": true
+    },
+    {
+      "id": "demo-year-2027-p-enasarco_massimale_mono",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2027",
+      "code": "enasarco_massimale_mono",
+      "value": "45717",
+      "description": "enasarco_massimale_mono",
+      "unit": "numero",
+      "source": "DATI SINTETICI DI COLLAUDO",
+      "is_provisional": true
+    },
+    {
+      "id": "demo-year-2027-p-inps_fisso_foglio",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2027",
+      "code": "inps_fisso_foglio",
+      "value": "4611.64",
+      "description": "inps_fisso_foglio",
+      "unit": "numero",
+      "source": "DATI SINTETICI DI COLLAUDO",
+      "is_provisional": true
+    },
+    {
+      "id": "demo-year-2027-p-inps_minimale_foglio",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2027",
+      "code": "inps_minimale_foglio",
+      "value": "18808",
+      "description": "inps_minimale_foglio",
+      "unit": "numero",
+      "source": "DATI SINTETICI DI COLLAUDO",
+      "is_provisional": true
+    },
+    {
+      "id": "demo-year-2027-p-inps_aliquota_prima_foglio",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2027",
+      "code": "inps_aliquota_prima_foglio",
+      "value": "0.2448",
+      "description": "inps_aliquota_prima_foglio",
+      "unit": "numero",
+      "source": "DATI SINTETICI DI COLLAUDO",
+      "is_provisional": true
+    },
+    {
+      "id": "demo-year-2027-p-inps_soglia_seconda_foglio",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2027",
+      "code": "inps_soglia_seconda_foglio",
+      "value": "56224",
+      "description": "inps_soglia_seconda_foglio",
+      "unit": "numero",
+      "source": "DATI SINTETICI DI COLLAUDO",
+      "is_provisional": true
+    },
+    {
+      "id": "demo-year-2027-p-inps_aliquota_seconda_foglio",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2027",
+      "code": "inps_aliquota_seconda_foglio",
+      "value": "0.2548",
+      "description": "inps_aliquota_seconda_foglio",
+      "unit": "numero",
+      "source": "DATI SINTETICI DI COLLAUDO",
+      "is_provisional": true
+    },
+    {
+      "id": "demo-year-2027-p-inps_massimale_foglio",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2027",
+      "code": "inps_massimale_foglio",
+      "value": "122295",
+      "description": "inps_massimale_foglio",
+      "unit": "numero",
+      "source": "DATI SINTETICI DI COLLAUDO",
+      "is_provisional": true
+    },
+    {
+      "id": "demo-year-2027-p-agenti_soglia_1_foglio",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2027",
+      "code": "agenti_soglia_1_foglio",
+      "value": "6197.48",
+      "description": "agenti_soglia_1_foglio",
+      "unit": "numero",
+      "source": "DATI SINTETICI DI COLLAUDO",
+      "is_provisional": true
+    },
+    {
+      "id": "demo-year-2027-p-agenti_aliquota_1_foglio",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2027",
+      "code": "agenti_aliquota_1_foglio",
+      "value": "0.03",
+      "description": "agenti_aliquota_1_foglio",
+      "unit": "numero",
+      "source": "DATI SINTETICI DI COLLAUDO",
+      "is_provisional": true
+    },
+    {
+      "id": "demo-year-2027-p-agenti_soglia_2_foglio",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2027",
+      "code": "agenti_soglia_2_foglio",
+      "value": "77468.53",
+      "description": "agenti_soglia_2_foglio",
+      "unit": "numero",
+      "source": "DATI SINTETICI DI COLLAUDO",
+      "is_provisional": true
+    },
+    {
+      "id": "demo-year-2027-p-agenti_aliquota_2_foglio",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2027",
+      "code": "agenti_aliquota_2_foglio",
+      "value": "0.01",
+      "description": "agenti_aliquota_2_foglio",
+      "unit": "numero",
+      "source": "DATI SINTETICI DI COLLAUDO",
+      "is_provisional": true
+    },
+    {
+      "id": "demo-year-2027-p-agenti_soglia_3_foglio",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2027",
+      "code": "agenti_soglia_3_foglio",
+      "value": "92962.24",
+      "description": "agenti_soglia_3_foglio",
+      "unit": "numero",
+      "source": "DATI SINTETICI DI COLLAUDO",
+      "is_provisional": true
+    },
+    {
+      "id": "demo-year-2027-p-agenti_aliquota_3_foglio",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2027",
+      "code": "agenti_aliquota_3_foglio",
+      "value": "0.005",
+      "description": "agenti_aliquota_3_foglio",
+      "unit": "numero",
+      "source": "DATI SINTETICI DI COLLAUDO",
+      "is_provisional": true
+    },
+    {
+      "id": "demo-year-2027-p-irpef_aliquota_1_foglio",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2027",
+      "code": "irpef_aliquota_1_foglio",
+      "value": "0.23",
+      "description": "irpef_aliquota_1_foglio",
+      "unit": "numero",
+      "source": "DATI SINTETICI DI COLLAUDO",
+      "is_provisional": true
+    },
+    {
+      "id": "demo-year-2027-p-irpef_soglia_2_foglio",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2027",
+      "code": "irpef_soglia_2_foglio",
+      "value": "28000",
+      "description": "irpef_soglia_2_foglio",
+      "unit": "numero",
+      "source": "DATI SINTETICI DI COLLAUDO",
+      "is_provisional": true
+    },
+    {
+      "id": "demo-year-2027-p-irpef_aliquota_2_foglio",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2027",
+      "code": "irpef_aliquota_2_foglio",
+      "value": "0.33",
+      "description": "irpef_aliquota_2_foglio",
+      "unit": "numero",
+      "source": "DATI SINTETICI DI COLLAUDO",
+      "is_provisional": true
+    },
+    {
+      "id": "demo-year-2027-p-irpef_soglia_3_foglio",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2027",
+      "code": "irpef_soglia_3_foglio",
+      "value": "50000",
+      "description": "irpef_soglia_3_foglio",
+      "unit": "numero",
+      "source": "DATI SINTETICI DI COLLAUDO",
+      "is_provisional": true
+    },
+    {
+      "id": "demo-year-2027-p-irpef_aliquota_3_foglio",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2027",
+      "code": "irpef_aliquota_3_foglio",
+      "value": "0.43",
+      "description": "irpef_aliquota_3_foglio",
+      "unit": "numero",
+      "source": "DATI SINTETICI DI COLLAUDO",
+      "is_provisional": true
+    },
+    {
+      "id": "demo-year-2027-p-addizionale_veneto_foglio",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2027",
+      "code": "addizionale_veneto_foglio",
+      "value": "0.0123",
+      "description": "addizionale_veneto_foglio",
+      "unit": "numero",
+      "source": "DATI SINTETICI DI COLLAUDO",
+      "is_provisional": true
+    },
+    {
+      "id": "demo-year-2027-p-addizionale_verona_foglio",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2027",
+      "code": "addizionale_verona_foglio",
+      "value": "0.008",
+      "description": "addizionale_verona_foglio",
+      "unit": "numero",
+      "source": "DATI SINTETICI DI COLLAUDO",
+      "is_provisional": true
+    }
+  ],
+  "fiscal_years": [
+    {
+      "id": "demo-year-2026",
+      "user_id": "demo-owner",
+      "fiscal_year": 2026,
+      "status": "open"
+    },
+    {
+      "id": "demo-year-2027",
+      "user_id": "demo-owner",
+      "fiscal_year": 2027,
+      "status": "open"
+    }
+  ],
+  "monthly_net_commissions": [
+    {
+      "id": "demo-year-2026-n-1",
+      "fiscal_year_id": "demo-year-2026",
+      "month": 1,
+      "amount": "3900.00"
+    },
+    {
+      "id": "demo-year-2026-n-2",
+      "fiscal_year_id": "demo-year-2026",
+      "month": 2,
+      "amount": "3900.00"
+    },
+    {
+      "id": "demo-year-2026-n-3",
+      "fiscal_year_id": "demo-year-2026",
+      "month": 3,
+      "amount": "3900.00"
+    },
+    {
+      "id": "demo-year-2026-n-4",
+      "fiscal_year_id": "demo-year-2026",
+      "month": 4,
+      "amount": "3900.00"
+    },
+    {
+      "id": "demo-year-2026-n-5",
+      "fiscal_year_id": "demo-year-2026",
+      "month": 5,
+      "amount": "3900.00"
+    },
+    {
+      "id": "demo-year-2026-n-6",
+      "fiscal_year_id": "demo-year-2026",
+      "month": 6,
+      "amount": "3900.00"
+    },
+    {
+      "id": "demo-year-2026-n-7",
+      "fiscal_year_id": "demo-year-2026",
+      "month": 7,
+      "amount": "3900.00"
+    },
+    {
+      "id": "demo-year-2026-n-8",
+      "fiscal_year_id": "demo-year-2026",
+      "month": 8,
+      "amount": "3900.00"
+    },
+    {
+      "id": "demo-year-2027-n-1",
+      "fiscal_year_id": "demo-year-2027",
+      "month": 1,
+      "amount": "3900.00"
+    },
+    {
+      "id": "demo-year-2027-n-2",
+      "fiscal_year_id": "demo-year-2027",
+      "month": 2,
+      "amount": "3900.00"
+    },
+    {
+      "id": "demo-year-2027-n-3",
+      "fiscal_year_id": "demo-year-2027",
+      "month": 3,
+      "amount": "3900.00"
+    },
+    {
+      "id": "demo-year-2027-n-4",
+      "fiscal_year_id": "demo-year-2027",
+      "month": 4,
+      "amount": "3900.00"
+    },
+    {
+      "id": "demo-year-2027-n-5",
+      "fiscal_year_id": "demo-year-2027",
+      "month": 5,
+      "amount": "3900.00"
+    },
+    {
+      "id": "demo-year-2027-n-6",
+      "fiscal_year_id": "demo-year-2027",
+      "month": 6,
+      "amount": "3900.00"
+    },
+    {
+      "id": "demo-year-2027-n-7",
+      "fiscal_year_id": "demo-year-2027",
+      "month": 7,
+      "amount": "3900.00"
+    },
+    {
+      "id": "demo-year-2027-n-8",
+      "fiscal_year_id": "demo-year-2027",
+      "month": 8,
+      "amount": "3900.00"
+    }
+  ],
+  "monthly_reserves": [
+    {
+      "id": "demo-year-2026-a-1",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2026",
+      "month": 1,
+      "reserved_amount": "600.00",
+      "notes": "DATI SINTETICI DI COLLAUDO"
+    },
+    {
+      "id": "demo-year-2026-a-2",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2026",
+      "month": 2,
+      "reserved_amount": "600.00",
+      "notes": "DATI SINTETICI DI COLLAUDO"
+    },
+    {
+      "id": "demo-year-2026-a-3",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2026",
+      "month": 3,
+      "reserved_amount": "600.00",
+      "notes": "DATI SINTETICI DI COLLAUDO"
+    },
+    {
+      "id": "demo-year-2026-a-4",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2026",
+      "month": 4,
+      "reserved_amount": "600.00",
+      "notes": "DATI SINTETICI DI COLLAUDO"
+    },
+    {
+      "id": "demo-year-2026-a-5",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2026",
+      "month": 5,
+      "reserved_amount": "600.00",
+      "notes": "DATI SINTETICI DI COLLAUDO"
+    },
+    {
+      "id": "demo-year-2026-a-6",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2026",
+      "month": 6,
+      "reserved_amount": "600.00",
+      "notes": "DATI SINTETICI DI COLLAUDO"
+    },
+    {
+      "id": "demo-year-2026-a-7",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2026",
+      "month": 7,
+      "reserved_amount": "600.00",
+      "notes": "DATI SINTETICI DI COLLAUDO"
+    },
+    {
+      "id": "demo-year-2026-a-8",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2026",
+      "month": 8,
+      "reserved_amount": "600.00",
+      "notes": "DATI SINTETICI DI COLLAUDO"
+    },
+    {
+      "id": "demo-year-2027-a-1",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2027",
+      "month": 1,
+      "reserved_amount": "600.00",
+      "notes": "DATI SINTETICI DI COLLAUDO"
+    },
+    {
+      "id": "demo-year-2027-a-2",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2027",
+      "month": 2,
+      "reserved_amount": "600.00",
+      "notes": "DATI SINTETICI DI COLLAUDO"
+    },
+    {
+      "id": "demo-year-2027-a-3",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2027",
+      "month": 3,
+      "reserved_amount": "600.00",
+      "notes": "DATI SINTETICI DI COLLAUDO"
+    },
+    {
+      "id": "demo-year-2027-a-4",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2027",
+      "month": 4,
+      "reserved_amount": "600.00",
+      "notes": "DATI SINTETICI DI COLLAUDO"
+    },
+    {
+      "id": "demo-year-2027-a-5",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2027",
+      "month": 5,
+      "reserved_amount": "600.00",
+      "notes": "DATI SINTETICI DI COLLAUDO"
+    },
+    {
+      "id": "demo-year-2027-a-6",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2027",
+      "month": 6,
+      "reserved_amount": "600.00",
+      "notes": "DATI SINTETICI DI COLLAUDO"
+    },
+    {
+      "id": "demo-year-2027-a-7",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2027",
+      "month": 7,
+      "reserved_amount": "600.00",
+      "notes": "DATI SINTETICI DI COLLAUDO"
+    },
+    {
+      "id": "demo-year-2027-a-8",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2027",
+      "month": 8,
+      "reserved_amount": "600.00",
+      "notes": "DATI SINTETICI DI COLLAUDO"
+    }
+  ],
+  "monthly_revenues": [
+    {
+      "id": "demo-year-2026-r-1",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2026",
+      "principal_id": "demo-principal",
+      "month": 1,
+      "amount": "4500.00",
+      "notes": "DATI SINTETICI DI COLLAUDO"
+    },
+    {
+      "id": "demo-year-2026-r-2",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2026",
+      "principal_id": "demo-principal",
+      "month": 2,
+      "amount": "4500.00",
+      "notes": "DATI SINTETICI DI COLLAUDO"
+    },
+    {
+      "id": "demo-year-2026-r-3",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2026",
+      "principal_id": "demo-principal",
+      "month": 3,
+      "amount": "4500.00",
+      "notes": "DATI SINTETICI DI COLLAUDO"
+    },
+    {
+      "id": "demo-year-2026-r-4",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2026",
+      "principal_id": "demo-principal",
+      "month": 4,
+      "amount": "4500.00",
+      "notes": "DATI SINTETICI DI COLLAUDO"
+    },
+    {
+      "id": "demo-year-2026-r-5",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2026",
+      "principal_id": "demo-principal",
+      "month": 5,
+      "amount": "4500.00",
+      "notes": "DATI SINTETICI DI COLLAUDO"
+    },
+    {
+      "id": "demo-year-2026-r-6",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2026",
+      "principal_id": "demo-principal",
+      "month": 6,
+      "amount": "4500.00",
+      "notes": "DATI SINTETICI DI COLLAUDO"
+    },
+    {
+      "id": "demo-year-2026-r-7",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2026",
+      "principal_id": "demo-principal",
+      "month": 7,
+      "amount": "4500.00",
+      "notes": "DATI SINTETICI DI COLLAUDO"
+    },
+    {
+      "id": "demo-year-2026-r-8",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2026",
+      "principal_id": "demo-principal",
+      "month": 8,
+      "amount": "4500.00",
+      "notes": "DATI SINTETICI DI COLLAUDO"
+    },
+    {
+      "id": "demo-year-2027-r-1",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2027",
+      "principal_id": "demo-principal",
+      "month": 1,
+      "amount": "4500.00",
+      "notes": "DATI SINTETICI DI COLLAUDO"
+    },
+    {
+      "id": "demo-year-2027-r-2",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2027",
+      "principal_id": "demo-principal",
+      "month": 2,
+      "amount": "4500.00",
+      "notes": "DATI SINTETICI DI COLLAUDO"
+    },
+    {
+      "id": "demo-year-2027-r-3",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2027",
+      "principal_id": "demo-principal",
+      "month": 3,
+      "amount": "4500.00",
+      "notes": "DATI SINTETICI DI COLLAUDO"
+    },
+    {
+      "id": "demo-year-2027-r-4",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2027",
+      "principal_id": "demo-principal",
+      "month": 4,
+      "amount": "4500.00",
+      "notes": "DATI SINTETICI DI COLLAUDO"
+    },
+    {
+      "id": "demo-year-2027-r-5",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2027",
+      "principal_id": "demo-principal",
+      "month": 5,
+      "amount": "4500.00",
+      "notes": "DATI SINTETICI DI COLLAUDO"
+    },
+    {
+      "id": "demo-year-2027-r-6",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2027",
+      "principal_id": "demo-principal",
+      "month": 6,
+      "amount": "4500.00",
+      "notes": "DATI SINTETICI DI COLLAUDO"
+    },
+    {
+      "id": "demo-year-2027-r-7",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2027",
+      "principal_id": "demo-principal",
+      "month": 7,
+      "amount": "4500.00",
+      "notes": "DATI SINTETICI DI COLLAUDO"
+    },
+    {
+      "id": "demo-year-2027-r-8",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2027",
+      "principal_id": "demo-principal",
+      "month": 8,
+      "amount": "4500.00",
+      "notes": "DATI SINTETICI DI COLLAUDO"
+    }
+  ],
+  "principals": [
+    {
+      "id": "demo-principal",
+      "user_id": "demo-owner",
+      "name": "Mandante dimostrativa",
+      "enasarco_relationship": "plurimandatario",
+      "active": true
+    }
+  ],
+  "purchase_vat_invoices": [],
+  "tax_credits": [],
+  "tax_deductions": [],
+  "vat_adjustments": [],
+  "vehicle_monthly": [],
+  "vehicle_year_settings": [
+    {
+      "id": "demo-year-2026-car-settings",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2026",
+      "vehicle_id": "demo-vehicle",
+      "annual_km_limit": 30000,
+      "excess_km_penalty": "0.10",
+      "fiscal_cost_limit": "25822.84",
+      "notes": "DATI SINTETICI DI COLLAUDO"
+    },
+    {
+      "id": "demo-year-2027-car-settings",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2027",
+      "vehicle_id": "demo-vehicle",
+      "annual_km_limit": 30000,
+      "excess_km_penalty": "0.10",
+      "fiscal_cost_limit": "25822.84",
+      "notes": "DATI SINTETICI DI COLLAUDO"
+    }
+  ],
+  "vehicles": [
+    {
+      "id": "demo-vehicle",
+      "user_id": "demo-owner",
+      "label": "Auto dimostrativa",
+      "acquisition_cost_gross": "39900",
+      "acquisition_date": "2026-01-01",
+      "contract_start": "2026-01-01",
+      "contract_end": "2029-12-31",
+      "notes": "VEICOLO DI PROVA - foglio originale"
+    }
+  ],
+  "sales_vat_invoices": [],
+  "vat_periods": [],
+  "pension_payments": [],
+  "purchase_cost_links": []
+}
