@@ -1,3 +1,6 @@
+# Checkpoint documenti — 2026-10-01
+Branch: migration/react-cloudflare. Precedente checkpoint: 8e344e3501413004ffe3e56c32c0c8d0c7bff48d.
+Implementati lettori PDF/XML originali con pypdf 6.19.0 e defusedxml 0.7.1, OCR locale Tesseract 7, rendering PDF.js 6.3.289, asset self-hosted con checksum. Nessuna modifica ai 48 moduli fiscali originali, nessun file inviato a servizi esterni. Test originali 50, bridge 3, Node 5 passati; build passata. Import documenti ancora DA COLLAUDARE nel browser: preview localhost avvia UI ma restituisce TypeError Failed to fetch senza console errors; risorse HTTP verificate 200. Aggiunta diagnostica per runtime/wheel/formule. Prossimo passo esatto: verificare questa build nel collaudo Cloudflare e provare invoice.pdf, invoice.png e medical.pdf; riconciliare importazione/conferma/manual fallback e duplicati. Poi collaudo completo delle scritture e parità funzionale. Produzione NON modificata. Quattro tabelle presenti solo nel collaudo richiedono piano prima della produzione. Credenziali sintetiche restano nel file ignorato web/.staging-test-users.json. Non riseminare database.
 # Migrazione React / Cloudflare — checkpoint 2026-10-01
 
 ## Esito grafica finale

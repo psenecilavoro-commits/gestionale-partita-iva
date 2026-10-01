@@ -37,6 +37,72 @@ mutations = []
 tables = {}
 counts = {}
 user = None
+document_texts = {}
+
+
+def inspect_document(request):
+    from pypdf import PdfReader
+    from sanitarie_documenti import suggerisci_importo
+    data = base64.b64decode(request['base64'])
+    if not data or len(data) > 8 * 1024 * 1024:
+        raise ValueError('Documento vuoto o oltre 8 MB.')
+    reader = PdfReader(io.BytesIO(data), strict=False)
+    limit = 3 if request.get('medical') else 4
+    if reader.is_encrypted or not 1 <= len(reader.pages) <= limit:
+        raise ValueError(f'PDF protetto o con più di {limit} pagine.')
+    text = '\n'.join(page.extract_text() or '' for page in reader.pages)
+    needs_ocr = suggerisci_importo(text) is None if request.get('medical') else not text.strip()
+    return {'text':text, 'pages':len(reader.pages), 'needs_ocr':bool(needs_ocr)}
+
+
+def clear_session():
+    global document_texts, tables, user, mutations, tree
+    state.clear()
+    document_texts = {}
+    tables = {}
+    user = None
+    mutations = []
+    tree = []
+    return {}
+
+
+def register_document_texts(inputs):
+    """Replace only local document readers; original amount parsers remain intact."""
+    from hashlib import sha256
+    global document_texts
+    document_texts = {}
+    def visit(value):
+        if isinstance(value, dict):
+            if 'base64' in value and ('document_text' in value or 'document_error' in value):
+                document_texts[sha256(base64.b64decode(value['base64'])).hexdigest()] = value
+            else:
+                for child in value.values():
+                    visit(child)
+        elif isinstance(value, list):
+            for child in value:
+                visit(child)
+    visit(inputs)
+    def text_for(data):
+        value = document_texts.get(sha256(data).hexdigest())
+        if value is None:
+            raise ValueError('Documento non preparato: selezionalo nuovamente.')
+        if value.get('document_error'):
+            raise ValueError(value['document_error'])
+        return value['document_text']
+    import fatture_provvigioni as invoices
+    import sanitarie_documenti as medical
+    if not hasattr(invoices, '_browser_original_analyze'):
+        invoices._browser_original_analyze = invoices.analizza_fattura
+    def analyze(name, data):
+        if name.lower().endswith('.xml'):
+            return invoices._browser_original_analyze(name, data)
+        if not data or len(data) > invoices.MAX_BYTES:
+            raise ValueError('File vuoto o superiore a 8 MB.')
+        if name.lower().rsplit('.',1)[-1] not in ('pdf','png','jpg','jpeg'):
+            raise ValueError('Formato non supportato: PDF, XML, JPG o PNG.')
+        return (*invoices.suggerisci_netto(text_for(data)), '')
+    invoices.analizza_fattura = analyze
+    medical._leggi_documento = lambda name, data: text_for(data)
 
 
 def encode(value):
@@ -297,6 +363,7 @@ def render(request):
     if 'anno_fiscale_selezionato' in inputs and inputs['anno_fiscale_selezionato'] != state.get('anno_fiscale_selezionato'):
         reset_inputs()
     state.update(inputs)
+    register_document_texts(inputs)
     counts = {}
     mutations = []
     tree = []
