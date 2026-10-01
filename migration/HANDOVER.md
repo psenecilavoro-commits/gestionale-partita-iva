@@ -1,3 +1,6 @@
+# Parita fiscale CPython/Pyodide - 2026-10-01
+Confronto automatico passato per tutte le metriche e tabelle delle8schede x2anni2026/2027, usando risultati CPython delle formule originali come riferimento; oracle sintetico web/tests/fixtures/fiscal-parity.json generato da migration/generate_parity.py. 48moduli originali verificati contro a6152b1366fe80cce950bc927a9099e728005cba, invariati. Test5Node passati inclusa parita16viste. CI corretta: build prima dei test, per creare lettori wheel locali necessari ai nuovi test documentali. Prossimo passo: verificare CI/deploy di questo checkpoint, audit delle scritture/CSV e piano dei4registri mancanti in produzione. Produzione ancora NON modificata; nessun processo locale in background.
+
 # Collaudo documenti verificato - 2026-10-01
 Sorgente documenti: 02e184bdf86a9fc445463bedf62a7dbf1e081f85. Deploy39dbab9b-2711-4201-a94e-b85727291ba5 riuscito. Browser remoto: PDF fattura1234.56, immagine OCR1234.56, PDF scansionato OCR1234.56, XML123.45 e PDF sanitario123.45 letti. PDF oltre4pagine passa al manuale. Salvataggio fattura2027 confermato1234.56 e ripristinato3900; sanitario123.45 confermato nel DB e stesso file segnalato duplicato senza ricontarlo; record sanitario sintetico eliminato dopo test. Nessuna produzione modificata. Test5Node e build passati, 48moduli fiscali intatti. Corretto messaggio sanitario: lettura nel browser. Server localhost fermato; suo errore fetch non presente su Cloudflare.
 Prossimo passo: completare audit dei flussi di scrittura/CSV e parita originale, preparare piano dei4registri mancanti in produzione prima del passaggio finale. NON rieseguire seed. Riprendere dalla branch migration/react-cloudflare, non dalla baseline. Credenziali sintetiche solo nel file ignorato. Nessun processo in background.
@@ -102,5 +105,7 @@ L'autorizzazione OAuth è completata. L'utente deve riavviare Codex per caricare
 ## Regole di continuità
 
 Salvare commit + aggiornare nota prima di interruzioni. Nessun lavoro in background fuori sessione; non aspettare ricariche. I file sources della directory progetto restano read-only. L'utente vuole comunicazioni solo per interventi necessari o collaudo pronto.
-
-
+
+
+
+
