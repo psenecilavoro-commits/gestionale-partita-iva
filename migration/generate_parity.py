@@ -15,6 +15,8 @@ def project(nodes):
             values.append({'kind': 'metric', 'label': n['label'], 'value': n['value']})
         if n['kind'] == 'table':
             values.append({'kind': 'table', 'records': n['records']})
+        if n['kind'] == 'download':
+            values.append({'kind': 'download', 'file_name': n['file_name'], 'mime': n['mime'], 'data': n['data']})
         values.extend(project(n['children']))
     return values
 results = {}

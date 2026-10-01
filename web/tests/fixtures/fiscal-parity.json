@@ -226,6 +226,14 @@
           "IVA compresa": true
         }
       ]
+    },
+    {
+      "kind": "download",
+      "file_name": "spese_2026.csv",
+      "mime": "text/csv",
+      "data": {
+        "base64": "77u/ImlkIjsidXNlcl9pZCI7ImZpc2NhbF95ZWFyX2lkIjsiY2F0ZWdvcnlfaWQiOyJ2ZWhpY2xlX2lkIjsiZXhwZW5zZV9kYXRlIjsicGF5bWVudF9kYXRlIjsiZGVzY3JpcHRpb24iOyJncm9zc19hbW91bnQiOyJhbW91bnRfaW5jbHVkZXNfdmF0IjsidmF0X3JhdGUiOyJ2YXRfZGVkdWN0aWJsZV9yYXRlIjsiY29zdF9kZWR1Y3RpYmxlX3JhdGUiOyJkZWR1Y3RpYmxlX2xpbWl0IjsiZmlzY2FsX2NvbXBldGVuY2VfeWVhciI7Im5vdGVzIg0KImRlbW8teWVhci0yMDI2LWNhdC1hdXRvc3RyYWRhLWNvc3QiOyJkZW1vLW93bmVyIjsiZGVtby15ZWFyLTIwMjYiOyJkZW1vLXllYXItMjAyNi1jYXQtYXV0b3N0cmFkYSI7ImRlbW8tdmVoaWNsZSI7IjIwMjYtMDEtMDEiOyIiOyJEQVRJIFNJTlRFVElDSSBESSBDT0xMQVVETyI7IjEwMC4wMCI7IlRydWUiOyIwLjIyIjsiMSI7IjAuOCI7IiI7IjIwMjYiOyJEYXRpIGRpIHByb3ZhIg0KImRlbW8teWVhci0yMDI2LWNhdC1jYXJidXJhbnRlLWNvc3QiOyJkZW1vLW93bmVyIjsiZGVtby15ZWFyLTIwMjYiOyJkZW1vLXllYXItMjAyNi1jYXQtY2FyYnVyYW50ZSI7ImRlbW8tdmVoaWNsZSI7IjIwMjYtMDEtMDEiOyIiOyJEQVRJIFNJTlRFVElDSSBESSBDT0xMQVVETyI7IjEwMC4wMCI7IlRydWUiOyIwLjIyIjsiMSI7IjAuOCI7IiI7IjIwMjYiOyJEYXRpIGRpIHByb3ZhIg0KImRlbW8teWVhci0yMDI2LWNhdC1yYXRlX2F1dG8tY29zdCI7ImRlbW8tb3duZXIiOyJkZW1vLXllYXItMjAyNiI7ImRlbW8teWVhci0yMDI2LWNhdC1yYXRlX2F1dG8iOyJkZW1vLXZlaGljbGUiOyIyMDI2LTAxLTAxIjsiIjsiREFUSSBTSU5URVRJQ0kgREkgQ09MTEFVRE8iOyIxMDAuMDAiOyJUcnVlIjsiMC4yMiI7IjEiOyIwLjgiOyIiOyIyMDI2IjsiRGF0aSBkaSBwcm92YSINCg=="
+      }
     }
   ],
   "2026:Auto": [
@@ -868,6 +876,14 @@
       "records": []
     },
     {
+      "kind": "download",
+      "file_name": "vendite_2027.csv",
+      "mime": "text/csv",
+      "data": {
+        "base64": ""
+      }
+    },
+    {
       "kind": "table",
       "records": [
         {
@@ -1039,6 +1055,14 @@
           "IVA compresa": true
         }
       ]
+    },
+    {
+      "kind": "download",
+      "file_name": "spese_2027.csv",
+      "mime": "text/csv",
+      "data": {
+        "base64": "77u/ImlkIjsidXNlcl9pZCI7ImZpc2NhbF95ZWFyX2lkIjsiY2F0ZWdvcnlfaWQiOyJ2ZWhpY2xlX2lkIjsiZXhwZW5zZV9kYXRlIjsicGF5bWVudF9kYXRlIjsiZGVzY3JpcHRpb24iOyJncm9zc19hbW91bnQiOyJhbW91bnRfaW5jbHVkZXNfdmF0IjsidmF0X3JhdGUiOyJ2YXRfZGVkdWN0aWJsZV9yYXRlIjsiY29zdF9kZWR1Y3RpYmxlX3JhdGUiOyJkZWR1Y3RpYmxlX2xpbWl0IjsiZmlzY2FsX2NvbXBldGVuY2VfeWVhciI7Im5vdGVzIg0KImRlbW8teWVhci0yMDI3LWNhdC1hdXRvc3RyYWRhLWNvc3QiOyJkZW1vLW93bmVyIjsiZGVtby15ZWFyLTIwMjciOyJkZW1vLXllYXItMjAyNy1jYXQtYXV0b3N0cmFkYSI7ImRlbW8tdmVoaWNsZSI7IjIwMjctMDEtMDEiOyIiOyJEQVRJIFNJTlRFVElDSSBESSBDT0xMQVVETyI7IjEwMC4wMCI7IlRydWUiOyIwLjIyIjsiMSI7IjAuOCI7IiI7IjIwMjciOyJEYXRpIGRpIHByb3ZhIg0KImRlbW8teWVhci0yMDI3LWNhdC1jYXJidXJhbnRlLWNvc3QiOyJkZW1vLW93bmVyIjsiZGVtby15ZWFyLTIwMjciOyJkZW1vLXllYXItMjAyNy1jYXQtY2FyYnVyYW50ZSI7ImRlbW8tdmVoaWNsZSI7IjIwMjctMDEtMDEiOyIiOyJEQVRJIFNJTlRFVElDSSBESSBDT0xMQVVETyI7IjEwMC4wMCI7IlRydWUiOyIwLjIyIjsiMSI7IjAuOCI7IiI7IjIwMjciOyJEYXRpIGRpIHByb3ZhIg0KImRlbW8teWVhci0yMDI3LWNhdC1yYXRlX2F1dG8tY29zdCI7ImRlbW8tb3duZXIiOyJkZW1vLXllYXItMjAyNyI7ImRlbW8teWVhci0yMDI3LWNhdC1yYXRlX2F1dG8iOyJkZW1vLXZlaGljbGUiOyIyMDI3LTAxLTAxIjsiIjsiREFUSSBTSU5URVRJQ0kgREkgQ09MTEFVRE8iOyIxMDAuMDAiOyJUcnVlIjsiMC4yMiI7IjEiOyIwLjgiOyIiOyIyMDI3IjsiRGF0aSBkaSBwcm92YSINCg=="
+      }
     },
     {
       "kind": "table",
@@ -1686,8 +1710,40 @@
       ]
     },
     {
+      "kind": "download",
+      "file_name": "quadro_mensile_2027.csv",
+      "mime": "text/csv",
+      "data": {
+        "base64": "77u/Ik1lc2UiOyJGYXR0dXJhdG8gc2VuemEgSVZBIjsiUHJvdnZpZ2lvbmkgbmV0dGUiOyJBY2NhbnRvbmF0byI7IklWQSB2ZW5kaXRlIMK3IGlwb3Rlc2kgMjIlIjsiSVZBIGFjcXVpc3RpIHJlZ2lzdHJhdGEgKFBBUlpJQUxFKSI7IkRpZmZlcmVuemEgSVZBIMK3IGlwb3Rlc2kgKE5PTiBkb3Z1dGEpIjsiTmV0dG8gdGVvcmljbyDCtyBOT04gZGlzcG9uaWJpbGUiDQoiR2VubmFpbyI7IjQuNTAwLDAwIOKCrCI7IjMuOTAwLDAwIOKCrCI7IjYwMCwwMCDigqwiOyI5OTAsMDAg4oKsIjsi4oCUIjsi4oCUIjsi4oCUIg0KIkZlYmJyYWlvIjsiNC41MDAsMDAg4oKsIjsiMy45MDAsMDAg4oKsIjsiNjAwLDAwIOKCrCI7Ijk5MCwwMCDigqwiOyLigJQiOyLigJQiOyLigJQiDQoiTWFyem8iOyI0LjUwMCwwMCDigqwiOyIzLjkwMCwwMCDigqwiOyI2MDAsMDAg4oKsIjsiOTkwLDAwIOKCrCI7IuKAlCI7IuKAlCI7IuKAlCINCiJBcHJpbGUiOyI0LjUwMCwwMCDigqwiOyIzLjkwMCwwMCDigqwiOyI2MDAsMDAg4oKsIjsiOTkwLDAwIOKCrCI7IuKAlCI7IuKAlCI7IuKAlCINCiJNYWdnaW8iOyI0LjUwMCwwMCDigqwiOyIzLjkwMCwwMCDigqwiOyI2MDAsMDAg4oKsIjsiOTkwLDAwIOKCrCI7IuKAlCI7IuKAlCI7IuKAlCINCiJHaXVnbm8iOyI0LjUwMCwwMCDigqwiOyIzLjkwMCwwMCDigqwiOyI2MDAsMDAg4oKsIjsiOTkwLDAwIOKCrCI7IuKAlCI7IuKAlCI7IuKAlCINCiJMdWdsaW8iOyI0LjUwMCwwMCDigqwiOyIzLjkwMCwwMCDigqwiOyI2MDAsMDAg4oKsIjsiOTkwLDAwIOKCrCI7IuKAlCI7IuKAlCI7IuKAlCINCiJBZ29zdG8iOyI0LjUwMCwwMCDigqwiOyIzLjkwMCwwMCDigqwiOyI2MDAsMDAg4oKsIjsiOTkwLDAwIOKCrCI7IuKAlCI7IuKAlCI7IuKAlCINCiJTZXR0ZW1icmUiOyLigJQiOyLigJQiOyLigJQiOyLigJQiOyLigJQiOyLigJQiOyLigJQiDQoiT3R0b2JyZSI7IuKAlCI7IuKAlCI7IuKAlCI7IuKAlCI7IuKAlCI7IuKAlCI7IuKAlCINCiJOb3ZlbWJyZSI7IuKAlCI7IuKAlCI7IuKAlCI7IuKAlCI7IuKAlCI7IuKAlCI7IuKAlCINCiJEaWNlbWJyZSI7IuKAlCI7IuKAlCI7IuKAlCI7IuKAlCI7IuKAlCI7IuKAlCI7IuKAlCINCg=="
+      }
+    },
+    {
+      "kind": "download",
+      "file_name": "controlli_dati_2027.csv",
+      "mime": "text/csv",
+      "data": {
+        "base64": "77u/Ik1lc2UiOyJEYXRpIGRhIGluc2VyaXJlIjsiRmF0dHVyZSBJVkEgYWNxdWlzdGkgcmVnaXN0cmF0ZSI7IkF2dmVydGVuemEiDQoiR2VubmFpbyI7ImZhdHR1cmUgYWNxdWlzdG8iOyIwIjsiVmVyaWZpY2FyZSBjb21wbGV0ZXp6YSBkb2N1bWVudGkgZSBJVkEgdmVuZGl0ZSINCiJGZWJicmFpbyI7ImZhdHR1cmUgYWNxdWlzdG8iOyIwIjsiVmVyaWZpY2FyZSBjb21wbGV0ZXp6YSBkb2N1bWVudGkgZSBJVkEgdmVuZGl0ZSINCiJNYXJ6byI7ImZhdHR1cmUgYWNxdWlzdG8iOyIwIjsiVmVyaWZpY2FyZSBjb21wbGV0ZXp6YSBkb2N1bWVudGkgZSBJVkEgdmVuZGl0ZSINCiJBcHJpbGUiOyJmYXR0dXJlIGFjcXVpc3RvIjsiMCI7IlZlcmlmaWNhcmUgY29tcGxldGV6emEgZG9jdW1lbnRpIGUgSVZBIHZlbmRpdGUiDQoiTWFnZ2lvIjsiZmF0dHVyZSBhY3F1aXN0byI7IjAiOyJWZXJpZmljYXJlIGNvbXBsZXRlenphIGRvY3VtZW50aSBlIElWQSB2ZW5kaXRlIg0KIkdpdWdubyI7ImZhdHR1cmUgYWNxdWlzdG8iOyIwIjsiVmVyaWZpY2FyZSBjb21wbGV0ZXp6YSBkb2N1bWVudGkgZSBJVkEgdmVuZGl0ZSINCiJMdWdsaW8iOyJmYXR0dXJlIGFjcXVpc3RvIjsiMCI7IlZlcmlmaWNhcmUgY29tcGxldGV6emEgZG9jdW1lbnRpIGUgSVZBIHZlbmRpdGUiDQoiQWdvc3RvIjsiZmF0dHVyZSBhY3F1aXN0byI7IjAiOyJWZXJpZmljYXJlIGNvbXBsZXRlenphIGRvY3VtZW50aSBlIElWQSB2ZW5kaXRlIg0KIlNldHRlbWJyZSI7ImZhdHR1cmF0bywgcHJvdnZpZ2lvbmkgbmV0dGUsIGFjY2FudG9uYXRvLCBmYXR0dXJlIGFjcXVpc3RvIjsiMCI7IlZlcmlmaWNhcmUgY29tcGxldGV6emEgZG9jdW1lbnRpIGUgSVZBIHZlbmRpdGUiDQoiT3R0b2JyZSI7ImZhdHR1cmF0bywgcHJvdnZpZ2lvbmkgbmV0dGUsIGFjY2FudG9uYXRvLCBmYXR0dXJlIGFjcXVpc3RvIjsiMCI7IlZlcmlmaWNhcmUgY29tcGxldGV6emEgZG9jdW1lbnRpIGUgSVZBIHZlbmRpdGUiDQoiTm92ZW1icmUiOyJmYXR0dXJhdG8sIHByb3Z2aWdpb25pIG5ldHRlLCBhY2NhbnRvbmF0bywgZmF0dHVyZSBhY3F1aXN0byI7IjAiOyJWZXJpZmljYXJlIGNvbXBsZXRlenphIGRvY3VtZW50aSBlIElWQSB2ZW5kaXRlIg0KIkRpY2VtYnJlIjsiZmF0dHVyYXRvLCBwcm92dmlnaW9uaSBuZXR0ZSwgYWNjYW50b25hdG8sIGZhdHR1cmUgYWNxdWlzdG8iOyIwIjsiVmVyaWZpY2FyZSBjb21wbGV0ZXp6YSBkb2N1bWVudGkgZSBJVkEgdmVuZGl0ZSINCg=="
+      }
+    },
+    {
+      "kind": "download",
+      "file_name": "fatture_iva_acquisti_2027.csv",
+      "mime": "text/csv",
+      "data": {
+        "base64": ""
+      }
+    },
+    {
       "kind": "table",
       "records": []
+    },
+    {
+      "kind": "download",
+      "file_name": "prospetti_iva_2027.csv",
+      "mime": "text/csv",
+      "data": {
+        "base64": ""
+      }
     }
   ],
   "2027:Conto economico": [
@@ -1928,6 +1984,14 @@
     {
       "kind": "table",
       "records": []
+    },
+    {
+      "kind": "download",
+      "file_name": "pensione_2027.csv",
+      "mime": "text/csv",
+      "data": {
+        "base64": ""
+      }
     }
   ],
   "2027:Ammortamenti": [

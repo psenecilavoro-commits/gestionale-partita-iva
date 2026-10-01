@@ -8,7 +8,7 @@ test('browser Python runtime renders both regimes with original formulas',async(
   const source=JSON.parse(gunzipSync(await readFile('public/engine.json.gz')).toString());
   const tables=JSON.parse(await readFile('public/demo.json','utf8'));
   const oracle=JSON.parse(await readFile('tests/fixtures/fiscal-parity.json','utf8'));
-  const project=nodes=>nodes.flatMap(n=>[...(n.kind==='metric'?[{kind:'metric',label:n.label,value:n.value}]:n.kind==='table'?[{kind:'table',records:n.records}]:[]),...project(n.children)]);
+  const project=nodes=>nodes.flatMap(n=>[...(n.kind==='metric'?[{kind:'metric',label:n.label,value:n.value}]:n.kind==='table'?[{kind:'table',records:n.records}]:n.kind==='download'?[{kind:'download',file_name:n.file_name,mime:n.mime,data:n.data}]:[]),...project(n.children)]);
   py.FS.mkdir('/app');
   for(const [p,s] of Object.entries(source))py.FS.writeFile(`/app/${p}`,s);
   py.runPython("import sys,json\nsys.path.insert(0,'/app')\nimport react_bridge");
