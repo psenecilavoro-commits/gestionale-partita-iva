@@ -82,7 +82,7 @@ function App(){
   async function load(){
     if(!client){tables.current=await (await fetch('/demo.json')).json();return;}
     const schema=await (await fetch('/schema.json')).json();
-    const names=[...schema.tables.map(t=>t.name),...(isStaging?['sales_vat_invoices','vat_periods','pension_payments','purchase_cost_links']:[])];
+    const names=[...schema.tables.map(t=>t.name),...['sales_vat_invoices','vat_periods','pension_payments','purchase_cost_links']];
     const pairs=await Promise.all(names.map(async name=>[name,await readTable(client,name)]));
     tables.current=Object.fromEntries(pairs);
   }
