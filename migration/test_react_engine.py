@@ -31,6 +31,37 @@ class ReactEngine(unittest.TestCase):
         from accantonamenti_confronto import ripartisci_residuo
         r=ripartisci_residuo(D('11000'),D('4800'),8)
         self.assertEqual(r['quota_mensile'],D('1550'))
+    def test_planned_asset_preserves_payload_and_clears_submitted_form(self):
+        def flatten(nodes):
+            return [item for n in nodes for item in [n, *flatten(n['children'])]]
+        initial=self.render(2027,'Ammortamenti')
+        values=initial['inputs']
+        radio=next(n for n in flatten(initial['tree']) if n.get('label')=='Tipo di inserimento')
+        values[radio['key']]='Previsto'
+        planned=self.render(2027,'Ammortamenti',inputs=values)
+        nodes=flatten(planned['tree'])
+        values=planned['inputs']
+        fields={'Descrizione bene':'SYNTHETIC FORM RESET', 'Esborso lordo previsto (€)':'1000', 'Coefficiente ammortamento (%) · solo se costo fiscale > 516,46 €':'20', 'Confermo importi, IVA, classificazione e coefficiente quando necessario':True}
+        keys={}
+        for label,value in fields.items():
+            item=next(n for n in nodes if n.get('label')==label)
+            values[item['key']]=value
+            keys[label]=item['key']
+        submit=next(n for n in nodes if n.get('label')=='Salva bene')['key']
+        saved=self.render(2027,'Ammortamenti',inputs=values,event=submit)
+        self.assertEqual(len(saved['mutations']),1)
+        payload=saved['mutations'][0]['payload']
+        self.assertEqual(payload['description'],'SYNTHETIC FORM RESET')
+        self.assertEqual(float(payload['gross_amount']),1000)
+        self.assertTrue(payload['is_planned'])
+        for key in keys.values():
+            self.assertNotIn(key,saved['inputs'])
+        next_view=self.render(2027,'Ammortamenti',inputs=saved['inputs'])
+        self.assertEqual(next_view['mutations'],[])
+        next_nodes=flatten(next_view['tree'])
+        self.assertEqual(next(n['value'] for n in next_nodes if n.get('label')=='Descrizione bene'),'')
+        self.assertFalse(next(n['value'] for n in next_nodes if n.get('label')=='Confermo importi, IVA, classificazione e coefficiente quando necessario'))
+
     def test_state_cleared_when_owner_changes(self):
         self.render(2026,'Fatturato')
         bridge.state['private']='sensitive'

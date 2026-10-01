@@ -1,0 +1,1072 @@
+{
+  "tables": [
+    {
+      "rls": true,
+      "name": "annual_cost_estimates"
+    },
+    {
+      "rls": true,
+      "name": "annual_settings"
+    },
+    {
+      "rls": true,
+      "name": "contributions"
+    },
+    {
+      "rls": true,
+      "name": "cost_categories"
+    },
+    {
+      "rls": true,
+      "name": "costs"
+    },
+    {
+      "rls": true,
+      "name": "depreciable_assets"
+    },
+    {
+      "rls": true,
+      "name": "estimate_monthly_allocations"
+    },
+    {
+      "rls": true,
+      "name": "fiscal_parameters"
+    },
+    {
+      "rls": true,
+      "name": "fiscal_years"
+    },
+    {
+      "rls": true,
+      "name": "monthly_net_commissions"
+    },
+    {
+      "rls": true,
+      "name": "monthly_reserves"
+    },
+    {
+      "rls": true,
+      "name": "monthly_revenues"
+    },
+    {
+      "rls": true,
+      "name": "principals"
+    },
+    {
+      "rls": true,
+      "name": "purchase_vat_invoices"
+    },
+    {
+      "rls": true,
+      "name": "tax_credits"
+    },
+    {
+      "rls": true,
+      "name": "tax_deductions"
+    },
+    {
+      "rls": true,
+      "name": "vat_adjustments"
+    },
+    {
+      "rls": true,
+      "name": "vehicle_monthly"
+    },
+    {
+      "rls": true,
+      "name": "vehicle_year_settings"
+    },
+    {
+      "rls": true,
+      "name": "vehicles"
+    }
+  ],
+  "policies": [
+    {
+      "cmd": "DELETE",
+      "qual": "(user_id = ( SELECT auth.uid() AS uid))",
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "annual_cost_estimates",
+      "permissive": "PERMISSIVE",
+      "policyname": "owner_delete",
+      "schemaname": "public",
+      "with_check": null
+    },
+    {
+      "cmd": "INSERT",
+      "qual": null,
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "annual_cost_estimates",
+      "permissive": "PERMISSIVE",
+      "policyname": "owner_insert",
+      "schemaname": "public",
+      "with_check": "(user_id = ( SELECT auth.uid() AS uid))"
+    },
+    {
+      "cmd": "SELECT",
+      "qual": "(user_id = ( SELECT auth.uid() AS uid))",
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "annual_cost_estimates",
+      "permissive": "PERMISSIVE",
+      "policyname": "owner_select",
+      "schemaname": "public",
+      "with_check": null
+    },
+    {
+      "cmd": "UPDATE",
+      "qual": "(user_id = ( SELECT auth.uid() AS uid))",
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "annual_cost_estimates",
+      "permissive": "PERMISSIVE",
+      "policyname": "owner_update",
+      "schemaname": "public",
+      "with_check": "(user_id = ( SELECT auth.uid() AS uid))"
+    },
+    {
+      "cmd": "DELETE",
+      "qual": "(user_id = ( SELECT auth.uid() AS uid))",
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "annual_settings",
+      "permissive": "PERMISSIVE",
+      "policyname": "owner_delete",
+      "schemaname": "public",
+      "with_check": null
+    },
+    {
+      "cmd": "INSERT",
+      "qual": null,
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "annual_settings",
+      "permissive": "PERMISSIVE",
+      "policyname": "owner_insert",
+      "schemaname": "public",
+      "with_check": "(user_id = ( SELECT auth.uid() AS uid))"
+    },
+    {
+      "cmd": "SELECT",
+      "qual": "(user_id = ( SELECT auth.uid() AS uid))",
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "annual_settings",
+      "permissive": "PERMISSIVE",
+      "policyname": "owner_select",
+      "schemaname": "public",
+      "with_check": null
+    },
+    {
+      "cmd": "UPDATE",
+      "qual": "(user_id = ( SELECT auth.uid() AS uid))",
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "annual_settings",
+      "permissive": "PERMISSIVE",
+      "policyname": "owner_update",
+      "schemaname": "public",
+      "with_check": "(user_id = ( SELECT auth.uid() AS uid))"
+    },
+    {
+      "cmd": "DELETE",
+      "qual": "(user_id = ( SELECT auth.uid() AS uid))",
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "contributions",
+      "permissive": "PERMISSIVE",
+      "policyname": "owner_delete",
+      "schemaname": "public",
+      "with_check": null
+    },
+    {
+      "cmd": "INSERT",
+      "qual": null,
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "contributions",
+      "permissive": "PERMISSIVE",
+      "policyname": "owner_insert",
+      "schemaname": "public",
+      "with_check": "(user_id = ( SELECT auth.uid() AS uid))"
+    },
+    {
+      "cmd": "SELECT",
+      "qual": "(user_id = ( SELECT auth.uid() AS uid))",
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "contributions",
+      "permissive": "PERMISSIVE",
+      "policyname": "owner_select",
+      "schemaname": "public",
+      "with_check": null
+    },
+    {
+      "cmd": "UPDATE",
+      "qual": "(user_id = ( SELECT auth.uid() AS uid))",
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "contributions",
+      "permissive": "PERMISSIVE",
+      "policyname": "owner_update",
+      "schemaname": "public",
+      "with_check": "(user_id = ( SELECT auth.uid() AS uid))"
+    },
+    {
+      "cmd": "DELETE",
+      "qual": "(user_id = ( SELECT auth.uid() AS uid))",
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "cost_categories",
+      "permissive": "PERMISSIVE",
+      "policyname": "owner_delete",
+      "schemaname": "public",
+      "with_check": null
+    },
+    {
+      "cmd": "INSERT",
+      "qual": null,
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "cost_categories",
+      "permissive": "PERMISSIVE",
+      "policyname": "owner_insert",
+      "schemaname": "public",
+      "with_check": "(user_id = ( SELECT auth.uid() AS uid))"
+    },
+    {
+      "cmd": "SELECT",
+      "qual": "(user_id = ( SELECT auth.uid() AS uid))",
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "cost_categories",
+      "permissive": "PERMISSIVE",
+      "policyname": "owner_select",
+      "schemaname": "public",
+      "with_check": null
+    },
+    {
+      "cmd": "UPDATE",
+      "qual": "(user_id = ( SELECT auth.uid() AS uid))",
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "cost_categories",
+      "permissive": "PERMISSIVE",
+      "policyname": "owner_update",
+      "schemaname": "public",
+      "with_check": "(user_id = ( SELECT auth.uid() AS uid))"
+    },
+    {
+      "cmd": "DELETE",
+      "qual": "(user_id = ( SELECT auth.uid() AS uid))",
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "costs",
+      "permissive": "PERMISSIVE",
+      "policyname": "owner_delete",
+      "schemaname": "public",
+      "with_check": null
+    },
+    {
+      "cmd": "INSERT",
+      "qual": null,
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "costs",
+      "permissive": "PERMISSIVE",
+      "policyname": "owner_insert",
+      "schemaname": "public",
+      "with_check": "(user_id = ( SELECT auth.uid() AS uid))"
+    },
+    {
+      "cmd": "SELECT",
+      "qual": "(user_id = ( SELECT auth.uid() AS uid))",
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "costs",
+      "permissive": "PERMISSIVE",
+      "policyname": "owner_select",
+      "schemaname": "public",
+      "with_check": null
+    },
+    {
+      "cmd": "UPDATE",
+      "qual": "(user_id = ( SELECT auth.uid() AS uid))",
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "costs",
+      "permissive": "PERMISSIVE",
+      "policyname": "owner_update",
+      "schemaname": "public",
+      "with_check": "(user_id = ( SELECT auth.uid() AS uid))"
+    },
+    {
+      "cmd": "DELETE",
+      "qual": "(EXISTS ( SELECT 1\n   FROM fiscal_years f\n  WHERE ((f.id = depreciable_assets.fiscal_year_id) AND (f.user_id = ( SELECT auth.uid() AS uid)) AND (f.status = 'open'::text))))",
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "depreciable_assets",
+      "permissive": "PERMISSIVE",
+      "policyname": "piva_depreciable_delete",
+      "schemaname": "public",
+      "with_check": null
+    },
+    {
+      "cmd": "INSERT",
+      "qual": null,
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "depreciable_assets",
+      "permissive": "PERMISSIVE",
+      "policyname": "piva_depreciable_insert",
+      "schemaname": "public",
+      "with_check": "(EXISTS ( SELECT 1\n   FROM fiscal_years f\n  WHERE ((f.id = depreciable_assets.fiscal_year_id) AND (f.user_id = ( SELECT auth.uid() AS uid)) AND (f.status = 'open'::text))))"
+    },
+    {
+      "cmd": "SELECT",
+      "qual": "(EXISTS ( SELECT 1\n   FROM fiscal_years f\n  WHERE ((f.id = depreciable_assets.fiscal_year_id) AND (f.user_id = ( SELECT auth.uid() AS uid)))))",
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "depreciable_assets",
+      "permissive": "PERMISSIVE",
+      "policyname": "piva_depreciable_read",
+      "schemaname": "public",
+      "with_check": null
+    },
+    {
+      "cmd": "UPDATE",
+      "qual": "(EXISTS ( SELECT 1\n   FROM fiscal_years f\n  WHERE ((f.id = depreciable_assets.fiscal_year_id) AND (f.user_id = ( SELECT auth.uid() AS uid)) AND (f.status = 'open'::text))))",
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "depreciable_assets",
+      "permissive": "PERMISSIVE",
+      "policyname": "piva_depreciable_update",
+      "schemaname": "public",
+      "with_check": "(EXISTS ( SELECT 1\n   FROM fiscal_years f\n  WHERE ((f.id = depreciable_assets.fiscal_year_id) AND (f.user_id = ( SELECT auth.uid() AS uid)) AND (f.status = 'open'::text))))"
+    },
+    {
+      "cmd": "DELETE",
+      "qual": "(user_id = ( SELECT auth.uid() AS uid))",
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "estimate_monthly_allocations",
+      "permissive": "PERMISSIVE",
+      "policyname": "owner_delete",
+      "schemaname": "public",
+      "with_check": null
+    },
+    {
+      "cmd": "INSERT",
+      "qual": null,
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "estimate_monthly_allocations",
+      "permissive": "PERMISSIVE",
+      "policyname": "owner_insert",
+      "schemaname": "public",
+      "with_check": "(user_id = ( SELECT auth.uid() AS uid))"
+    },
+    {
+      "cmd": "SELECT",
+      "qual": "(user_id = ( SELECT auth.uid() AS uid))",
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "estimate_monthly_allocations",
+      "permissive": "PERMISSIVE",
+      "policyname": "owner_select",
+      "schemaname": "public",
+      "with_check": null
+    },
+    {
+      "cmd": "UPDATE",
+      "qual": "(user_id = ( SELECT auth.uid() AS uid))",
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "estimate_monthly_allocations",
+      "permissive": "PERMISSIVE",
+      "policyname": "owner_update",
+      "schemaname": "public",
+      "with_check": "(user_id = ( SELECT auth.uid() AS uid))"
+    },
+    {
+      "cmd": "DELETE",
+      "qual": "(user_id = ( SELECT auth.uid() AS uid))",
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "fiscal_parameters",
+      "permissive": "PERMISSIVE",
+      "policyname": "owner_delete",
+      "schemaname": "public",
+      "with_check": null
+    },
+    {
+      "cmd": "INSERT",
+      "qual": null,
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "fiscal_parameters",
+      "permissive": "PERMISSIVE",
+      "policyname": "owner_insert",
+      "schemaname": "public",
+      "with_check": "(user_id = ( SELECT auth.uid() AS uid))"
+    },
+    {
+      "cmd": "SELECT",
+      "qual": "(user_id = ( SELECT auth.uid() AS uid))",
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "fiscal_parameters",
+      "permissive": "PERMISSIVE",
+      "policyname": "owner_select",
+      "schemaname": "public",
+      "with_check": null
+    },
+    {
+      "cmd": "UPDATE",
+      "qual": "(user_id = ( SELECT auth.uid() AS uid))",
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "fiscal_parameters",
+      "permissive": "PERMISSIVE",
+      "policyname": "owner_update",
+      "schemaname": "public",
+      "with_check": "(user_id = ( SELECT auth.uid() AS uid))"
+    },
+    {
+      "cmd": "DELETE",
+      "qual": "(user_id = ( SELECT auth.uid() AS uid))",
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "fiscal_years",
+      "permissive": "PERMISSIVE",
+      "policyname": "owner_delete",
+      "schemaname": "public",
+      "with_check": null
+    },
+    {
+      "cmd": "INSERT",
+      "qual": null,
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "fiscal_years",
+      "permissive": "PERMISSIVE",
+      "policyname": "owner_insert",
+      "schemaname": "public",
+      "with_check": "(user_id = ( SELECT auth.uid() AS uid))"
+    },
+    {
+      "cmd": "SELECT",
+      "qual": "(user_id = ( SELECT auth.uid() AS uid))",
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "fiscal_years",
+      "permissive": "PERMISSIVE",
+      "policyname": "owner_select",
+      "schemaname": "public",
+      "with_check": null
+    },
+    {
+      "cmd": "UPDATE",
+      "qual": "(user_id = ( SELECT auth.uid() AS uid))",
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "fiscal_years",
+      "permissive": "PERMISSIVE",
+      "policyname": "owner_update",
+      "schemaname": "public",
+      "with_check": "(user_id = ( SELECT auth.uid() AS uid))"
+    },
+    {
+      "cmd": "UPDATE",
+      "qual": "(user_id = ( SELECT auth.uid() AS uid))",
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "fiscal_years",
+      "permissive": "PERMISSIVE",
+      "policyname": "piva_fiscal_year_update_owner",
+      "schemaname": "public",
+      "with_check": "(user_id = ( SELECT auth.uid() AS uid))"
+    },
+    {
+      "cmd": "UPDATE",
+      "qual": "(user_id = ( SELECT auth.uid() AS uid))",
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "fiscal_years",
+      "permissive": "RESTRICTIVE",
+      "policyname": "piva_fiscal_year_update_owner_guard",
+      "schemaname": "public",
+      "with_check": "(user_id = ( SELECT auth.uid() AS uid))"
+    },
+    {
+      "cmd": "DELETE",
+      "qual": "(EXISTS ( SELECT 1\n   FROM fiscal_years fy\n  WHERE ((fy.id = monthly_net_commissions.fiscal_year_id) AND (fy.user_id = ( SELECT auth.uid() AS uid)) AND (fy.status = 'open'::text))))",
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "monthly_net_commissions",
+      "permissive": "PERMISSIVE",
+      "policyname": "net_commissions_delete_owner_open",
+      "schemaname": "public",
+      "with_check": null
+    },
+    {
+      "cmd": "INSERT",
+      "qual": null,
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "monthly_net_commissions",
+      "permissive": "PERMISSIVE",
+      "policyname": "net_commissions_insert_owner_open",
+      "schemaname": "public",
+      "with_check": "(EXISTS ( SELECT 1\n   FROM fiscal_years fy\n  WHERE ((fy.id = monthly_net_commissions.fiscal_year_id) AND (fy.user_id = ( SELECT auth.uid() AS uid)) AND (fy.status = 'open'::text))))"
+    },
+    {
+      "cmd": "SELECT",
+      "qual": "(EXISTS ( SELECT 1\n   FROM fiscal_years fy\n  WHERE ((fy.id = monthly_net_commissions.fiscal_year_id) AND (fy.user_id = ( SELECT auth.uid() AS uid)))))",
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "monthly_net_commissions",
+      "permissive": "PERMISSIVE",
+      "policyname": "net_commissions_select_owner",
+      "schemaname": "public",
+      "with_check": null
+    },
+    {
+      "cmd": "UPDATE",
+      "qual": "(EXISTS ( SELECT 1\n   FROM fiscal_years fy\n  WHERE ((fy.id = monthly_net_commissions.fiscal_year_id) AND (fy.user_id = ( SELECT auth.uid() AS uid)) AND (fy.status = 'open'::text))))",
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "monthly_net_commissions",
+      "permissive": "PERMISSIVE",
+      "policyname": "net_commissions_update_owner_open",
+      "schemaname": "public",
+      "with_check": "(EXISTS ( SELECT 1\n   FROM fiscal_years fy\n  WHERE ((fy.id = monthly_net_commissions.fiscal_year_id) AND (fy.user_id = ( SELECT auth.uid() AS uid)) AND (fy.status = 'open'::text))))"
+    },
+    {
+      "cmd": "DELETE",
+      "qual": "(user_id = ( SELECT auth.uid() AS uid))",
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "monthly_reserves",
+      "permissive": "PERMISSIVE",
+      "policyname": "owner_delete",
+      "schemaname": "public",
+      "with_check": null
+    },
+    {
+      "cmd": "INSERT",
+      "qual": null,
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "monthly_reserves",
+      "permissive": "PERMISSIVE",
+      "policyname": "owner_insert",
+      "schemaname": "public",
+      "with_check": "(user_id = ( SELECT auth.uid() AS uid))"
+    },
+    {
+      "cmd": "SELECT",
+      "qual": "(user_id = ( SELECT auth.uid() AS uid))",
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "monthly_reserves",
+      "permissive": "PERMISSIVE",
+      "policyname": "owner_select",
+      "schemaname": "public",
+      "with_check": null
+    },
+    {
+      "cmd": "UPDATE",
+      "qual": "(user_id = ( SELECT auth.uid() AS uid))",
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "monthly_reserves",
+      "permissive": "PERMISSIVE",
+      "policyname": "owner_update",
+      "schemaname": "public",
+      "with_check": "(user_id = ( SELECT auth.uid() AS uid))"
+    },
+    {
+      "cmd": "DELETE",
+      "qual": "(user_id = ( SELECT auth.uid() AS uid))",
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "monthly_revenues",
+      "permissive": "PERMISSIVE",
+      "policyname": "owner_delete",
+      "schemaname": "public",
+      "with_check": null
+    },
+    {
+      "cmd": "INSERT",
+      "qual": null,
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "monthly_revenues",
+      "permissive": "PERMISSIVE",
+      "policyname": "owner_insert",
+      "schemaname": "public",
+      "with_check": "(user_id = ( SELECT auth.uid() AS uid))"
+    },
+    {
+      "cmd": "SELECT",
+      "qual": "(user_id = ( SELECT auth.uid() AS uid))",
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "monthly_revenues",
+      "permissive": "PERMISSIVE",
+      "policyname": "owner_select",
+      "schemaname": "public",
+      "with_check": null
+    },
+    {
+      "cmd": "UPDATE",
+      "qual": "(user_id = ( SELECT auth.uid() AS uid))",
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "monthly_revenues",
+      "permissive": "PERMISSIVE",
+      "policyname": "owner_update",
+      "schemaname": "public",
+      "with_check": "(user_id = ( SELECT auth.uid() AS uid))"
+    },
+    {
+      "cmd": "DELETE",
+      "qual": "(user_id = ( SELECT auth.uid() AS uid))",
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "principals",
+      "permissive": "PERMISSIVE",
+      "policyname": "owner_delete",
+      "schemaname": "public",
+      "with_check": null
+    },
+    {
+      "cmd": "INSERT",
+      "qual": null,
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "principals",
+      "permissive": "PERMISSIVE",
+      "policyname": "owner_insert",
+      "schemaname": "public",
+      "with_check": "(user_id = ( SELECT auth.uid() AS uid))"
+    },
+    {
+      "cmd": "SELECT",
+      "qual": "(user_id = ( SELECT auth.uid() AS uid))",
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "principals",
+      "permissive": "PERMISSIVE",
+      "policyname": "owner_select",
+      "schemaname": "public",
+      "with_check": null
+    },
+    {
+      "cmd": "UPDATE",
+      "qual": "(user_id = ( SELECT auth.uid() AS uid))",
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "principals",
+      "permissive": "PERMISSIVE",
+      "policyname": "owner_update",
+      "schemaname": "public",
+      "with_check": "(user_id = ( SELECT auth.uid() AS uid))"
+    },
+    {
+      "cmd": "DELETE",
+      "qual": "(EXISTS ( SELECT 1\n   FROM fiscal_years fy\n  WHERE ((fy.id = purchase_vat_invoices.fiscal_year_id) AND (fy.user_id = ( SELECT auth.uid() AS uid)) AND (fy.status = 'open'::text))))",
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "purchase_vat_invoices",
+      "permissive": "PERMISSIVE",
+      "policyname": "purchase_vat_delete_owner_open",
+      "schemaname": "public",
+      "with_check": null
+    },
+    {
+      "cmd": "INSERT",
+      "qual": null,
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "purchase_vat_invoices",
+      "permissive": "PERMISSIVE",
+      "policyname": "purchase_vat_insert_owner_open",
+      "schemaname": "public",
+      "with_check": "(EXISTS ( SELECT 1\n   FROM fiscal_years fy\n  WHERE ((fy.id = purchase_vat_invoices.fiscal_year_id) AND (fy.user_id = ( SELECT auth.uid() AS uid)) AND (fy.status = 'open'::text))))"
+    },
+    {
+      "cmd": "SELECT",
+      "qual": "(EXISTS ( SELECT 1\n   FROM fiscal_years fy\n  WHERE ((fy.id = purchase_vat_invoices.fiscal_year_id) AND (fy.user_id = ( SELECT auth.uid() AS uid)))))",
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "purchase_vat_invoices",
+      "permissive": "PERMISSIVE",
+      "policyname": "purchase_vat_select_owner",
+      "schemaname": "public",
+      "with_check": null
+    },
+    {
+      "cmd": "UPDATE",
+      "qual": "(EXISTS ( SELECT 1\n   FROM fiscal_years fy\n  WHERE ((fy.id = purchase_vat_invoices.fiscal_year_id) AND (fy.user_id = ( SELECT auth.uid() AS uid)) AND (fy.status = 'open'::text))))",
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "purchase_vat_invoices",
+      "permissive": "PERMISSIVE",
+      "policyname": "purchase_vat_update_owner_open",
+      "schemaname": "public",
+      "with_check": "(EXISTS ( SELECT 1\n   FROM fiscal_years fy\n  WHERE ((fy.id = purchase_vat_invoices.fiscal_year_id) AND (fy.user_id = ( SELECT auth.uid() AS uid)) AND (fy.status = 'open'::text))))"
+    },
+    {
+      "cmd": "DELETE",
+      "qual": "(user_id = ( SELECT auth.uid() AS uid))",
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "tax_credits",
+      "permissive": "PERMISSIVE",
+      "policyname": "owner_delete",
+      "schemaname": "public",
+      "with_check": null
+    },
+    {
+      "cmd": "INSERT",
+      "qual": null,
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "tax_credits",
+      "permissive": "PERMISSIVE",
+      "policyname": "owner_insert",
+      "schemaname": "public",
+      "with_check": "(user_id = ( SELECT auth.uid() AS uid))"
+    },
+    {
+      "cmd": "SELECT",
+      "qual": "(user_id = ( SELECT auth.uid() AS uid))",
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "tax_credits",
+      "permissive": "PERMISSIVE",
+      "policyname": "owner_select",
+      "schemaname": "public",
+      "with_check": null
+    },
+    {
+      "cmd": "UPDATE",
+      "qual": "(user_id = ( SELECT auth.uid() AS uid))",
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "tax_credits",
+      "permissive": "PERMISSIVE",
+      "policyname": "owner_update",
+      "schemaname": "public",
+      "with_check": "(user_id = ( SELECT auth.uid() AS uid))"
+    },
+    {
+      "cmd": "DELETE",
+      "qual": "(user_id = ( SELECT auth.uid() AS uid))",
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "tax_deductions",
+      "permissive": "PERMISSIVE",
+      "policyname": "owner_delete",
+      "schemaname": "public",
+      "with_check": null
+    },
+    {
+      "cmd": "INSERT",
+      "qual": null,
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "tax_deductions",
+      "permissive": "PERMISSIVE",
+      "policyname": "owner_insert",
+      "schemaname": "public",
+      "with_check": "(user_id = ( SELECT auth.uid() AS uid))"
+    },
+    {
+      "cmd": "SELECT",
+      "qual": "(user_id = ( SELECT auth.uid() AS uid))",
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "tax_deductions",
+      "permissive": "PERMISSIVE",
+      "policyname": "owner_select",
+      "schemaname": "public",
+      "with_check": null
+    },
+    {
+      "cmd": "UPDATE",
+      "qual": "(user_id = ( SELECT auth.uid() AS uid))",
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "tax_deductions",
+      "permissive": "PERMISSIVE",
+      "policyname": "owner_update",
+      "schemaname": "public",
+      "with_check": "(user_id = ( SELECT auth.uid() AS uid))"
+    },
+    {
+      "cmd": "DELETE",
+      "qual": "(user_id = ( SELECT auth.uid() AS uid))",
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "vat_adjustments",
+      "permissive": "PERMISSIVE",
+      "policyname": "owner_delete",
+      "schemaname": "public",
+      "with_check": null
+    },
+    {
+      "cmd": "INSERT",
+      "qual": null,
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "vat_adjustments",
+      "permissive": "PERMISSIVE",
+      "policyname": "owner_insert",
+      "schemaname": "public",
+      "with_check": "(user_id = ( SELECT auth.uid() AS uid))"
+    },
+    {
+      "cmd": "SELECT",
+      "qual": "(user_id = ( SELECT auth.uid() AS uid))",
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "vat_adjustments",
+      "permissive": "PERMISSIVE",
+      "policyname": "owner_select",
+      "schemaname": "public",
+      "with_check": null
+    },
+    {
+      "cmd": "UPDATE",
+      "qual": "(user_id = ( SELECT auth.uid() AS uid))",
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "vat_adjustments",
+      "permissive": "PERMISSIVE",
+      "policyname": "owner_update",
+      "schemaname": "public",
+      "with_check": "(user_id = ( SELECT auth.uid() AS uid))"
+    },
+    {
+      "cmd": "DELETE",
+      "qual": "(user_id = ( SELECT auth.uid() AS uid))",
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "vehicle_monthly",
+      "permissive": "PERMISSIVE",
+      "policyname": "owner_delete",
+      "schemaname": "public",
+      "with_check": null
+    },
+    {
+      "cmd": "INSERT",
+      "qual": null,
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "vehicle_monthly",
+      "permissive": "PERMISSIVE",
+      "policyname": "owner_insert",
+      "schemaname": "public",
+      "with_check": "(user_id = ( SELECT auth.uid() AS uid))"
+    },
+    {
+      "cmd": "SELECT",
+      "qual": "(user_id = ( SELECT auth.uid() AS uid))",
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "vehicle_monthly",
+      "permissive": "PERMISSIVE",
+      "policyname": "owner_select",
+      "schemaname": "public",
+      "with_check": null
+    },
+    {
+      "cmd": "UPDATE",
+      "qual": "(user_id = ( SELECT auth.uid() AS uid))",
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "vehicle_monthly",
+      "permissive": "PERMISSIVE",
+      "policyname": "owner_update",
+      "schemaname": "public",
+      "with_check": "(user_id = ( SELECT auth.uid() AS uid))"
+    },
+    {
+      "cmd": "DELETE",
+      "qual": "(user_id = ( SELECT auth.uid() AS uid))",
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "vehicle_year_settings",
+      "permissive": "PERMISSIVE",
+      "policyname": "owner_delete",
+      "schemaname": "public",
+      "with_check": null
+    },
+    {
+      "cmd": "INSERT",
+      "qual": null,
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "vehicle_year_settings",
+      "permissive": "PERMISSIVE",
+      "policyname": "owner_insert",
+      "schemaname": "public",
+      "with_check": "(user_id = ( SELECT auth.uid() AS uid))"
+    },
+    {
+      "cmd": "SELECT",
+      "qual": "(user_id = ( SELECT auth.uid() AS uid))",
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "vehicle_year_settings",
+      "permissive": "PERMISSIVE",
+      "policyname": "owner_select",
+      "schemaname": "public",
+      "with_check": null
+    },
+    {
+      "cmd": "UPDATE",
+      "qual": "(user_id = ( SELECT auth.uid() AS uid))",
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "vehicle_year_settings",
+      "permissive": "PERMISSIVE",
+      "policyname": "owner_update",
+      "schemaname": "public",
+      "with_check": "(user_id = ( SELECT auth.uid() AS uid))"
+    },
+    {
+      "cmd": "DELETE",
+      "qual": "(user_id = ( SELECT auth.uid() AS uid))",
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "vehicles",
+      "permissive": "PERMISSIVE",
+      "policyname": "owner_delete",
+      "schemaname": "public",
+      "with_check": null
+    },
+    {
+      "cmd": "INSERT",
+      "qual": null,
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "vehicles",
+      "permissive": "PERMISSIVE",
+      "policyname": "owner_insert",
+      "schemaname": "public",
+      "with_check": "(user_id = ( SELECT auth.uid() AS uid))"
+    },
+    {
+      "cmd": "SELECT",
+      "qual": "(user_id = ( SELECT auth.uid() AS uid))",
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "vehicles",
+      "permissive": "PERMISSIVE",
+      "policyname": "owner_select",
+      "schemaname": "public",
+      "with_check": null
+    },
+    {
+      "cmd": "UPDATE",
+      "qual": "(user_id = ( SELECT auth.uid() AS uid))",
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "vehicles",
+      "permissive": "PERMISSIVE",
+      "policyname": "owner_update",
+      "schemaname": "public",
+      "with_check": "(user_id = ( SELECT auth.uid() AS uid))"
+    }
+  ],
+  "captured_at": "2026-10-01T16:54:48.203938+00:00",
+  "existing_structure_function": null
+}

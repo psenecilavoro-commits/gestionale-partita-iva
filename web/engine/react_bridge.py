@@ -170,7 +170,7 @@ def widget(kind):
             state[ident] = default
         formatter = kwargs.get('format_func', str)
         props = {k: v for k, v in kwargs.items() if k in ('disabled','help','placeholder','min_value','max_value','step','type','accept_multiple_files')}
-        node(kind, label, key=ident, value=current, options=opts,
+        node(kind, label, key=ident, value=current, default_value=default, options=opts,
              option_labels=[str(formatter(v)) for v in opts] if opts is not None else None, **props)
         if kind == 'date_input' and isinstance(current, str):
             return datetime.date.fromisoformat(current)
@@ -195,7 +195,7 @@ def button(label, *args, key=None, disabled=False, **kwargs):
 
 def group(kind):
     def call(label='', *args, **kwargs):
-        return Frame(node(kind, str(label)), f'{contexts[-1]}/{kind}:{label}')
+        return Frame(node(kind, str(label), clear_on_submit=bool(kwargs.get('clear_on_submit', False))), f'{contexts[-1]}/{kind}:{label}')
     return call
 
 
@@ -381,6 +381,21 @@ def render(request):
             if 'key' in item and item['kind'] != 'button':
                 yield item['key']
             yield from visible_keys(item['children'])
+    def clear_submitted_forms(nodes):
+        for item in nodes:
+            if item['kind'] == 'form' and item.get('clear_on_submit'):
+                def submitted(children):
+                    return any((n['kind'] == 'button' and n.get('key') == event) or submitted(n['children']) for n in children)
+                if submitted(item['children']):
+                    def reset(children):
+                        for widget in children:
+                            if 'default_value' in widget:
+                                widget['value'] = widget['default_value']
+                                state.pop(widget['key'], None)
+                            reset(widget['children'])
+                    reset(item['children'])
+            clear_submitted_forms(item['children'])
+    clear_submitted_forms(tree + st.sidebar.node['children'])
     keys=set(visible_keys(tree + st.sidebar.node['children']))
     return json.dumps({'tree':tree,'sidebar':st.sidebar.node['children'],
                        'inputs':{k:state[k] for k in keys if k in state},

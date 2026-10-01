@@ -96,7 +96,7 @@ function App(){
       if(next.mutations.length){
         if(client){await applyMutations(client,next.mutations);await load();}
         else tables.current=next.tables;
-        event=null;next=await evaluate();
+        inputs=next.inputs;event=null;next=await evaluate();
       }
       if(ticket===epoch.current){setResult(next);currentValues.current=next.inputs;setValues(next.inputs);}
     }catch(e){if(ticket===epoch.current)setError(e.message);}
