@@ -24,6 +24,7 @@ test('local document readers preserve original amounts and reject unsafe XML and
  for(const name of ['pypdf-6.19.0-py3-none-any.whl','defusedxml-0.7.1-py2.py3-none-any.whl']){py.FS.writeFile('/package.whl',await readFile('public/runtime/wheels/'+name));py.runPython("import zipfile\nwith zipfile.ZipFile('/package.whl') as wheel: wheel.extractall('/app')");}
  py.runPython("import sys,json\nsys.path.insert(0,'/app')\nimport react_bridge");
  const inspect=async(name,medical=false)=>{py.globals.set('document_request',JSON.stringify({base64:(await readFile('tests/fixtures/'+name)).toString('base64'),medical}));return JSON.parse(py.runPython('json.dumps(react_bridge.inspect_document(json.loads(document_request)))'));};
+ const scanned=await inspect('invoice-scanned.pdf');assert.equal(scanned.needs_ocr,true);
  const invoice=await inspect('invoice.pdf');assert.equal(invoice.needs_ocr,false);
  py.globals.set('document_text',invoice.text);assert.equal(py.runPython("from fatture_provvigioni import suggerisci_netto\nstr(suggerisci_netto(document_text)[0])"),'1234.56');
  const medical=await inspect('medical.pdf',true);py.globals.set('document_text',medical.text);assert.equal(py.runPython("from sanitarie_documenti import suggerisci_importo\nstr(suggerisci_importo(document_text))"),'123.45');

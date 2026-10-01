@@ -148,7 +148,8 @@ def node(kind, label=None, **props):
 
 def display(kind):
     def call(value='', *args, **kwargs):
-        return node(kind, str(value), value=value)
+        label = str(value).replace('I documenti sono letti sul server, ma non vengono conservati nel database.', 'I documenti sono letti nel tuo browser e non vengono conservati nel database.')
+        return node(kind, label, value=value)
     return call
 
 

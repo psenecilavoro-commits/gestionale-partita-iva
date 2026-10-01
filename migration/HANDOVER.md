@@ -1,3 +1,7 @@
+# Collaudo documenti verificato - 2026-10-01
+Sorgente documenti: 02e184bdf86a9fc445463bedf62a7dbf1e081f85. Deploy39dbab9b-2711-4201-a94e-b85727291ba5 riuscito. Browser remoto: PDF fattura1234.56, immagine OCR1234.56, PDF scansionato OCR1234.56, XML123.45 e PDF sanitario123.45 letti. PDF oltre4pagine passa al manuale. Salvataggio fattura2027 confermato1234.56 e ripristinato3900; sanitario123.45 confermato nel DB e stesso file segnalato duplicato senza ricontarlo; record sanitario sintetico eliminato dopo test. Nessuna produzione modificata. Test5Node e build passati, 48moduli fiscali intatti. Corretto messaggio sanitario: lettura nel browser. Server localhost fermato; suo errore fetch non presente su Cloudflare.
+Prossimo passo: completare audit dei flussi di scrittura/CSV e parita originale, preparare piano dei4registri mancanti in produzione prima del passaggio finale. NON rieseguire seed. Riprendere dalla branch migration/react-cloudflare, non dalla baseline. Credenziali sintetiche solo nel file ignorato. Nessun processo in background.
+
 # Checkpoint documenti — 2026-10-01
 Branch: migration/react-cloudflare. Precedente checkpoint: 8e344e3501413004ffe3e56c32c0c8d0c7bff48d.
 Implementati lettori PDF/XML originali con pypdf 6.19.0 e defusedxml 0.7.1, OCR locale Tesseract 7, rendering PDF.js 6.3.289, asset self-hosted con checksum. Nessuna modifica ai 48 moduli fiscali originali, nessun file inviato a servizi esterni. Test originali 50, bridge 3, Node 5 passati; build passata. Import documenti ancora DA COLLAUDARE nel browser: preview localhost avvia UI ma restituisce TypeError Failed to fetch senza console errors; risorse HTTP verificate 200. Aggiunta diagnostica per runtime/wheel/formule. Prossimo passo esatto: verificare questa build nel collaudo Cloudflare e provare invoice.pdf, invoice.png e medical.pdf; riconciliare importazione/conferma/manual fallback e duplicati. Poi collaudo completo delle scritture e parità funzionale. Produzione NON modificata. Quattro tabelle presenti solo nel collaudo richiedono piano prima della produzione. Credenziali sintetiche restano nel file ignorato web/.staging-test-users.json. Non riseminare database.
@@ -98,5 +102,5 @@ L'autorizzazione OAuth è completata. L'utente deve riavviare Codex per caricare
 ## Regole di continuità
 
 Salvare commit + aggiornare nota prima di interruzioni. Nessun lavoro in background fuori sessione; non aspettare ricariche. I file sources della directory progetto restano read-only. L'utente vuole comunicazioni solo per interventi necessari o collaudo pronto.
-
-
+
+
