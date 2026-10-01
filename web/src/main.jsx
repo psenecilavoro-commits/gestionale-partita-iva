@@ -14,6 +14,16 @@ function Markdown({text=''}){
 const client=configuredClient();
 const isStaging=import.meta.env.VITE_APP_MODE==='staging';
 function encodeFile(bytes){let binary='';for(let i=0;i<bytes.length;i+=8192)binary+=String.fromCharCode(...bytes.subarray(i,i+8192));return btoa(binary);}
+function Download({node}){
+  const [href,setHref]=useState('');
+  useEffect(()=>{
+    const bytes=Uint8Array.from(atob(node.data.base64),c=>c.charCodeAt(0));
+    const url=URL.createObjectURL(new Blob([bytes],{type:node.mime}));
+    setHref(url);
+    return()=>URL.revokeObjectURL(url);
+  },[node.data.base64,node.mime]);
+  return <a className="download-link" href={href||undefined} download={node.file_name} aria-disabled={!href}>{node.label}</a>;
+}
 function Table({records}){
   if(!Array.isArray(records))return <p>Nessuna riga disponibile.</p>;
   const cols=[...new Set(records.flatMap(r=>Object.keys(r)))];
@@ -47,7 +57,7 @@ function Nodes({nodes=[],values,onChange,onClick,onUpload,busy}){
       case 'columns':el=<div className="columns">{children}</div>;break;
       case 'column':case 'container':case 'placeholder':case 'spinner':el=<div>{children}</div>;break;
       case 'link':el=<a href={n.url} target="_blank" rel="noreferrer">{n.label}</a>;break;
-      case 'download':el=<button onClick={()=>{const bytes=Uint8Array.from(atob(n.data.base64),c=>c.charCodeAt(0));const url=URL.createObjectURL(new Blob([bytes],{type:n.mime}));const a=document.createElement('a');a.href=url;a.download=n.file_name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}}>{n.label}</button>;break;
+      case 'download':el=<Download node={n}/>;break;
       default:el=<p role="alert">Elemento da completare: {n.kind}</p>;
     }
     return <React.Fragment key={n.id}>{el}</React.Fragment>;
