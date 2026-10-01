@@ -1,5 +1,8 @@
 # Migrazione React / Cloudflare — checkpoint 2026-10-01
 
+## Grafica richiesta dall’utente
+Utente autorizza prosecuzione autonoma e chiede stile come Ordini. Riferimento UI letto da release/produzione-050-prospect 19a7f712. Main.jsx: icone navigazione, intestazione sezione, badge collaudo, menu mobile con chiusura e backdrop, Markdown sicuro come elementi React (nessun HTML iniettato). CSS: palette azzurra, pannelli e metriche con bordi/ombre leggeri, tabelle ordinate, sidebar sticky scorrevole e layout mobile. Build passata. Formule, backend e dati intatti.
+Prossimo passo: verificare deploy e resa desktop/mobile, poi riprendere PDF/OCR e parità finale. Non migrare produzione prima di completare i punti aperti.
 ## Verifica successiva
 Browser remoto: tutte8schede x 2026/2027 =16viste verificate senza alert dopo completamento struttura staging. Utente test0 autenticato nel tab consegnabile. Fatturato Gennaio ripristinato4500; anno2026 open. Password test nel file locale ignorato, non riutilizzare credenziali produzione.
 Deploy ce1c948b777b50f10c669363975fb925744246fc riuscito: 225c0bd4-0397-44ec-b910-747bf0875203. Test Auth/RLS ripetuto su dati popolati, PASS anche registrazione IVA vendite, isolamento secondo utente, update con version1->2, rifiuto update stale version1, rifiuto update anno chiuso, registrazione pensione e rifiuto periodi IVA sovrapposti. Record temporanei test eliminati, anno2026 riaperto. Nessuna operazione produzione.

@@ -1,10 +1,15 @@
 import React,{useState,useEffect,useRef} from 'react';
 import {createRoot} from 'react-dom/client';
-import {Calculator,Menu,ShieldCheck} from 'lucide-react';
+import {Calculator,Menu,ShieldCheck,TrendingUp,Receipt,Car,Wallet,ChartNoAxesCombined,Landmark,BadgePercent,Layers,X} from 'lucide-react';
 import {configuredClient,readTable,applyMutations} from './data.js';
 import './style.css';
 
 const NAV=['Fatturato','Costi','Auto','Accantonamenti','Conto economico','Imposte','Detrazioni e deduzioni','Ammortamenti'];
+const NAV_ICONS=[TrendingUp,Receipt,Car,Wallet,ChartNoAxesCombined,Landmark,BadgePercent,Layers];
+function Markdown({text=''}){
+ const inline=line=>line.split(/(\*\*.*?\*\*)/g).map((part,i)=>part.startsWith('**')?<strong key={i}>{part.slice(2,-2)}</strong>:part);
+ return <div className="prose">{String(text).split('\n').map((line,i)=>{const heading=line.match(/^(#{1,4})\s+(.+)$/);if(heading){const Tag=heading[1].length<3?'h2':'h3';return <Tag key={i}>{inline(heading[2])}</Tag>;}return line.trim()?<p key={i}>{inline(line)}</p>:null;})}</div>;
+}
 const client=configuredClient();
 const isStaging=import.meta.env.VITE_APP_MODE==='staging';
 function encodeFile(bytes){let binary='';for(let i=0;i<bytes.length;i+=8192)binary+=String.fromCharCode(...bytes.subarray(i,i+8192));return btoa(binary);}
@@ -20,10 +25,11 @@ function Nodes({nodes=[],values,onChange,onClick,busy}){
     const change=v=>onChange(n.key,v);
     let el;
     switch(n.kind){
-      case 'title':el=<h1>{n.label}</h1>;break;
+      case 'title':el=n.label==='Gestionale Partita IVA'?null:<h1>{n.label}</h1>;break;
       case 'subheader':el=<h2>{n.label}</h2>;break;
       case 'caption':el=<p className="caption">{n.label}</p>;break;
-      case 'markdown':case 'write':case 'code':el=<p style={{whiteSpace:'pre-wrap'}}>{n.label}</p>;break;
+      case 'markdown':el=<Markdown text={n.label}/>;break;
+      case 'write':case 'code':el=<p style={{whiteSpace:'pre-wrap'}}>{n.label}</p>;break;
       case 'info':case 'warning':case 'error':case 'success':el=<p role={n.kind==='error'?'alert':undefined} className={`notice ${n.kind}`}>{n.label}</p>;break;
       case 'table':el=<Table records={n.records}/>;break;
       case 'metric':el=<div className="metric"><small>{n.label}</small><strong>{String(n.value)}</strong></div>;break;
@@ -95,6 +101,6 @@ function App(){
   function findKind(nodes,key){for(const n of nodes||[]){if(n.key===key)return n.kind;const found=findKind(n.children,key);if(found)return found;}return null;}
   async function login(e){e.preventDefault();setBusy(true);setError('');const f=new FormData(e.target);const {error}=await client.auth.signInWithPassword({email:String(f.get('email')).trim(),password:String(f.get('password'))});e.target.reset();setBusy(false);if(error)setError('Accesso non riuscito. Controlla le credenziali.');}
   const page=values.schede_principali||'Fatturato';
-  return <div className="shell"><aside className={mobile?'sidebar shown':'sidebar'}><div className="brand"><Calculator/><div><strong>Gestionale</strong><small>Partita IVA · Personale</small></div></div><nav>{NAV.map(p=><button key={p} className={page===p?'active':''} aria-current={page===p?'page':undefined} disabled={busy||!user} onClick={()=>{change('schede_principali',p);setMobile(false);}}>{p}</button>)}</nav><Nodes nodes={result?.sidebar.filter(n=>!['Utente autenticato',user?.email,'Esci'].includes(n.label))} values={values} onChange={change} onClick={event=>run(event)} busy={busy}/><footer><ShieldCheck size={16}/> {client?'Accesso protetto':'Collaudo isolato'}<small>{user?.email}</small></footer></aside><main><button className="menu" onClick={()=>setMobile(!mobile)} aria-label="Apri menu"><Menu/></button><div className="banner">{isStaging?'AMBIENTE DI COLLAUDO · dati sintetici · database separato':client?'Gestionale Partita IVA':'AMBIENTE DI COLLAUDO · dati sintetici · nessun collegamento al database reale'}</div>{client&&user&&<button onClick={async()=>{await client.auth.signOut({scope:'local'});}}>Esci</button>}{error&&<p role="alert" className="notice error">{error}</p>}{!user?<form onSubmit={login} className="login"><h1>Accedi</h1><label>Email<input name="email" type="email" required autoComplete="username"/></label><label>Password<input name="password" type="password" required autoComplete="current-password"/></label><button disabled={busy}>Accedi</button></form>:<>{busy&&<p role="status">{result?'Aggiornamento…':'Preparazione del gestionale e del motore di calcolo…'}</p>}<Nodes nodes={result?.tree} values={values} onChange={change} onClick={event=>run(event)} busy={busy}/><button disabled={busy} onClick={()=>run(null)}>Aggiorna prospetto</button></>}</main></div>;
+  return <div className="shell">{mobile&&<button className="backdrop" aria-label="Chiudi menu laterale" onClick={()=>setMobile(false)}/>}<aside aria-label="Menu principale" className={mobile?'sidebar shown':'sidebar'}><div className="brand"><div className="brand-icon"><Calculator/></div><div><strong>Gestionale</strong><small>Partita IVA · Personale</small></div><button className="side-close" aria-label="Chiudi menu" onClick={()=>setMobile(false)}><X size={18}/></button></div><div className="nav-label">IL TUO GESTIONALE</div><nav aria-label="Sezioni">{NAV.map((p,i)=><button key={p} className={page===p?'active':''} aria-current={page===p?'page':undefined} disabled={busy||!user} onClick={()=>{change('schede_principali',p);setMobile(false);}}>{React.createElement(NAV_ICONS[i],{size:18,"aria-hidden":true})}<span>{p}</span></button>)}</nav><Nodes nodes={result?.sidebar.filter(n=>!['Utente autenticato',user?.email,'Esci'].includes(n.label))} values={values} onChange={change} onClick={event=>run(event)} busy={busy}/><footer><ShieldCheck size={16}/> {client?'Accesso protetto':'Collaudo isolato'}<small>{user?.email}</small></footer></aside><main><header className="page-header"><div><p className="eyebrow">PARTITA IVA · PERSONALE</p><h1>{user?page:"Benvenuto"}</h1><p className="page-description">{user?"Un quadro chiaro della tua attività, mese dopo mese.":"Accedi al tuo spazio per tenere tutto sotto controllo."}</p></div><span className="environment-tag"><ShieldCheck size={15}/>{isStaging||!client?"Collaudo gratuito":"Accesso protetto"}</span></header><button className="menu" onClick={()=>setMobile(!mobile)} aria-label="Apri menu"><Menu/></button><div className="banner">{isStaging?'AMBIENTE DI COLLAUDO · dati sintetici · database separato':client?'Gestionale Partita IVA':'AMBIENTE DI COLLAUDO · dati sintetici · nessun collegamento al database reale'}</div>{client&&user&&<button onClick={async()=>{await client.auth.signOut({scope:'local'});}}>Esci</button>}{error&&<p role="alert" className="notice error">{error}</p>}{!user?<form onSubmit={login} className="login"><h1>Accedi</h1><label>Email<input name="email" type="email" required autoComplete="username"/></label><label>Password<input name="password" type="password" required autoComplete="current-password"/></label><button disabled={busy}>Accedi</button></form>:<>{busy&&<p role="status">{result?'Aggiornamento…':'Preparazione del gestionale e del motore di calcolo…'}</p>}<Nodes nodes={result?.tree} values={values} onChange={change} onClick={event=>run(event)} busy={busy}/><button disabled={busy} onClick={()=>run(null)}>Aggiorna prospetto</button></>}</main></div>;
 }
 createRoot(document.getElementById('root')).render(<App/>);
