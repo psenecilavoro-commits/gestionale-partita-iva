@@ -1,0 +1,6 @@
+[
+{"path":"wheels/pypdf-6.19.0-py3-none-any.whl","url":"https://files.pythonhosted.org/packages/3c/2c/c43c03eaf630435f023f1dc61ec4a4a78951ad5530a62c71cc89bde307b7/pypdf-6.19.0-py3-none-any.whl","sha256":"7e5d6e730e7dae87d560a2cee218b852f6498c8be61966f3cd02ead971e48d14"},
+{"path":"wheels/defusedxml-0.7.1-py2.py3-none-any.whl","url":"https://files.pythonhosted.org/packages/07/6c/aa3f2f849e01cb6a001cd8554a88d4c77c5c1a31c95bdf1cf9301e6d9ef4/defusedxml-0.7.1-py2.py3-none-any.whl","sha256":"a352e7e428770286cc899e2542b6cdaedb2b4953ff269a210103ec58f6198a61"},
+{"path":"ocr/lang/ita.traineddata","url":"https://raw.githubusercontent.com/tesseract-ocr/tessdata_fast/4.1.0/ita.traineddata","sha256":"b8f89e1e785118dac4d51ae042c029a64edb5c3ee42ef73027a6d412748d8827"},
+{"path":"ocr/lang/eng.traineddata","url":"https://raw.githubusercontent.com/tesseract-ocr/tessdata_fast/4.1.0/eng.traineddata","sha256":"7d4322bd2a7749724879683fc3912cb542f19906c83bcc1a52132556427170b2"}
+]

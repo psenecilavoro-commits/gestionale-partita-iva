@@ -1,0 +1,2034 @@
+{
+  "2026:Fatturato": [
+    {
+      "kind": "table",
+      "records": [
+        {
+          "VOCE": "Fatturato",
+          "VALORE": "49.500,00 €"
+        },
+        {
+          "VOCE": "Costi annui",
+          "VALORE": "8.001,83 €"
+        },
+        {
+          "VOCE": "Netto annuo stimato",
+          "VALORE": "29.836,38 €"
+        },
+        {
+          "VOCE": "Netto/12 medio",
+          "VALORE": "2.486,37 €"
+        },
+        {
+          "VOCE": "Netto/12 senza costi",
+          "VALORE": "3.153,18 €"
+        }
+      ]
+    },
+    {
+      "kind": "metric",
+      "label": "Fatturato registrato",
+      "value": "36.000,00 €"
+    },
+    {
+      "kind": "metric",
+      "label": "Stima a fine anno",
+      "value": "54.000,00 €"
+    },
+    {
+      "kind": "table",
+      "records": [
+        {
+          "Mese": "Gennaio",
+          "Mandante dimostrativa": "4.500,00 €",
+          "Totale mese": "4.500,00 €"
+        },
+        {
+          "Mese": "Febbraio",
+          "Mandante dimostrativa": "4.500,00 €",
+          "Totale mese": "4.500,00 €"
+        },
+        {
+          "Mese": "Marzo",
+          "Mandante dimostrativa": "4.500,00 €",
+          "Totale mese": "4.500,00 €"
+        },
+        {
+          "Mese": "Aprile",
+          "Mandante dimostrativa": "4.500,00 €",
+          "Totale mese": "4.500,00 €"
+        },
+        {
+          "Mese": "Maggio",
+          "Mandante dimostrativa": "4.500,00 €",
+          "Totale mese": "4.500,00 €"
+        },
+        {
+          "Mese": "Giugno",
+          "Mandante dimostrativa": "4.500,00 €",
+          "Totale mese": "4.500,00 €"
+        },
+        {
+          "Mese": "Luglio",
+          "Mandante dimostrativa": "4.500,00 €",
+          "Totale mese": "4.500,00 €"
+        },
+        {
+          "Mese": "Agosto",
+          "Mandante dimostrativa": "4.500,00 €",
+          "Totale mese": "4.500,00 €"
+        },
+        {
+          "Mese": "Settembre",
+          "Mandante dimostrativa": "—",
+          "Totale mese": "—"
+        },
+        {
+          "Mese": "Ottobre",
+          "Mandante dimostrativa": "—",
+          "Totale mese": "—"
+        },
+        {
+          "Mese": "Novembre",
+          "Mandante dimostrativa": "—",
+          "Totale mese": "—"
+        },
+        {
+          "Mese": "Dicembre",
+          "Mandante dimostrativa": "—",
+          "Totale mese": "—"
+        }
+      ]
+    },
+    {
+      "kind": "table",
+      "records": [
+        {
+          "Mandante": "Mandante dimostrativa",
+          "Mesi compilati": 8,
+          "Fatturato": "36.000,00 €",
+          "Media mesi compilati": "4.500,00 €",
+          "Stima annua": "54.000,00 €"
+        }
+      ]
+    },
+    {
+      "kind": "metric",
+      "label": "Fatturato registrato",
+      "value": "36.000,00 €"
+    },
+    {
+      "kind": "metric",
+      "label": "Proiezione file · 11 mesi",
+      "value": "49.500,00 €"
+    },
+    {
+      "kind": "metric",
+      "label": "Margine sul limite 100.000 €",
+      "value": "64.000,00 €"
+    },
+    {
+      "kind": "table",
+      "records": [
+        {
+          "Mandante": "Mandante dimostrativa",
+          "Rapporto Enasarco": "plurimandatario",
+          "Stato": "Attiva"
+        }
+      ]
+    }
+  ],
+  "2026:Costi": [
+    {
+      "kind": "table",
+      "records": [
+        {
+          "VOCE": "Fatturato",
+          "VALORE": "49.500,00 €"
+        },
+        {
+          "VOCE": "Costi annui",
+          "VALORE": "8.001,83 €"
+        },
+        {
+          "VOCE": "Netto annuo stimato",
+          "VALORE": "29.836,38 €"
+        },
+        {
+          "VOCE": "Netto/12 medio",
+          "VALORE": "2.486,37 €"
+        },
+        {
+          "VOCE": "Netto/12 senza costi",
+          "VALORE": "3.153,18 €"
+        }
+      ]
+    },
+    {
+      "kind": "table",
+      "records": [
+        {
+          "Voce": "Assicurazione",
+          "Registrato": "—",
+          "Stima annua / valore file": "1.060,86 €"
+        },
+        {
+          "Voce": "Autostrada",
+          "Registrato": "100,00 €",
+          "Stima annua / valore file": "1.200,00 €"
+        },
+        {
+          "Voce": "Bollo",
+          "Registrato": "—",
+          "Stima annua / valore file": "340,97 €"
+        },
+        {
+          "Voce": "Carburante",
+          "Registrato": "100,00 €",
+          "Stima annua / valore file": "1.200,00 €"
+        },
+        {
+          "Voce": "Commercialista",
+          "Registrato": "—",
+          "Stima annua / valore file": "3.000,00 €"
+        },
+        {
+          "Voce": "Rate Auto",
+          "Registrato": "100,00 €",
+          "Stima annua / valore file": "1.200,00 €"
+        }
+      ]
+    },
+    {
+      "kind": "metric",
+      "label": "Totale costi annui del modello 2026",
+      "value": "8.001,83 €"
+    },
+    {
+      "kind": "table",
+      "records": [
+        {
+          "Data": "2026-01-01",
+          "Descrizione": "DATI SINTETICI DI COLLAUDO",
+          "Importo": "100.00",
+          "IVA compresa": true
+        },
+        {
+          "Data": "2026-01-01",
+          "Descrizione": "DATI SINTETICI DI COLLAUDO",
+          "Importo": "100.00",
+          "IVA compresa": true
+        },
+        {
+          "Data": "2026-01-01",
+          "Descrizione": "DATI SINTETICI DI COLLAUDO",
+          "Importo": "100.00",
+          "IVA compresa": true
+        }
+      ]
+    },
+    {
+      "kind": "download",
+      "file_name": "spese_2026.csv",
+      "mime": "text/csv",
+      "data": {
+        "base64": "77u/ImlkIjsidXNlcl9pZCI7ImZpc2NhbF95ZWFyX2lkIjsiY2F0ZWdvcnlfaWQiOyJ2ZWhpY2xlX2lkIjsiZXhwZW5zZV9kYXRlIjsicGF5bWVudF9kYXRlIjsiZGVzY3JpcHRpb24iOyJncm9zc19hbW91bnQiOyJhbW91bnRfaW5jbHVkZXNfdmF0IjsidmF0X3JhdGUiOyJ2YXRfZGVkdWN0aWJsZV9yYXRlIjsiY29zdF9kZWR1Y3RpYmxlX3JhdGUiOyJkZWR1Y3RpYmxlX2xpbWl0IjsiZmlzY2FsX2NvbXBldGVuY2VfeWVhciI7Im5vdGVzIg0KImRlbW8teWVhci0yMDI2LWNhdC1hdXRvc3RyYWRhLWNvc3QiOyJkZW1vLW93bmVyIjsiZGVtby15ZWFyLTIwMjYiOyJkZW1vLXllYXItMjAyNi1jYXQtYXV0b3N0cmFkYSI7ImRlbW8tdmVoaWNsZSI7IjIwMjYtMDEtMDEiOyIiOyJEQVRJIFNJTlRFVElDSSBESSBDT0xMQVVETyI7IjEwMC4wMCI7IlRydWUiOyIwLjIyIjsiMSI7IjAuOCI7IiI7IjIwMjYiOyJEYXRpIGRpIHByb3ZhIg0KImRlbW8teWVhci0yMDI2LWNhdC1jYXJidXJhbnRlLWNvc3QiOyJkZW1vLW93bmVyIjsiZGVtby15ZWFyLTIwMjYiOyJkZW1vLXllYXItMjAyNi1jYXQtY2FyYnVyYW50ZSI7ImRlbW8tdmVoaWNsZSI7IjIwMjYtMDEtMDEiOyIiOyJEQVRJIFNJTlRFVElDSSBESSBDT0xMQVVETyI7IjEwMC4wMCI7IlRydWUiOyIwLjIyIjsiMSI7IjAuOCI7IiI7IjIwMjYiOyJEYXRpIGRpIHByb3ZhIg0KImRlbW8teWVhci0yMDI2LWNhdC1yYXRlX2F1dG8tY29zdCI7ImRlbW8tb3duZXIiOyJkZW1vLXllYXItMjAyNiI7ImRlbW8teWVhci0yMDI2LWNhdC1yYXRlX2F1dG8iOyJkZW1vLXZlaGljbGUiOyIyMDI2LTAxLTAxIjsiIjsiREFUSSBTSU5URVRJQ0kgREkgQ09MTEFVRE8iOyIxMDAuMDAiOyJUcnVlIjsiMC4yMiI7IjEiOyIwLjgiOyIiOyIyMDI2IjsiRGF0aSBkaSBwcm92YSINCg=="
+      }
+    }
+  ],
+  "2026:Auto": [
+    {
+      "kind": "table",
+      "records": [
+        {
+          "VOCE": "Fatturato",
+          "VALORE": "49.500,00 €"
+        },
+        {
+          "VOCE": "Costi annui",
+          "VALORE": "8.001,83 €"
+        },
+        {
+          "VOCE": "Netto annuo stimato",
+          "VALORE": "29.836,38 €"
+        },
+        {
+          "VOCE": "Netto/12 medio",
+          "VALORE": "2.486,37 €"
+        },
+        {
+          "VOCE": "Netto/12 senza costi",
+          "VALORE": "3.153,18 €"
+        }
+      ]
+    },
+    {
+      "kind": "table",
+      "records": [
+        {
+          "Mese": "Gennaio",
+          "Percorrenza": "—",
+          "Carburante": "100,00 €",
+          "Autostrada": "100,00 €",
+          "Rate auto": "100,00 €"
+        },
+        {
+          "Mese": "Febbraio",
+          "Percorrenza": "—",
+          "Carburante": "—",
+          "Autostrada": "—",
+          "Rate auto": "—"
+        },
+        {
+          "Mese": "Marzo",
+          "Percorrenza": "—",
+          "Carburante": "—",
+          "Autostrada": "—",
+          "Rate auto": "—"
+        },
+        {
+          "Mese": "Aprile",
+          "Percorrenza": "—",
+          "Carburante": "—",
+          "Autostrada": "—",
+          "Rate auto": "—"
+        },
+        {
+          "Mese": "Maggio",
+          "Percorrenza": "—",
+          "Carburante": "—",
+          "Autostrada": "—",
+          "Rate auto": "—"
+        },
+        {
+          "Mese": "Giugno",
+          "Percorrenza": "—",
+          "Carburante": "—",
+          "Autostrada": "—",
+          "Rate auto": "—"
+        },
+        {
+          "Mese": "Luglio",
+          "Percorrenza": "—",
+          "Carburante": "—",
+          "Autostrada": "—",
+          "Rate auto": "—"
+        },
+        {
+          "Mese": "Agosto",
+          "Percorrenza": "—",
+          "Carburante": "—",
+          "Autostrada": "—",
+          "Rate auto": "—"
+        },
+        {
+          "Mese": "Settembre",
+          "Percorrenza": "—",
+          "Carburante": "—",
+          "Autostrada": "—",
+          "Rate auto": "—"
+        },
+        {
+          "Mese": "Ottobre",
+          "Percorrenza": "—",
+          "Carburante": "—",
+          "Autostrada": "—",
+          "Rate auto": "—"
+        },
+        {
+          "Mese": "Novembre",
+          "Percorrenza": "—",
+          "Carburante": "—",
+          "Autostrada": "—",
+          "Rate auto": "—"
+        },
+        {
+          "Mese": "Dicembre",
+          "Percorrenza": "—",
+          "Carburante": "—",
+          "Autostrada": "—",
+          "Rate auto": "—"
+        },
+        {
+          "Mese": "Totale registrato",
+          "Percorrenza": "—",
+          "Carburante": "100,00 €",
+          "Autostrada": "100,00 €",
+          "Rate auto": "100,00 €"
+        },
+        {
+          "Mese": "Stima annua",
+          "Percorrenza": "—",
+          "Carburante": "1.200,00 €",
+          "Autostrada": "1.200,00 €",
+          "Rate auto": "1.200,00 €"
+        }
+      ]
+    }
+  ],
+  "2026:Accantonamenti": [
+    {
+      "kind": "table",
+      "records": [
+        {
+          "VOCE": "Fatturato",
+          "VALORE": "49.500,00 €"
+        },
+        {
+          "VOCE": "Costi annui",
+          "VALORE": "8.001,83 €"
+        },
+        {
+          "VOCE": "Netto annuo stimato",
+          "VALORE": "29.836,38 €"
+        },
+        {
+          "VOCE": "Netto/12 medio",
+          "VALORE": "2.486,37 €"
+        },
+        {
+          "VOCE": "Netto/12 senza costi",
+          "VALORE": "3.153,18 €"
+        }
+      ]
+    },
+    {
+      "kind": "table",
+      "records": [
+        {
+          "Mese": "Gennaio",
+          "Fatturato IVA esclusa": "4.500,00 €",
+          "Provvigioni nette · manuale": "3.900,00 €",
+          "Accantonato · manuale": "600,00 €",
+          "Provv. nette − accantonato · prima IVA": "3.300,00 €"
+        },
+        {
+          "Mese": "Febbraio",
+          "Fatturato IVA esclusa": "4.500,00 €",
+          "Provvigioni nette · manuale": "3.900,00 €",
+          "Accantonato · manuale": "600,00 €",
+          "Provv. nette − accantonato · prima IVA": "3.300,00 €"
+        },
+        {
+          "Mese": "Marzo",
+          "Fatturato IVA esclusa": "4.500,00 €",
+          "Provvigioni nette · manuale": "3.900,00 €",
+          "Accantonato · manuale": "600,00 €",
+          "Provv. nette − accantonato · prima IVA": "3.300,00 €"
+        },
+        {
+          "Mese": "Aprile",
+          "Fatturato IVA esclusa": "4.500,00 €",
+          "Provvigioni nette · manuale": "3.900,00 €",
+          "Accantonato · manuale": "600,00 €",
+          "Provv. nette − accantonato · prima IVA": "3.300,00 €"
+        },
+        {
+          "Mese": "Maggio",
+          "Fatturato IVA esclusa": "4.500,00 €",
+          "Provvigioni nette · manuale": "3.900,00 €",
+          "Accantonato · manuale": "600,00 €",
+          "Provv. nette − accantonato · prima IVA": "3.300,00 €"
+        },
+        {
+          "Mese": "Giugno",
+          "Fatturato IVA esclusa": "4.500,00 €",
+          "Provvigioni nette · manuale": "3.900,00 €",
+          "Accantonato · manuale": "600,00 €",
+          "Provv. nette − accantonato · prima IVA": "3.300,00 €"
+        },
+        {
+          "Mese": "Luglio",
+          "Fatturato IVA esclusa": "4.500,00 €",
+          "Provvigioni nette · manuale": "3.900,00 €",
+          "Accantonato · manuale": "600,00 €",
+          "Provv. nette − accantonato · prima IVA": "3.300,00 €"
+        },
+        {
+          "Mese": "Agosto",
+          "Fatturato IVA esclusa": "4.500,00 €",
+          "Provvigioni nette · manuale": "3.900,00 €",
+          "Accantonato · manuale": "600,00 €",
+          "Provv. nette − accantonato · prima IVA": "3.300,00 €"
+        },
+        {
+          "Mese": "Settembre",
+          "Fatturato IVA esclusa": "—",
+          "Provvigioni nette · manuale": "—",
+          "Accantonato · manuale": "—",
+          "Provv. nette − accantonato · prima IVA": "—"
+        },
+        {
+          "Mese": "Ottobre",
+          "Fatturato IVA esclusa": "—",
+          "Provvigioni nette · manuale": "—",
+          "Accantonato · manuale": "—",
+          "Provv. nette − accantonato · prima IVA": "—"
+        },
+        {
+          "Mese": "Novembre",
+          "Fatturato IVA esclusa": "—",
+          "Provvigioni nette · manuale": "—",
+          "Accantonato · manuale": "—",
+          "Provv. nette − accantonato · prima IVA": "—"
+        },
+        {
+          "Mese": "Dicembre",
+          "Fatturato IVA esclusa": "—",
+          "Provvigioni nette · manuale": "—",
+          "Accantonato · manuale": "—",
+          "Provv. nette − accantonato · prima IVA": "—"
+        }
+      ]
+    },
+    {
+      "kind": "metric",
+      "label": "Provvigioni nette inserite",
+      "value": "31.200,00 €"
+    },
+    {
+      "kind": "metric",
+      "label": "Accantonamenti annotati",
+      "value": "4.800,00 €"
+    },
+    {
+      "kind": "metric",
+      "label": "Differenza parziale · mesi completi",
+      "value": "26.400,00 €"
+    },
+    {
+      "kind": "metric",
+      "label": "Fabbisogno fiscale annuo stimato",
+      "value": "9.071,16 €"
+    },
+    {
+      "kind": "metric",
+      "label": "Già accantonato",
+      "value": "4.800,00 €"
+    },
+    {
+      "kind": "metric",
+      "label": "Residuo da accantonare",
+      "value": "4.271,16 €"
+    },
+    {
+      "kind": "metric",
+      "label": "Quota indicativa per ciascuno dei 4 mesi restanti",
+      "value": "1.067,79 €"
+    }
+  ],
+  "2026:Conto economico": [
+    {
+      "kind": "table",
+      "records": [
+        {
+          "VOCE": "Fatturato",
+          "VALORE": "49.500,00 €"
+        },
+        {
+          "VOCE": "Costi annui",
+          "VALORE": "8.001,83 €"
+        },
+        {
+          "VOCE": "Netto annuo stimato",
+          "VALORE": "29.836,38 €"
+        },
+        {
+          "VOCE": "Netto/12 medio",
+          "VALORE": "2.486,37 €"
+        },
+        {
+          "VOCE": "Netto/12 senza costi",
+          "VALORE": "3.153,18 €"
+        }
+      ]
+    },
+    {
+      "kind": "table",
+      "records": [
+        {
+          "Voce": "Fatturato registrato",
+          "Importo": "36.000,00 €"
+        },
+        {
+          "Voce": "Proiezione annualizzata 12 mesi",
+          "Importo": "54.000,00 €"
+        },
+        {
+          "Voce": "Fatturato stimato file · 11 mesi",
+          "Importo": "49.500,00 €"
+        },
+        {
+          "Voce": "Reddito forfettario · coefficiente 62%",
+          "Importo": "30.690,00 €"
+        },
+        {
+          "Voce": "INPS eccedente prima della riduzione",
+          "Importo": "2.908,71 €"
+        },
+        {
+          "Voce": "INPS eccedente con riduzione 35%",
+          "Importo": "1.890,66 €"
+        },
+        {
+          "Voce": "INPS totale stimato · riduzione 35% attiva",
+          "Importo": "4.922,42 €"
+        },
+        {
+          "Voce": "Enasarco stimato",
+          "Importo": "2.590,63 €"
+        },
+        {
+          "Voce": "Costi economici annui",
+          "Importo": "8.001,83 €"
+        },
+        {
+          "Voce": "Imposta sostitutiva · modello file",
+          "Importo": "4.148,74 €"
+        },
+        {
+          "Voce": "Netto annuo stimato · regime INPS -35%",
+          "Importo": "29.836,38 €"
+        },
+        {
+          "Voce": "Netto medio / 12 · regime INPS -35%",
+          "Importo": "2.486,37 €"
+        },
+        {
+          "Voce": "Netto / 12 senza costi · regime INPS -35%",
+          "Importo": "3.153,18 €"
+        },
+        {
+          "Voce": "Netto annuo senza riduzione sulla quota eccedente · confronto",
+          "Importo": "28.818,33 €"
+        }
+      ]
+    }
+  ],
+  "2026:Imposte": [
+    {
+      "kind": "table",
+      "records": [
+        {
+          "VOCE": "Fatturato",
+          "VALORE": "49.500,00 €"
+        },
+        {
+          "VOCE": "Costi annui",
+          "VALORE": "8.001,83 €"
+        },
+        {
+          "VOCE": "Netto annuo stimato",
+          "VALORE": "29.836,38 €"
+        },
+        {
+          "VOCE": "Netto/12 medio",
+          "VALORE": "2.486,37 €"
+        },
+        {
+          "VOCE": "Netto/12 senza costi",
+          "VALORE": "3.153,18 €"
+        }
+      ]
+    },
+    {
+      "kind": "table",
+      "records": [
+        {
+          "Parametro": "Coefficiente di redditività",
+          "Valore importato": "62.00%"
+        },
+        {
+          "Parametro": "Imposta sostitutiva",
+          "Valore importato": "15.00%"
+        },
+        {
+          "Parametro": "Limite 85.000 € ragguagliato usato nel file",
+          "Valore importato": "82.205,00 €"
+        },
+        {
+          "Parametro": "Limite uscita immediata",
+          "Valore importato": "100.000,00 €"
+        },
+        {
+          "Parametro": "Mesi usati nella proiezione del file",
+          "Valore importato": "11"
+        },
+        {
+          "Parametro": "INPS fisso del file",
+          "Valore importato": "3.031,76 €"
+        },
+        {
+          "Parametro": "Minimale INPS del file",
+          "Valore importato": "18.808,01 €"
+        },
+        {
+          "Parametro": "Aliquota INPS prima fascia",
+          "Valore importato": "24.4800%"
+        },
+        {
+          "Parametro": "Soglia seconda fascia INPS",
+          "Valore importato": "56.224,00 €"
+        },
+        {
+          "Parametro": "Aliquota INPS seconda fascia",
+          "Valore importato": "25.4800%"
+        },
+        {
+          "Parametro": "Riduzione INPS nello scenario del file",
+          "Valore importato": "35.00%"
+        },
+        {
+          "Parametro": "Quota personale Enasarco",
+          "Valore importato": "8.500%"
+        },
+        {
+          "Parametro": "Massimale Enasarco plurimandatario",
+          "Valore importato": "30.478,00 €"
+        }
+      ]
+    },
+    {
+      "kind": "metric",
+      "label": "INPS documentato nell'anno",
+      "value": "0,00 €"
+    },
+    {
+      "kind": "metric",
+      "label": "Di cui INPS anni precedenti",
+      "value": "0,00 €"
+    },
+    {
+      "kind": "metric",
+      "label": "Enasarco documentato nell'anno",
+      "value": "0,00 €"
+    }
+  ],
+  "2026:Detrazioni e deduzioni": [
+    {
+      "kind": "table",
+      "records": [
+        {
+          "VOCE": "Fatturato",
+          "VALORE": "49.500,00 €"
+        },
+        {
+          "VOCE": "Costi annui",
+          "VALORE": "8.001,83 €"
+        },
+        {
+          "VOCE": "Netto annuo stimato",
+          "VALORE": "29.836,38 €"
+        },
+        {
+          "VOCE": "Netto/12 medio",
+          "VALORE": "2.486,37 €"
+        },
+        {
+          "VOCE": "Netto/12 senza costi",
+          "VALORE": "3.153,18 €"
+        }
+      ]
+    }
+  ],
+  "2026:Ammortamenti": [
+    {
+      "kind": "table",
+      "records": [
+        {
+          "VOCE": "Fatturato",
+          "VALORE": "49.500,00 €"
+        },
+        {
+          "VOCE": "Costi annui",
+          "VALORE": "8.001,83 €"
+        },
+        {
+          "VOCE": "Netto annuo stimato",
+          "VALORE": "29.836,38 €"
+        },
+        {
+          "VOCE": "Netto/12 medio",
+          "VALORE": "2.486,37 €"
+        },
+        {
+          "VOCE": "Netto/12 senza costi",
+          "VALORE": "3.153,18 €"
+        }
+      ]
+    }
+  ],
+  "2027:Fatturato": [
+    {
+      "kind": "table",
+      "records": [
+        {
+          "VOCE": "Fatturato",
+          "VALORE": "—"
+        },
+        {
+          "VOCE": "Costi annui",
+          "VALORE": "—"
+        },
+        {
+          "VOCE": "Netto annuo stimato",
+          "VALORE": "—"
+        },
+        {
+          "VOCE": "Netto/12 medio",
+          "VALORE": "—"
+        },
+        {
+          "VOCE": "Netto/12 senza costi",
+          "VALORE": "—"
+        }
+      ]
+    },
+    {
+      "kind": "metric",
+      "label": "Fatturato registrato",
+      "value": "36.000,00 €"
+    },
+    {
+      "kind": "metric",
+      "label": "Stima a fine anno",
+      "value": "54.000,00 €"
+    },
+    {
+      "kind": "table",
+      "records": [
+        {
+          "Mese": "Gennaio",
+          "Mandante dimostrativa": "4.500,00 €",
+          "Totale mese": "4.500,00 €"
+        },
+        {
+          "Mese": "Febbraio",
+          "Mandante dimostrativa": "4.500,00 €",
+          "Totale mese": "4.500,00 €"
+        },
+        {
+          "Mese": "Marzo",
+          "Mandante dimostrativa": "4.500,00 €",
+          "Totale mese": "4.500,00 €"
+        },
+        {
+          "Mese": "Aprile",
+          "Mandante dimostrativa": "4.500,00 €",
+          "Totale mese": "4.500,00 €"
+        },
+        {
+          "Mese": "Maggio",
+          "Mandante dimostrativa": "4.500,00 €",
+          "Totale mese": "4.500,00 €"
+        },
+        {
+          "Mese": "Giugno",
+          "Mandante dimostrativa": "4.500,00 €",
+          "Totale mese": "4.500,00 €"
+        },
+        {
+          "Mese": "Luglio",
+          "Mandante dimostrativa": "4.500,00 €",
+          "Totale mese": "4.500,00 €"
+        },
+        {
+          "Mese": "Agosto",
+          "Mandante dimostrativa": "4.500,00 €",
+          "Totale mese": "4.500,00 €"
+        },
+        {
+          "Mese": "Settembre",
+          "Mandante dimostrativa": "—",
+          "Totale mese": "—"
+        },
+        {
+          "Mese": "Ottobre",
+          "Mandante dimostrativa": "—",
+          "Totale mese": "—"
+        },
+        {
+          "Mese": "Novembre",
+          "Mandante dimostrativa": "—",
+          "Totale mese": "—"
+        },
+        {
+          "Mese": "Dicembre",
+          "Mandante dimostrativa": "—",
+          "Totale mese": "—"
+        }
+      ]
+    },
+    {
+      "kind": "table",
+      "records": [
+        {
+          "Mandante": "Mandante dimostrativa",
+          "Mesi compilati": 8,
+          "Fatturato": "36.000,00 €",
+          "Media mesi compilati": "4.500,00 €",
+          "Stima annua": "54.000,00 €"
+        }
+      ]
+    },
+    {
+      "kind": "table",
+      "records": []
+    },
+    {
+      "kind": "download",
+      "file_name": "vendite_2027.csv",
+      "mime": "text/csv",
+      "data": {
+        "base64": ""
+      }
+    },
+    {
+      "kind": "table",
+      "records": [
+        {
+          "Mandante": "Mandante dimostrativa",
+          "Rapporto Enasarco": "plurimandatario",
+          "Stato": "Attiva"
+        }
+      ]
+    }
+  ],
+  "2027:Costi": [
+    {
+      "kind": "table",
+      "records": [
+        {
+          "VOCE": "Fatturato",
+          "VALORE": "—"
+        },
+        {
+          "VOCE": "Costi annui",
+          "VALORE": "—"
+        },
+        {
+          "VOCE": "Netto annuo stimato",
+          "VALORE": "—"
+        },
+        {
+          "VOCE": "Netto/12 medio",
+          "VALORE": "—"
+        },
+        {
+          "VOCE": "Netto/12 senza costi",
+          "VALORE": "—"
+        }
+      ]
+    },
+    {
+      "kind": "table",
+      "records": [
+        {
+          "Voce": "Rate Auto",
+          "Registrato": "100,00 €",
+          "Totale annuo stimato": "1.200,00 €",
+          "IVA scorporata": "216,39 €",
+          "Costo netto": "983,61 €",
+          "% deducibilità": "63,31%*",
+          "Da dedurre": "621,30 €"
+        },
+        {
+          "Voce": "Penale km",
+          "Registrato": "—",
+          "Totale annuo stimato": "—",
+          "IVA scorporata": "—",
+          "Costo netto": "—",
+          "% deducibilità": "—",
+          "Da dedurre": "—"
+        },
+        {
+          "Voce": "Carburante",
+          "Registrato": "100,00 €",
+          "Totale annuo stimato": "1.200,00 €",
+          "IVA scorporata": "216,39 €",
+          "Costo netto": "983,61 €",
+          "% deducibilità": "80.0%",
+          "Da dedurre": "786,89 €"
+        },
+        {
+          "Voce": "Autostrada",
+          "Registrato": "100,00 €",
+          "Totale annuo stimato": "1.200,00 €",
+          "IVA scorporata": "216,39 €",
+          "Costo netto": "983,61 €",
+          "% deducibilità": "80.0%",
+          "Da dedurre": "786,89 €"
+        },
+        {
+          "Voce": "Bollo",
+          "Registrato": "—",
+          "Totale annuo stimato": "340,97 €",
+          "IVA scorporata": "0,00 €",
+          "Costo netto": "340,97 €",
+          "% deducibilità": "80.0%",
+          "Da dedurre": "272,78 €"
+        },
+        {
+          "Voce": "Assicurazione",
+          "Registrato": "—",
+          "Totale annuo stimato": "1.060,86 €",
+          "IVA scorporata": "0,00 €",
+          "Costo netto": "1.060,86 €",
+          "% deducibilità": "80.0%",
+          "Da dedurre": "848,69 €"
+        },
+        {
+          "Voce": "Manutenzione auto",
+          "Registrato": "—",
+          "Totale annuo stimato": "—",
+          "IVA scorporata": "—",
+          "Costo netto": "—",
+          "% deducibilità": "—",
+          "Da dedurre": "—"
+        },
+        {
+          "Voce": "Commercialista",
+          "Registrato": "—",
+          "Totale annuo stimato": "3.000,00 €",
+          "IVA scorporata": "540,98 €",
+          "Costo netto": "2.459,02 €",
+          "% deducibilità": "100%",
+          "Da dedurre": "2.459,02 €"
+        },
+        {
+          "Voce": "Vitto e alloggio",
+          "Registrato": "—",
+          "Totale annuo stimato": "—",
+          "IVA scorporata": "—",
+          "Costo netto": "—",
+          "% deducibilità": "—",
+          "Da dedurre": "—"
+        },
+        {
+          "Voce": "PC",
+          "Registrato": "—",
+          "Totale annuo stimato": "—",
+          "IVA scorporata": "—",
+          "Costo netto": "—",
+          "% deducibilità": "—",
+          "Da dedurre": "—"
+        },
+        {
+          "Voce": "Telefono o tablet",
+          "Registrato": "—",
+          "Totale annuo stimato": "—",
+          "IVA scorporata": "—",
+          "Costo netto": "—",
+          "% deducibilità": "—",
+          "Da dedurre": "—"
+        },
+        {
+          "Voce": "TOTALE SPESE",
+          "Registrato": "—",
+          "Totale annuo stimato": "8.001,83 €",
+          "IVA scorporata": "1.190,16 €",
+          "Costo netto": "6.811,67 €",
+          "% deducibilità": "—",
+          "Da dedurre": "5.775,55 €"
+        }
+      ]
+    },
+    {
+      "kind": "table",
+      "records": [
+        {
+          "Data": "2027-01-01",
+          "Descrizione": "DATI SINTETICI DI COLLAUDO",
+          "Importo": "100.00",
+          "IVA compresa": true
+        },
+        {
+          "Data": "2027-01-01",
+          "Descrizione": "DATI SINTETICI DI COLLAUDO",
+          "Importo": "100.00",
+          "IVA compresa": true
+        },
+        {
+          "Data": "2027-01-01",
+          "Descrizione": "DATI SINTETICI DI COLLAUDO",
+          "Importo": "100.00",
+          "IVA compresa": true
+        }
+      ]
+    },
+    {
+      "kind": "download",
+      "file_name": "spese_2027.csv",
+      "mime": "text/csv",
+      "data": {
+        "base64": "77u/ImlkIjsidXNlcl9pZCI7ImZpc2NhbF95ZWFyX2lkIjsiY2F0ZWdvcnlfaWQiOyJ2ZWhpY2xlX2lkIjsiZXhwZW5zZV9kYXRlIjsicGF5bWVudF9kYXRlIjsiZGVzY3JpcHRpb24iOyJncm9zc19hbW91bnQiOyJhbW91bnRfaW5jbHVkZXNfdmF0IjsidmF0X3JhdGUiOyJ2YXRfZGVkdWN0aWJsZV9yYXRlIjsiY29zdF9kZWR1Y3RpYmxlX3JhdGUiOyJkZWR1Y3RpYmxlX2xpbWl0IjsiZmlzY2FsX2NvbXBldGVuY2VfeWVhciI7Im5vdGVzIg0KImRlbW8teWVhci0yMDI3LWNhdC1hdXRvc3RyYWRhLWNvc3QiOyJkZW1vLW93bmVyIjsiZGVtby15ZWFyLTIwMjciOyJkZW1vLXllYXItMjAyNy1jYXQtYXV0b3N0cmFkYSI7ImRlbW8tdmVoaWNsZSI7IjIwMjctMDEtMDEiOyIiOyJEQVRJIFNJTlRFVElDSSBESSBDT0xMQVVETyI7IjEwMC4wMCI7IlRydWUiOyIwLjIyIjsiMSI7IjAuOCI7IiI7IjIwMjciOyJEYXRpIGRpIHByb3ZhIg0KImRlbW8teWVhci0yMDI3LWNhdC1jYXJidXJhbnRlLWNvc3QiOyJkZW1vLW93bmVyIjsiZGVtby15ZWFyLTIwMjciOyJkZW1vLXllYXItMjAyNy1jYXQtY2FyYnVyYW50ZSI7ImRlbW8tdmVoaWNsZSI7IjIwMjctMDEtMDEiOyIiOyJEQVRJIFNJTlRFVElDSSBESSBDT0xMQVVETyI7IjEwMC4wMCI7IlRydWUiOyIwLjIyIjsiMSI7IjAuOCI7IiI7IjIwMjciOyJEYXRpIGRpIHByb3ZhIg0KImRlbW8teWVhci0yMDI3LWNhdC1yYXRlX2F1dG8tY29zdCI7ImRlbW8tb3duZXIiOyJkZW1vLXllYXItMjAyNyI7ImRlbW8teWVhci0yMDI3LWNhdC1yYXRlX2F1dG8iOyJkZW1vLXZlaGljbGUiOyIyMDI3LTAxLTAxIjsiIjsiREFUSSBTSU5URVRJQ0kgREkgQ09MTEFVRE8iOyIxMDAuMDAiOyJUcnVlIjsiMC4yMiI7IjEiOyIwLjgiOyIiOyIyMDI3IjsiRGF0aSBkaSBwcm92YSINCg=="
+      }
+    },
+    {
+      "kind": "table",
+      "records": []
+    }
+  ],
+  "2027:Auto": [
+    {
+      "kind": "table",
+      "records": [
+        {
+          "VOCE": "Fatturato",
+          "VALORE": "—"
+        },
+        {
+          "VOCE": "Costi annui",
+          "VALORE": "—"
+        },
+        {
+          "VOCE": "Netto annuo stimato",
+          "VALORE": "—"
+        },
+        {
+          "VOCE": "Netto/12 medio",
+          "VALORE": "—"
+        },
+        {
+          "VOCE": "Netto/12 senza costi",
+          "VALORE": "—"
+        }
+      ]
+    },
+    {
+      "kind": "table",
+      "records": [
+        {
+          "Mese": "Gennaio",
+          "Percorrenza": "—",
+          "Carburante": "100,00 €",
+          "Autostrada": "100,00 €",
+          "Rate auto": "100,00 €"
+        },
+        {
+          "Mese": "Febbraio",
+          "Percorrenza": "—",
+          "Carburante": "—",
+          "Autostrada": "—",
+          "Rate auto": "—"
+        },
+        {
+          "Mese": "Marzo",
+          "Percorrenza": "—",
+          "Carburante": "—",
+          "Autostrada": "—",
+          "Rate auto": "—"
+        },
+        {
+          "Mese": "Aprile",
+          "Percorrenza": "—",
+          "Carburante": "—",
+          "Autostrada": "—",
+          "Rate auto": "—"
+        },
+        {
+          "Mese": "Maggio",
+          "Percorrenza": "—",
+          "Carburante": "—",
+          "Autostrada": "—",
+          "Rate auto": "—"
+        },
+        {
+          "Mese": "Giugno",
+          "Percorrenza": "—",
+          "Carburante": "—",
+          "Autostrada": "—",
+          "Rate auto": "—"
+        },
+        {
+          "Mese": "Luglio",
+          "Percorrenza": "—",
+          "Carburante": "—",
+          "Autostrada": "—",
+          "Rate auto": "—"
+        },
+        {
+          "Mese": "Agosto",
+          "Percorrenza": "—",
+          "Carburante": "—",
+          "Autostrada": "—",
+          "Rate auto": "—"
+        },
+        {
+          "Mese": "Settembre",
+          "Percorrenza": "—",
+          "Carburante": "—",
+          "Autostrada": "—",
+          "Rate auto": "—"
+        },
+        {
+          "Mese": "Ottobre",
+          "Percorrenza": "—",
+          "Carburante": "—",
+          "Autostrada": "—",
+          "Rate auto": "—"
+        },
+        {
+          "Mese": "Novembre",
+          "Percorrenza": "—",
+          "Carburante": "—",
+          "Autostrada": "—",
+          "Rate auto": "—"
+        },
+        {
+          "Mese": "Dicembre",
+          "Percorrenza": "—",
+          "Carburante": "—",
+          "Autostrada": "—",
+          "Rate auto": "—"
+        },
+        {
+          "Mese": "Totale registrato",
+          "Percorrenza": "—",
+          "Carburante": "100,00 €",
+          "Autostrada": "100,00 €",
+          "Rate auto": "100,00 €"
+        },
+        {
+          "Mese": "Stima annua",
+          "Percorrenza": "—",
+          "Carburante": "1.200,00 €",
+          "Autostrada": "1.200,00 €",
+          "Rate auto": "1.200,00 €"
+        }
+      ]
+    }
+  ],
+  "2027:Accantonamenti": [
+    {
+      "kind": "table",
+      "records": [
+        {
+          "VOCE": "Fatturato",
+          "VALORE": "—"
+        },
+        {
+          "VOCE": "Costi annui",
+          "VALORE": "—"
+        },
+        {
+          "VOCE": "Netto annuo stimato",
+          "VALORE": "—"
+        },
+        {
+          "VOCE": "Netto/12 medio",
+          "VALORE": "—"
+        },
+        {
+          "VOCE": "Netto/12 senza costi",
+          "VALORE": "—"
+        }
+      ]
+    },
+    {
+      "kind": "table",
+      "records": [
+        {
+          "Mese": "Gennaio",
+          "Fatturato IVA esclusa": "4.500,00 €",
+          "Provvigioni nette · manuale": "3.900,00 €",
+          "Accantonato · manuale": "600,00 €",
+          "Provv. nette − accantonato · prima IVA": "3.300,00 €"
+        },
+        {
+          "Mese": "Febbraio",
+          "Fatturato IVA esclusa": "4.500,00 €",
+          "Provvigioni nette · manuale": "3.900,00 €",
+          "Accantonato · manuale": "600,00 €",
+          "Provv. nette − accantonato · prima IVA": "3.300,00 €"
+        },
+        {
+          "Mese": "Marzo",
+          "Fatturato IVA esclusa": "4.500,00 €",
+          "Provvigioni nette · manuale": "3.900,00 €",
+          "Accantonato · manuale": "600,00 €",
+          "Provv. nette − accantonato · prima IVA": "3.300,00 €"
+        },
+        {
+          "Mese": "Aprile",
+          "Fatturato IVA esclusa": "4.500,00 €",
+          "Provvigioni nette · manuale": "3.900,00 €",
+          "Accantonato · manuale": "600,00 €",
+          "Provv. nette − accantonato · prima IVA": "3.300,00 €"
+        },
+        {
+          "Mese": "Maggio",
+          "Fatturato IVA esclusa": "4.500,00 €",
+          "Provvigioni nette · manuale": "3.900,00 €",
+          "Accantonato · manuale": "600,00 €",
+          "Provv. nette − accantonato · prima IVA": "3.300,00 €"
+        },
+        {
+          "Mese": "Giugno",
+          "Fatturato IVA esclusa": "4.500,00 €",
+          "Provvigioni nette · manuale": "3.900,00 €",
+          "Accantonato · manuale": "600,00 €",
+          "Provv. nette − accantonato · prima IVA": "3.300,00 €"
+        },
+        {
+          "Mese": "Luglio",
+          "Fatturato IVA esclusa": "4.500,00 €",
+          "Provvigioni nette · manuale": "3.900,00 €",
+          "Accantonato · manuale": "600,00 €",
+          "Provv. nette − accantonato · prima IVA": "3.300,00 €"
+        },
+        {
+          "Mese": "Agosto",
+          "Fatturato IVA esclusa": "4.500,00 €",
+          "Provvigioni nette · manuale": "3.900,00 €",
+          "Accantonato · manuale": "600,00 €",
+          "Provv. nette − accantonato · prima IVA": "3.300,00 €"
+        },
+        {
+          "Mese": "Settembre",
+          "Fatturato IVA esclusa": "—",
+          "Provvigioni nette · manuale": "—",
+          "Accantonato · manuale": "—",
+          "Provv. nette − accantonato · prima IVA": "—"
+        },
+        {
+          "Mese": "Ottobre",
+          "Fatturato IVA esclusa": "—",
+          "Provvigioni nette · manuale": "—",
+          "Accantonato · manuale": "—",
+          "Provv. nette − accantonato · prima IVA": "—"
+        },
+        {
+          "Mese": "Novembre",
+          "Fatturato IVA esclusa": "—",
+          "Provvigioni nette · manuale": "—",
+          "Accantonato · manuale": "—",
+          "Provv. nette − accantonato · prima IVA": "—"
+        },
+        {
+          "Mese": "Dicembre",
+          "Fatturato IVA esclusa": "—",
+          "Provvigioni nette · manuale": "—",
+          "Accantonato · manuale": "—",
+          "Provv. nette − accantonato · prima IVA": "—"
+        }
+      ]
+    },
+    {
+      "kind": "metric",
+      "label": "Provvigioni nette inserite",
+      "value": "31.200,00 €"
+    },
+    {
+      "kind": "metric",
+      "label": "Accantonamenti annotati",
+      "value": "4.800,00 €"
+    },
+    {
+      "kind": "metric",
+      "label": "Differenza parziale · mesi completi",
+      "value": "26.400,00 €"
+    },
+    {
+      "kind": "table",
+      "records": [
+        {
+          "Mese": "Gennaio",
+          "IVA vendite · ipotesi 22%": "990,00 €",
+          "IVA detraibile auto · registrata": "—",
+          "Altra IVA detraibile · registrata": "—",
+          "IVA dovuta": "— · non determinata"
+        },
+        {
+          "Mese": "Febbraio",
+          "IVA vendite · ipotesi 22%": "990,00 €",
+          "IVA detraibile auto · registrata": "—",
+          "Altra IVA detraibile · registrata": "—",
+          "IVA dovuta": "— · non determinata"
+        },
+        {
+          "Mese": "Marzo",
+          "IVA vendite · ipotesi 22%": "990,00 €",
+          "IVA detraibile auto · registrata": "—",
+          "Altra IVA detraibile · registrata": "—",
+          "IVA dovuta": "— · non determinata"
+        },
+        {
+          "Mese": "Aprile",
+          "IVA vendite · ipotesi 22%": "990,00 €",
+          "IVA detraibile auto · registrata": "—",
+          "Altra IVA detraibile · registrata": "—",
+          "IVA dovuta": "— · non determinata"
+        },
+        {
+          "Mese": "Maggio",
+          "IVA vendite · ipotesi 22%": "990,00 €",
+          "IVA detraibile auto · registrata": "—",
+          "Altra IVA detraibile · registrata": "—",
+          "IVA dovuta": "— · non determinata"
+        },
+        {
+          "Mese": "Giugno",
+          "IVA vendite · ipotesi 22%": "990,00 €",
+          "IVA detraibile auto · registrata": "—",
+          "Altra IVA detraibile · registrata": "—",
+          "IVA dovuta": "— · non determinata"
+        },
+        {
+          "Mese": "Luglio",
+          "IVA vendite · ipotesi 22%": "990,00 €",
+          "IVA detraibile auto · registrata": "—",
+          "Altra IVA detraibile · registrata": "—",
+          "IVA dovuta": "— · non determinata"
+        },
+        {
+          "Mese": "Agosto",
+          "IVA vendite · ipotesi 22%": "990,00 €",
+          "IVA detraibile auto · registrata": "—",
+          "Altra IVA detraibile · registrata": "—",
+          "IVA dovuta": "— · non determinata"
+        },
+        {
+          "Mese": "Settembre",
+          "IVA vendite · ipotesi 22%": "—",
+          "IVA detraibile auto · registrata": "—",
+          "Altra IVA detraibile · registrata": "—",
+          "IVA dovuta": "— · non determinata"
+        },
+        {
+          "Mese": "Ottobre",
+          "IVA vendite · ipotesi 22%": "—",
+          "IVA detraibile auto · registrata": "—",
+          "Altra IVA detraibile · registrata": "—",
+          "IVA dovuta": "— · non determinata"
+        },
+        {
+          "Mese": "Novembre",
+          "IVA vendite · ipotesi 22%": "—",
+          "IVA detraibile auto · registrata": "—",
+          "Altra IVA detraibile · registrata": "—",
+          "IVA dovuta": "— · non determinata"
+        },
+        {
+          "Mese": "Dicembre",
+          "IVA vendite · ipotesi 22%": "—",
+          "IVA detraibile auto · registrata": "—",
+          "Altra IVA detraibile · registrata": "—",
+          "IVA dovuta": "— · non determinata"
+        }
+      ]
+    },
+    {
+      "kind": "table",
+      "records": [
+        {
+          "Mese IVA": "Gennaio",
+          "IVA detraibile auto": "—",
+          "Altra IVA detraibile": "—",
+          "Totale IVA detraibile registrata": "—",
+          "Fatture": "—"
+        },
+        {
+          "Mese IVA": "Febbraio",
+          "IVA detraibile auto": "—",
+          "Altra IVA detraibile": "—",
+          "Totale IVA detraibile registrata": "—",
+          "Fatture": "—"
+        },
+        {
+          "Mese IVA": "Marzo",
+          "IVA detraibile auto": "—",
+          "Altra IVA detraibile": "—",
+          "Totale IVA detraibile registrata": "—",
+          "Fatture": "—"
+        },
+        {
+          "Mese IVA": "Aprile",
+          "IVA detraibile auto": "—",
+          "Altra IVA detraibile": "—",
+          "Totale IVA detraibile registrata": "—",
+          "Fatture": "—"
+        },
+        {
+          "Mese IVA": "Maggio",
+          "IVA detraibile auto": "—",
+          "Altra IVA detraibile": "—",
+          "Totale IVA detraibile registrata": "—",
+          "Fatture": "—"
+        },
+        {
+          "Mese IVA": "Giugno",
+          "IVA detraibile auto": "—",
+          "Altra IVA detraibile": "—",
+          "Totale IVA detraibile registrata": "—",
+          "Fatture": "—"
+        },
+        {
+          "Mese IVA": "Luglio",
+          "IVA detraibile auto": "—",
+          "Altra IVA detraibile": "—",
+          "Totale IVA detraibile registrata": "—",
+          "Fatture": "—"
+        },
+        {
+          "Mese IVA": "Agosto",
+          "IVA detraibile auto": "—",
+          "Altra IVA detraibile": "—",
+          "Totale IVA detraibile registrata": "—",
+          "Fatture": "—"
+        },
+        {
+          "Mese IVA": "Settembre",
+          "IVA detraibile auto": "—",
+          "Altra IVA detraibile": "—",
+          "Totale IVA detraibile registrata": "—",
+          "Fatture": "—"
+        },
+        {
+          "Mese IVA": "Ottobre",
+          "IVA detraibile auto": "—",
+          "Altra IVA detraibile": "—",
+          "Totale IVA detraibile registrata": "—",
+          "Fatture": "—"
+        },
+        {
+          "Mese IVA": "Novembre",
+          "IVA detraibile auto": "—",
+          "Altra IVA detraibile": "—",
+          "Totale IVA detraibile registrata": "—",
+          "Fatture": "—"
+        },
+        {
+          "Mese IVA": "Dicembre",
+          "IVA detraibile auto": "—",
+          "Altra IVA detraibile": "—",
+          "Totale IVA detraibile registrata": "—",
+          "Fatture": "—"
+        }
+      ]
+    },
+    {
+      "kind": "table",
+      "records": [
+        {
+          "Mese": "Gennaio",
+          "Fatturato senza IVA": "4.500,00 €",
+          "Provvigioni nette": "3.900,00 €",
+          "Accantonato": "600,00 €",
+          "IVA vendite · ipotesi 22%": "990,00 €",
+          "IVA acquisti registrata (PARZIALE)": "—",
+          "Differenza IVA · ipotesi (NON dovuta)": "—",
+          "Netto teorico · NON disponibile": "—"
+        },
+        {
+          "Mese": "Febbraio",
+          "Fatturato senza IVA": "4.500,00 €",
+          "Provvigioni nette": "3.900,00 €",
+          "Accantonato": "600,00 €",
+          "IVA vendite · ipotesi 22%": "990,00 €",
+          "IVA acquisti registrata (PARZIALE)": "—",
+          "Differenza IVA · ipotesi (NON dovuta)": "—",
+          "Netto teorico · NON disponibile": "—"
+        },
+        {
+          "Mese": "Marzo",
+          "Fatturato senza IVA": "4.500,00 €",
+          "Provvigioni nette": "3.900,00 €",
+          "Accantonato": "600,00 €",
+          "IVA vendite · ipotesi 22%": "990,00 €",
+          "IVA acquisti registrata (PARZIALE)": "—",
+          "Differenza IVA · ipotesi (NON dovuta)": "—",
+          "Netto teorico · NON disponibile": "—"
+        },
+        {
+          "Mese": "Aprile",
+          "Fatturato senza IVA": "4.500,00 €",
+          "Provvigioni nette": "3.900,00 €",
+          "Accantonato": "600,00 €",
+          "IVA vendite · ipotesi 22%": "990,00 €",
+          "IVA acquisti registrata (PARZIALE)": "—",
+          "Differenza IVA · ipotesi (NON dovuta)": "—",
+          "Netto teorico · NON disponibile": "—"
+        },
+        {
+          "Mese": "Maggio",
+          "Fatturato senza IVA": "4.500,00 €",
+          "Provvigioni nette": "3.900,00 €",
+          "Accantonato": "600,00 €",
+          "IVA vendite · ipotesi 22%": "990,00 €",
+          "IVA acquisti registrata (PARZIALE)": "—",
+          "Differenza IVA · ipotesi (NON dovuta)": "—",
+          "Netto teorico · NON disponibile": "—"
+        },
+        {
+          "Mese": "Giugno",
+          "Fatturato senza IVA": "4.500,00 €",
+          "Provvigioni nette": "3.900,00 €",
+          "Accantonato": "600,00 €",
+          "IVA vendite · ipotesi 22%": "990,00 €",
+          "IVA acquisti registrata (PARZIALE)": "—",
+          "Differenza IVA · ipotesi (NON dovuta)": "—",
+          "Netto teorico · NON disponibile": "—"
+        },
+        {
+          "Mese": "Luglio",
+          "Fatturato senza IVA": "4.500,00 €",
+          "Provvigioni nette": "3.900,00 €",
+          "Accantonato": "600,00 €",
+          "IVA vendite · ipotesi 22%": "990,00 €",
+          "IVA acquisti registrata (PARZIALE)": "—",
+          "Differenza IVA · ipotesi (NON dovuta)": "—",
+          "Netto teorico · NON disponibile": "—"
+        },
+        {
+          "Mese": "Agosto",
+          "Fatturato senza IVA": "4.500,00 €",
+          "Provvigioni nette": "3.900,00 €",
+          "Accantonato": "600,00 €",
+          "IVA vendite · ipotesi 22%": "990,00 €",
+          "IVA acquisti registrata (PARZIALE)": "—",
+          "Differenza IVA · ipotesi (NON dovuta)": "—",
+          "Netto teorico · NON disponibile": "—"
+        },
+        {
+          "Mese": "Settembre",
+          "Fatturato senza IVA": "—",
+          "Provvigioni nette": "—",
+          "Accantonato": "—",
+          "IVA vendite · ipotesi 22%": "—",
+          "IVA acquisti registrata (PARZIALE)": "—",
+          "Differenza IVA · ipotesi (NON dovuta)": "—",
+          "Netto teorico · NON disponibile": "—"
+        },
+        {
+          "Mese": "Ottobre",
+          "Fatturato senza IVA": "—",
+          "Provvigioni nette": "—",
+          "Accantonato": "—",
+          "IVA vendite · ipotesi 22%": "—",
+          "IVA acquisti registrata (PARZIALE)": "—",
+          "Differenza IVA · ipotesi (NON dovuta)": "—",
+          "Netto teorico · NON disponibile": "—"
+        },
+        {
+          "Mese": "Novembre",
+          "Fatturato senza IVA": "—",
+          "Provvigioni nette": "—",
+          "Accantonato": "—",
+          "IVA vendite · ipotesi 22%": "—",
+          "IVA acquisti registrata (PARZIALE)": "—",
+          "Differenza IVA · ipotesi (NON dovuta)": "—",
+          "Netto teorico · NON disponibile": "—"
+        },
+        {
+          "Mese": "Dicembre",
+          "Fatturato senza IVA": "—",
+          "Provvigioni nette": "—",
+          "Accantonato": "—",
+          "IVA vendite · ipotesi 22%": "—",
+          "IVA acquisti registrata (PARZIALE)": "—",
+          "Differenza IVA · ipotesi (NON dovuta)": "—",
+          "Netto teorico · NON disponibile": "—"
+        }
+      ]
+    },
+    {
+      "kind": "table",
+      "records": [
+        {
+          "Mese": "Gennaio",
+          "Dati da inserire": "fatture acquisto",
+          "Fatture IVA acquisti registrate": 0,
+          "Avvertenza": "Verificare completezza documenti e IVA vendite"
+        },
+        {
+          "Mese": "Febbraio",
+          "Dati da inserire": "fatture acquisto",
+          "Fatture IVA acquisti registrate": 0,
+          "Avvertenza": "Verificare completezza documenti e IVA vendite"
+        },
+        {
+          "Mese": "Marzo",
+          "Dati da inserire": "fatture acquisto",
+          "Fatture IVA acquisti registrate": 0,
+          "Avvertenza": "Verificare completezza documenti e IVA vendite"
+        },
+        {
+          "Mese": "Aprile",
+          "Dati da inserire": "fatture acquisto",
+          "Fatture IVA acquisti registrate": 0,
+          "Avvertenza": "Verificare completezza documenti e IVA vendite"
+        },
+        {
+          "Mese": "Maggio",
+          "Dati da inserire": "fatture acquisto",
+          "Fatture IVA acquisti registrate": 0,
+          "Avvertenza": "Verificare completezza documenti e IVA vendite"
+        },
+        {
+          "Mese": "Giugno",
+          "Dati da inserire": "fatture acquisto",
+          "Fatture IVA acquisti registrate": 0,
+          "Avvertenza": "Verificare completezza documenti e IVA vendite"
+        },
+        {
+          "Mese": "Luglio",
+          "Dati da inserire": "fatture acquisto",
+          "Fatture IVA acquisti registrate": 0,
+          "Avvertenza": "Verificare completezza documenti e IVA vendite"
+        },
+        {
+          "Mese": "Agosto",
+          "Dati da inserire": "fatture acquisto",
+          "Fatture IVA acquisti registrate": 0,
+          "Avvertenza": "Verificare completezza documenti e IVA vendite"
+        },
+        {
+          "Mese": "Settembre",
+          "Dati da inserire": "fatturato, provvigioni nette, accantonato, fatture acquisto",
+          "Fatture IVA acquisti registrate": 0,
+          "Avvertenza": "Verificare completezza documenti e IVA vendite"
+        },
+        {
+          "Mese": "Ottobre",
+          "Dati da inserire": "fatturato, provvigioni nette, accantonato, fatture acquisto",
+          "Fatture IVA acquisti registrate": 0,
+          "Avvertenza": "Verificare completezza documenti e IVA vendite"
+        },
+        {
+          "Mese": "Novembre",
+          "Dati da inserire": "fatturato, provvigioni nette, accantonato, fatture acquisto",
+          "Fatture IVA acquisti registrate": 0,
+          "Avvertenza": "Verificare completezza documenti e IVA vendite"
+        },
+        {
+          "Mese": "Dicembre",
+          "Dati da inserire": "fatturato, provvigioni nette, accantonato, fatture acquisto",
+          "Fatture IVA acquisti registrate": 0,
+          "Avvertenza": "Verificare completezza documenti e IVA vendite"
+        }
+      ]
+    },
+    {
+      "kind": "download",
+      "file_name": "quadro_mensile_2027.csv",
+      "mime": "text/csv",
+      "data": {
+        "base64": "77u/Ik1lc2UiOyJGYXR0dXJhdG8gc2VuemEgSVZBIjsiUHJvdnZpZ2lvbmkgbmV0dGUiOyJBY2NhbnRvbmF0byI7IklWQSB2ZW5kaXRlIMK3IGlwb3Rlc2kgMjIlIjsiSVZBIGFjcXVpc3RpIHJlZ2lzdHJhdGEgKFBBUlpJQUxFKSI7IkRpZmZlcmVuemEgSVZBIMK3IGlwb3Rlc2kgKE5PTiBkb3Z1dGEpIjsiTmV0dG8gdGVvcmljbyDCtyBOT04gZGlzcG9uaWJpbGUiDQoiR2VubmFpbyI7IjQuNTAwLDAwIOKCrCI7IjMuOTAwLDAwIOKCrCI7IjYwMCwwMCDigqwiOyI5OTAsMDAg4oKsIjsi4oCUIjsi4oCUIjsi4oCUIg0KIkZlYmJyYWlvIjsiNC41MDAsMDAg4oKsIjsiMy45MDAsMDAg4oKsIjsiNjAwLDAwIOKCrCI7Ijk5MCwwMCDigqwiOyLigJQiOyLigJQiOyLigJQiDQoiTWFyem8iOyI0LjUwMCwwMCDigqwiOyIzLjkwMCwwMCDigqwiOyI2MDAsMDAg4oKsIjsiOTkwLDAwIOKCrCI7IuKAlCI7IuKAlCI7IuKAlCINCiJBcHJpbGUiOyI0LjUwMCwwMCDigqwiOyIzLjkwMCwwMCDigqwiOyI2MDAsMDAg4oKsIjsiOTkwLDAwIOKCrCI7IuKAlCI7IuKAlCI7IuKAlCINCiJNYWdnaW8iOyI0LjUwMCwwMCDigqwiOyIzLjkwMCwwMCDigqwiOyI2MDAsMDAg4oKsIjsiOTkwLDAwIOKCrCI7IuKAlCI7IuKAlCI7IuKAlCINCiJHaXVnbm8iOyI0LjUwMCwwMCDigqwiOyIzLjkwMCwwMCDigqwiOyI2MDAsMDAg4oKsIjsiOTkwLDAwIOKCrCI7IuKAlCI7IuKAlCI7IuKAlCINCiJMdWdsaW8iOyI0LjUwMCwwMCDigqwiOyIzLjkwMCwwMCDigqwiOyI2MDAsMDAg4oKsIjsiOTkwLDAwIOKCrCI7IuKAlCI7IuKAlCI7IuKAlCINCiJBZ29zdG8iOyI0LjUwMCwwMCDigqwiOyIzLjkwMCwwMCDigqwiOyI2MDAsMDAg4oKsIjsiOTkwLDAwIOKCrCI7IuKAlCI7IuKAlCI7IuKAlCINCiJTZXR0ZW1icmUiOyLigJQiOyLigJQiOyLigJQiOyLigJQiOyLigJQiOyLigJQiOyLigJQiDQoiT3R0b2JyZSI7IuKAlCI7IuKAlCI7IuKAlCI7IuKAlCI7IuKAlCI7IuKAlCI7IuKAlCINCiJOb3ZlbWJyZSI7IuKAlCI7IuKAlCI7IuKAlCI7IuKAlCI7IuKAlCI7IuKAlCI7IuKAlCINCiJEaWNlbWJyZSI7IuKAlCI7IuKAlCI7IuKAlCI7IuKAlCI7IuKAlCI7IuKAlCI7IuKAlCINCg=="
+      }
+    },
+    {
+      "kind": "download",
+      "file_name": "controlli_dati_2027.csv",
+      "mime": "text/csv",
+      "data": {
+        "base64": "77u/Ik1lc2UiOyJEYXRpIGRhIGluc2VyaXJlIjsiRmF0dHVyZSBJVkEgYWNxdWlzdGkgcmVnaXN0cmF0ZSI7IkF2dmVydGVuemEiDQoiR2VubmFpbyI7ImZhdHR1cmUgYWNxdWlzdG8iOyIwIjsiVmVyaWZpY2FyZSBjb21wbGV0ZXp6YSBkb2N1bWVudGkgZSBJVkEgdmVuZGl0ZSINCiJGZWJicmFpbyI7ImZhdHR1cmUgYWNxdWlzdG8iOyIwIjsiVmVyaWZpY2FyZSBjb21wbGV0ZXp6YSBkb2N1bWVudGkgZSBJVkEgdmVuZGl0ZSINCiJNYXJ6byI7ImZhdHR1cmUgYWNxdWlzdG8iOyIwIjsiVmVyaWZpY2FyZSBjb21wbGV0ZXp6YSBkb2N1bWVudGkgZSBJVkEgdmVuZGl0ZSINCiJBcHJpbGUiOyJmYXR0dXJlIGFjcXVpc3RvIjsiMCI7IlZlcmlmaWNhcmUgY29tcGxldGV6emEgZG9jdW1lbnRpIGUgSVZBIHZlbmRpdGUiDQoiTWFnZ2lvIjsiZmF0dHVyZSBhY3F1aXN0byI7IjAiOyJWZXJpZmljYXJlIGNvbXBsZXRlenphIGRvY3VtZW50aSBlIElWQSB2ZW5kaXRlIg0KIkdpdWdubyI7ImZhdHR1cmUgYWNxdWlzdG8iOyIwIjsiVmVyaWZpY2FyZSBjb21wbGV0ZXp6YSBkb2N1bWVudGkgZSBJVkEgdmVuZGl0ZSINCiJMdWdsaW8iOyJmYXR0dXJlIGFjcXVpc3RvIjsiMCI7IlZlcmlmaWNhcmUgY29tcGxldGV6emEgZG9jdW1lbnRpIGUgSVZBIHZlbmRpdGUiDQoiQWdvc3RvIjsiZmF0dHVyZSBhY3F1aXN0byI7IjAiOyJWZXJpZmljYXJlIGNvbXBsZXRlenphIGRvY3VtZW50aSBlIElWQSB2ZW5kaXRlIg0KIlNldHRlbWJyZSI7ImZhdHR1cmF0bywgcHJvdnZpZ2lvbmkgbmV0dGUsIGFjY2FudG9uYXRvLCBmYXR0dXJlIGFjcXVpc3RvIjsiMCI7IlZlcmlmaWNhcmUgY29tcGxldGV6emEgZG9jdW1lbnRpIGUgSVZBIHZlbmRpdGUiDQoiT3R0b2JyZSI7ImZhdHR1cmF0bywgcHJvdnZpZ2lvbmkgbmV0dGUsIGFjY2FudG9uYXRvLCBmYXR0dXJlIGFjcXVpc3RvIjsiMCI7IlZlcmlmaWNhcmUgY29tcGxldGV6emEgZG9jdW1lbnRpIGUgSVZBIHZlbmRpdGUiDQoiTm92ZW1icmUiOyJmYXR0dXJhdG8sIHByb3Z2aWdpb25pIG5ldHRlLCBhY2NhbnRvbmF0bywgZmF0dHVyZSBhY3F1aXN0byI7IjAiOyJWZXJpZmljYXJlIGNvbXBsZXRlenphIGRvY3VtZW50aSBlIElWQSB2ZW5kaXRlIg0KIkRpY2VtYnJlIjsiZmF0dHVyYXRvLCBwcm92dmlnaW9uaSBuZXR0ZSwgYWNjYW50b25hdG8sIGZhdHR1cmUgYWNxdWlzdG8iOyIwIjsiVmVyaWZpY2FyZSBjb21wbGV0ZXp6YSBkb2N1bWVudGkgZSBJVkEgdmVuZGl0ZSINCg=="
+      }
+    },
+    {
+      "kind": "download",
+      "file_name": "fatture_iva_acquisti_2027.csv",
+      "mime": "text/csv",
+      "data": {
+        "base64": ""
+      }
+    },
+    {
+      "kind": "table",
+      "records": []
+    },
+    {
+      "kind": "download",
+      "file_name": "prospetti_iva_2027.csv",
+      "mime": "text/csv",
+      "data": {
+        "base64": ""
+      }
+    }
+  ],
+  "2027:Conto economico": [
+    {
+      "kind": "table",
+      "records": [
+        {
+          "VOCE": "Fatturato",
+          "VALORE": "—"
+        },
+        {
+          "VOCE": "Costi annui",
+          "VALORE": "—"
+        },
+        {
+          "VOCE": "Netto annuo stimato",
+          "VALORE": "—"
+        },
+        {
+          "VOCE": "Netto/12 medio",
+          "VALORE": "—"
+        },
+        {
+          "VOCE": "Netto/12 senza costi",
+          "VALORE": "—"
+        }
+      ]
+    }
+  ],
+  "2027:Imposte": [
+    {
+      "kind": "table",
+      "records": [
+        {
+          "VOCE": "Fatturato",
+          "VALORE": "—"
+        },
+        {
+          "VOCE": "Costi annui",
+          "VALORE": "—"
+        },
+        {
+          "VOCE": "Netto annuo stimato",
+          "VALORE": "—"
+        },
+        {
+          "VOCE": "Netto/12 medio",
+          "VALORE": "—"
+        },
+        {
+          "VOCE": "Netto/12 senza costi",
+          "VALORE": "—"
+        }
+      ]
+    },
+    {
+      "kind": "table",
+      "records": [
+        {
+          "Parametro": "Aliquota quota personale",
+          "Valore configurato": "0,08 €",
+          "Stato": "Provvisorio"
+        },
+        {
+          "Parametro": "Massimale plurimandatario · riferimento 2026 provvisorio",
+          "Valore configurato": "30.478,00 €",
+          "Stato": "Provvisorio"
+        },
+        {
+          "Parametro": "Massimale monomandatario · riferimento 2026 provvisorio",
+          "Valore configurato": "45.717,00 €",
+          "Stato": "Provvisorio"
+        }
+      ]
+    },
+    {
+      "kind": "table",
+      "records": [
+        {
+          "Parametro": "INPS fisso",
+          "Valore configurato": "4.611,64 €",
+          "Stato": "Provvisorio"
+        },
+        {
+          "Parametro": "Minimale · riferimento 2026 provvisorio",
+          "Valore configurato": "18.808,00 €",
+          "Stato": "Provvisorio"
+        },
+        {
+          "Parametro": "Aliquota prima fascia",
+          "Valore configurato": "0,24 €",
+          "Stato": "Provvisorio"
+        },
+        {
+          "Parametro": "Soglia seconda fascia",
+          "Valore configurato": "56.224,00 €",
+          "Stato": "Provvisorio"
+        },
+        {
+          "Parametro": "Aliquota seconda fascia",
+          "Valore configurato": "0,25 €",
+          "Stato": "Provvisorio"
+        },
+        {
+          "Parametro": "Massimale",
+          "Valore configurato": "122.295,00 €",
+          "Stato": "Provvisorio"
+        }
+      ]
+    },
+    {
+      "kind": "table",
+      "records": [
+        {
+          "Parametro": "Prima soglia · modello definitivo",
+          "Valore configurato": "6.197,48 €",
+          "Stato": "Provvisorio"
+        },
+        {
+          "Parametro": "Aliquota prima fascia · modello definitivo",
+          "Valore configurato": "0,03 €",
+          "Stato": "Provvisorio"
+        },
+        {
+          "Parametro": "Seconda soglia · modello definitivo",
+          "Valore configurato": "77.468,53 €",
+          "Stato": "Provvisorio"
+        },
+        {
+          "Parametro": "Aliquota seconda fascia · modello definitivo",
+          "Valore configurato": "0,01 €",
+          "Stato": "Provvisorio"
+        },
+        {
+          "Parametro": "Terza soglia · modello definitivo",
+          "Valore configurato": "92.962,24 €",
+          "Stato": "Provvisorio"
+        },
+        {
+          "Parametro": "Aliquota terza fascia · modello definitivo",
+          "Valore configurato": "0,00 €",
+          "Stato": "Provvisorio"
+        }
+      ]
+    },
+    {
+      "kind": "table",
+      "records": [
+        {
+          "Parametro": "Aliquota prima fascia",
+          "Valore configurato": "0,23 €",
+          "Stato": "Provvisorio"
+        },
+        {
+          "Parametro": "Soglia seconda fascia",
+          "Valore configurato": "28.000,00 €",
+          "Stato": "Provvisorio"
+        },
+        {
+          "Parametro": "Aliquota seconda fascia",
+          "Valore configurato": "0,33 €",
+          "Stato": "Provvisorio"
+        },
+        {
+          "Parametro": "Soglia terza fascia",
+          "Valore configurato": "50.000,00 €",
+          "Stato": "Provvisorio"
+        },
+        {
+          "Parametro": "Aliquota terza fascia",
+          "Valore configurato": "0,43 €",
+          "Stato": "Provvisorio"
+        },
+        {
+          "Parametro": "Addizionale Veneto",
+          "Valore configurato": "0,01 €",
+          "Stato": "Provvisorio"
+        },
+        {
+          "Parametro": "Addizionale Verona",
+          "Valore configurato": "0,01 €",
+          "Stato": "Provvisorio"
+        }
+      ]
+    },
+    {
+      "kind": "metric",
+      "label": "INPS documentato nell'anno",
+      "value": "0,00 €"
+    },
+    {
+      "kind": "metric",
+      "label": "Di cui INPS anni precedenti",
+      "value": "0,00 €"
+    },
+    {
+      "kind": "metric",
+      "label": "Enasarco documentato nell'anno",
+      "value": "0,00 €"
+    }
+  ],
+  "2027:Detrazioni e deduzioni": [
+    {
+      "kind": "table",
+      "records": [
+        {
+          "VOCE": "Fatturato",
+          "VALORE": "—"
+        },
+        {
+          "VOCE": "Costi annui",
+          "VALORE": "—"
+        },
+        {
+          "VOCE": "Netto annuo stimato",
+          "VALORE": "—"
+        },
+        {
+          "VOCE": "Netto/12 medio",
+          "VALORE": "—"
+        },
+        {
+          "VOCE": "Netto/12 senza costi",
+          "VALORE": "—"
+        }
+      ]
+    },
+    {
+      "kind": "metric",
+      "label": "Totale unico spese sanitarie inserite",
+      "value": "0,00 €"
+    },
+    {
+      "kind": "metric",
+      "label": "Detrazione sanitaria annua · scenario",
+      "value": "0,00 €"
+    },
+    {
+      "kind": "table",
+      "records": []
+    },
+    {
+      "kind": "download",
+      "file_name": "pensione_2027.csv",
+      "mime": "text/csv",
+      "data": {
+        "base64": ""
+      }
+    }
+  ],
+  "2027:Ammortamenti": [
+    {
+      "kind": "table",
+      "records": [
+        {
+          "VOCE": "Fatturato",
+          "VALORE": "—"
+        },
+        {
+          "VOCE": "Costi annui",
+          "VALORE": "—"
+        },
+        {
+          "VOCE": "Netto annuo stimato",
+          "VALORE": "—"
+        },
+        {
+          "VOCE": "Netto/12 medio",
+          "VALORE": "—"
+        },
+        {
+          "VOCE": "Netto/12 senza costi",
+          "VALORE": "—"
+        }
+      ]
+    },
+    {
+      "kind": "metric",
+      "label": "Quota fiscalmente deducibile · beni acquistati",
+      "value": "0,00 €"
+    },
+    {
+      "kind": "metric",
+      "label": "Quota prevista · simulazione",
+      "value": "0,00 €"
+    }
+  ]
+}

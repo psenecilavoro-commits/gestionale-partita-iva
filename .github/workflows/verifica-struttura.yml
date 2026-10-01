@@ -31,6 +31,8 @@ jobs:
         run: .venv/bin/python -m compileall -q -x '/\.venv/' .
       - name: Esegui test senza database
         run: .venv/bin/python -m unittest discover -s tests -v
+      - name: Verifica adattatore React e reset moduli
+        run: .venv/bin/python migration/test_react_engine.py
       - name: SQL su PostgreSQL temporaneo (nessun Supabase)
         env:
           PIVA_SQL_TEST: temporary-ci-database
