@@ -1,6 +1,14 @@
 # Migrazione React / Cloudflare — checkpoint 2026-10-01
 
-## Aggiornamento della seconda sessione — leggere prima
+## Ultimo stato verificato — leggere prima
+
+Collaudo Cloudflare pubblicato: https://gestionale-partita-iva-collaudo.pages.dev/ . Progetto Pages separato gestionale-partita-iva-collaudo, deployment 991f691f-3428-457b-9603-8f5798d8fbf7, sorgente d09f661a3804f60aa0ab6d112ea738fbee6c1dd7. Browser remoto verificato: motore locale avviato, Fatturato e Accantonamenti 2026; residuo sintetico 4.271,16 / 4 = 1.067,79. Nessun backend reale collegato.
+
+Diagnosi collegamento Supabase: Plugin Management conferma installed=true, status=ENABLED. Non affermare che sia scollegato. list_projects restituisce ancora Unknown tool supabase.list_projects nella sessione. Tutte le letture tentate falliscono nello stesso modo; non si tratta di un prezzo, né di un errore SQL. Serve ripristinare la disponibilità effettiva degli strumenti prima di creare backend separato o collaudare auth/RLS. Non disinstallare, modificare permessi o chiedere segreti.
+
+Prossimo passo esatto: dalla branch migration/react-cloudflare leggere questa nota, verificare HEAD/stato, tentare una sola lettura Supabase list_projects. Se funziona, verificare org Personale e get_cost per backend staging separato; eventuali costi richiedono conferma. Poi collaudare auth/RLS e mutazioni su soli dati sintetici, completare import PDF/OCR e flussi indicati sotto. Non ripetere backup, setup Cloudflare o implementazione già committata. Produzione non pronta: restano i limiti elencati nella seconda sessione.
+
+## Aggiornamento della seconda sessione — contesto
 
 La migrazione ha ora un frontend React compilabile in web/, con tutte le otto schede rese attraverso un adattatore dichiarativo. Le formule dei 48 moduli Python della baseline sono eseguite localmente con Pyodide/Decimal in un Web Worker; nessun server Streamlit e nessuna riscrittura delle formule. Hash sorgenti in engine-manifest.json. Asset engine.json.gz ricostruibile con migration/build_engine.py.
 
@@ -16,7 +24,7 @@ Limiti da risolvere: PDF/OCR (pypdf/pypdfium2/PIL/pytesseract originali non anco
 
 Il tool Supabase get_cost ha restituito Unknown tool, non un prezzo: non assumere la disponibilità/costo di branching e non creare risorse a pagamento. Prima del live collaudo serve un backend separato Personale con schema/policy identici e soli dati sintetici. Nessun dato o policy di produzione modificato.
 
-Prossimo passo: pubblicare/verificare il progetto Pages distinto gestionale-partita-iva-collaudo dalla branch migration/react-cloudflare con root web, build pnpm build, output dist e modalità demo; poi completare PDF/OCR e il backend di staging. Aggiornare qui URL e commit del deploy quando verificati. Il server preview locale va fermato prima di finire la sessione; nessun lavoro in background.
+Passo già completato: pubblicare/verificare il progetto Pages distinto gestionale-partita-iva-collaudo dalla branch migration/react-cloudflare con root web, build pnpm build, output dist e modalità demo; poi completare PDF/OCR e il backend di staging. Aggiornare qui URL e commit del deploy quando verificati. Il server preview locale va fermato prima di finire la sessione; nessun lavoro in background.
 
 ## Riprendere qui, senza ricominciare
 
@@ -63,4 +71,5 @@ L'autorizzazione OAuth è completata. L'utente deve riavviare Codex per caricare
 ## Regole di continuità
 
 Salvare commit + aggiornare nota prima di interruzioni. Nessun lavoro in background fuori sessione; non aspettare ricariche. I file sources della directory progetto restano read-only. L'utente vuole comunicazioni solo per interventi necessari o collaudo pronto.
+
 
