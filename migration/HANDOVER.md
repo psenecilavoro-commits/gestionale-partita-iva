@@ -1,5 +1,7 @@
 # Migrazione React / Cloudflare — checkpoint 2026-10-01
 
+## Esito grafica finale
+Correzione9dbdd037518fa1a5ca17ed43bb8c353a0274cd70 pubblicata (eb7ac3b2-be10-461c-83a4-1a0fb8765fe8). Browser reload+navigazione Accantonamenti verificati senza alert; screenshot finale con tutti i comandi abilitati e importi invariati. Layout390px menu con backdrop/chiusura verificato; viewport ripristinato. Quattro test Node passati. Nessun processo locale in background. Prossimo passo PDF/OCR e parità integrale, mantenendo collaudo gratuito.
 ## Verifica grafica e correzione avvio
 Deploy grafica e60c5c22d6fc9b57f42aee3bc73d23f49b83f70b riuscito:8d208288-d23f-4c01-9c31-6d9fcfb81b02. Desktop e menu390px verificati. Rilevato errore intermittente NameError react_bridge dopo avvio: messaggi worker concorrenti eseguivano render prima di completare init. Corretto con una promessa di inizializzazione condivisa e coda seriale di richieste. Verificare nuovo deploy con reload e navigazione prima del prossimo passo PDF/OCR. Nessun cambiamento formule.
 ## Grafica richiesta dall’utente
