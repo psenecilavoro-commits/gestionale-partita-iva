@@ -1,6 +1,10 @@
 # Migrazione React / Cloudflare — checkpoint 2026-10-01
 
-## Sessione collaudo gratuito — stato prioritario
+## Collaudo live verificato e completamento struttura — leggere prima
+Deploy live Auth verificato 008c7ba4-e8e2-40fb-99b7-564510bfe103, sorgente 66e80bef086ad6b72758ce9caf426d0fc6cb0d6e. Browser login utente sintetico 0 riuscito; fatturato Gennaio 2026 modificato 4500->4600, confermato via SELECT staging, poi ripristinato4500; chiusura anno verificata sia DB sia UI sola lettura, riapertura riuscita.
+Le viste 2027 hanno mostrato errori sui 4 registri mancanti. Trovato SQL_COMPLETAMENTO_STRUTTURA.sql nella baseline, esplicitamente NON APPLICATO. Applicato SOLO su staging (gbtvscldenpmvcvwognw), sostituendo soltanto il flag conferma dopo verifica ref. Migration staging_validate_existing_structure_script crea 4 tabelle e relative policy/trigger già previste dallo script originale; non cambia le 82 policy delle 20 tabelle base. Lo staging ora ha24tabelle. Main.jsx carica le4 aggiuntive SOLO in modalità staging; produzione continua a leggere solo baseline20.
+Prossimo passo immediato: verificare deploy di questo checkpoint e tutte16viste. Registri nuovi ancora vuoti; collaudare insert/update/version/periodi con date lecite (anno2027 futuro rispetto alla data corrente). Produzione resta senza4registri: decisione/schema necessaria prima del passaggio finale, nessuno script applicato al progetto originale. PDF/OCR ancora da completare.
+## Sessione collaudo gratuito — contesto precedente
 Supabase riconnesso: usare link_id link_6abe5d9a48cc81919d5364d1ffb82d7c (Primary, organizzazione Personale). L'altro collegamento è Lavoro: non usarlo.
 Utente ha autorizzato progetto separato GRATUITO. get_cost project ha restituito 0/mese, confermato; creato gestionale-partita-iva-collaudo, ref gbtvscldenpmvcvwognw, eu-west-1, ACTIVE_HEALTHY. NON creata branch Supabase a pagamento.
 Applicata migration personale_schema_staging_clone: 20 tabelle, 160 constraint, 82 policy identiche alla baseline, due funzioni piva e trigger originali. SQL in staging-schema.sql, colonne in staging-columns.json. Produzione letta solo per metadati. Nessun dato reale copiato.

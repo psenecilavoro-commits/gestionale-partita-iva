@@ -19,7 +19,7 @@ if(!year){const r=await first.from('fiscal_years').insert({fiscal_year:2026}).se
 assert.equal((await readTable(second,'fiscal_years')).length,0);
 const blocked=await second.from('fiscal_years').insert({user_id:users[0].id,fiscal_year:2027});assert.ok(blocked.error);
 await applyMutations(first,[{table:'fiscal_years',operation:'update',payload:{status:'closed'},filters:[['id',year.id]],expected_rows:1}]);
-assert.equal((await readTable(first,'fiscal_years'))[0].status,'closed');
+assert.equal((await readTable(first,'fiscal_years')).find(y=>y.id===year.id).status,'closed');
 await applyMutations(first,[{table:'fiscal_years',operation:'update',payload:{status:'open'},filters:[['id',year.id]],expected_rows:1}]);
 const anon=createClient(url,key,{auth:{persistSession:false}});
 const publicRead=await anon.from('fiscal_years').select('*');assert.ok(publicRead.error||publicRead.data.length===0);
