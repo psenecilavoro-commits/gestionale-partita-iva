@@ -27,7 +27,7 @@ function Download({node}){
 function Table({records}){
   if(!Array.isArray(records))return <p>Nessuna riga disponibile.</p>;
   const cols=[...new Set(records.flatMap(r=>Object.keys(r)))];
-  return <div className="table-scroll"><table><thead><tr>{cols.map(c=><th key={c}>{c==='Stima annua / valore file'?'Stima annua / valore finale':c}</th>)}</tr></thead><tbody>{records.map((r,i)=><tr key={i}>{cols.map(c=><td key={c}>{r[c]===null?'—':String(r[c]??'')}</td>)}</tr>)}</tbody></table></div>;
+  return <div className="table-scroll"><table><thead><tr>{cols.map(c=><th key={c}>{c==='Stima annua / valore file'?'Stima annua / valore finale':c}</th>)}</tr></thead><tbody>{records.map((r,i)=><tr key={i}>{cols.map(c=><td key={c}>{r[c]===null?'—':c==='IVA compresa'&&typeof r[c]==='boolean'?(r[c]?'Sì':'No'):String(r[c]??'')}</td>)}</tr>)}</tbody></table></div>;
 }
 function Nodes({nodes=[],values,onChange,onClick,onUpload,busy}){
   return nodes.map(n=>{
