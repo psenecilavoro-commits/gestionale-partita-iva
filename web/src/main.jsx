@@ -33,6 +33,21 @@ function Table({records,editTable}){
   return <div className={`table-scroll${editTable&&monthlySheet?' revenue-sheet':''}`}><table><thead><tr>{cols.map(c=><th key={c}>{c==='Stima annua / valore file'?'Stima annua / valore finale':c}</th>)}</tr></thead><tbody>{records.map((r,i)=><tr key={i}>{cols.map(c=><td key={c}>{editTable?.(records,c,i)?<button className="cell-edit" disabled={!editTable(records,c,i).editable} aria-label={`Modifica ${r.Voce||c}, ${r.Mese||"stima annua"}`} onClick={()=>editTable(records,c,i,true)}>{String(r[c]??'—')}</button>:r[c]===null?'—':c==='IVA compresa'&&typeof r[c]==='boolean'?(r[c]?'Sì':'No'):String(r[c]??'')}</td>)}</tr>)}</tbody></table></div>;
 }
 function Nodes({nodes=[],values,onChange,onClick,onUpload,busy,editTable}){
+  if(values.schede_principali==='Auto'){
+    const start=nodes.findIndex(n=>n.kind==='subheader'&&n.label==='Registra o modifica le spese');
+    const end=start>=0?nodes.findIndex((n,i)=>i>start&&n.kind==='divider'):-1;
+    if(start>=0&&end>start){
+      const props={values,onChange,onClick,onUpload,busy,editTable};
+      return <>
+        <Nodes nodes={nodes.slice(0,start)} {...props}/>
+        <details className="auto-fuel-expander" key="auto-fuel-expander">
+          <summary>Registra carburante</summary>
+          <Nodes nodes={nodes.slice(start+1,end)} {...props}/>
+        </details>
+        <Nodes nodes={nodes.slice(end)} {...props}/>
+      </>;
+    }
+  }
   return nodes.map(n=>{
     if(values.schede_principali==='Costi'&&Number(values.anno_fiscale_selezionato)===2026&&(n.label==='Spesa effettiva da registrare o modificare'||(n.kind==='form'&&n.children?.some(c=>c.kind==='button'&&c.label==='Conferma spesa effettiva'))))return null;
     if(values.schede_principali==='Auto'&&n.kind==='selectbox'&&n.label==='Che cosa vuoi registrare o modificare?')return null;
