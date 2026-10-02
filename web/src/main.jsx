@@ -4,6 +4,7 @@ import {Calculator,Menu,ShieldCheck,TrendingUp,Receipt,Car,Wallet,ChartNoAxesCom
 import {configuredClient,readTable,applyMutations} from './data.js';
 import './style.css';
 import {prepareDocument} from './documents.js';
+import {revenueCell} from './revenue-cells.js';
 
 const NAV=['Fatturato','Costi','Auto','Accantonamenti','Conto economico','Imposte','Detrazioni e deduzioni','Ammortamenti'];
 const NAV_ICONS=[TrendingUp,Receipt,Car,Wallet,ChartNoAxesCombined,Landmark,BadgePercent,Layers];
@@ -24,14 +25,14 @@ function Download({node}){
   },[node.data.base64,node.mime]);
   return <a className="download-link" href={href||undefined} download={node.file_name} aria-disabled={!href}>{node.label}</a>;
 }
-function Table({records}){
+function Table({records,editTable}){
   if(!Array.isArray(records))return <p>Nessuna riga disponibile.</p>;
   const cols=[...new Set(records.flatMap(r=>Object.keys(r)))];
-  return <div className="table-scroll"><table><thead><tr>{cols.map(c=><th key={c}>{c==='Stima annua / valore file'?'Stima annua / valore finale':c}</th>)}</tr></thead><tbody>{records.map((r,i)=><tr key={i}>{cols.map(c=><td key={c}>{r[c]===null?'—':c==='IVA compresa'&&typeof r[c]==='boolean'?(r[c]?'Sì':'No'):String(r[c]??'')}</td>)}</tr>)}</tbody></table></div>;
+  return <div className="table-scroll"><table><thead><tr>{cols.map(c=><th key={c}>{c==='Stima annua / valore file'?'Stima annua / valore finale':c}</th>)}</tr></thead><tbody>{records.map((r,i)=><tr key={i}>{cols.map(c=><td key={c}>{editTable?.(records,c,i)?<button className="cell-edit" disabled={!editTable(records,c,i).editable} aria-label={`Modifica ${c}, ${r.Mese}`} onClick={()=>editTable(records,c,i,true)}>{String(r[c]??'—')}</button>:r[c]===null?'—':c==='IVA compresa'&&typeof r[c]==='boolean'?(r[c]?'Sì':'No'):String(r[c]??'')}</td>)}</tr>)}</tbody></table></div>;
 }
-function Nodes({nodes=[],values,onChange,onClick,onUpload,busy}){
+function Nodes({nodes=[],values,onChange,onClick,onUpload,busy,editTable}){
   return nodes.map(n=>{
-    const children=<Nodes nodes={n.children} values={values} onChange={onChange} onClick={onClick} onUpload={onUpload} busy={busy}/>;
+    const children=<Nodes nodes={n.children} values={values} onChange={onChange} onClick={onClick} onUpload={onUpload} busy={busy} editTable={editTable}/>;
     const value=values[n.key]??n.value;
     const change=v=>onChange(n.key,v);
     let el;
@@ -42,7 +43,7 @@ function Nodes({nodes=[],values,onChange,onClick,onUpload,busy}){
       case 'markdown':el=<Markdown text={n.label}/>;break;
       case 'write':case 'code':el=<p style={{whiteSpace:'pre-wrap'}}>{n.label}</p>;break;
       case 'info':case 'warning':case 'error':case 'success':el=<p role={n.kind==='error'?'alert':undefined} className={`notice ${n.kind}`}>{n.label}</p>;break;
-      case 'table':el=<Table records={n.records}/>;break;
+      case 'table':el=<Table records={n.records} editTable={editTable}/>;break;
       case 'metric':el=<div className="metric"><small>{n.label}</small><strong>{String(n.value)}</strong></div>;break;
       case 'divider':el=<hr/>;break;
       case 'button':el=<button disabled={busy||n.disabled} onClick={()=>onClick(n.key)}>{n.label}</button>;break;
@@ -66,6 +67,7 @@ function Nodes({nodes=[],values,onChange,onClick,onUpload,busy}){
 function App(){
   const [user,setUser]=useState(client?null:{id:'demo-owner',email:'Collaudo · dati sintetici'});
   const [result,setResult]=useState(null),[values,setValues]=useState({}),[busy,setBusy]=useState(false),[error,setError]=useState(''),[mobile,setMobile]=useState(false);
+  const [editor,setEditor]=useState(null),[editorValue,setEditorValue]=useState(''),[editorError,setEditorError]=useState('');
   const worker=useRef(),tables=useRef(),pending=useRef(new Map()),seq=useRef(0),epoch=useRef(0);
   const currentValues=useRef({});
   useEffect(()=>{
@@ -91,18 +93,44 @@ function App(){
     try{
       if(!tables.current)await load();
       const evaluate=()=>new Promise((resolve,reject)=>{const id=++seq.current;pending.current.set(id,{resolve,reject});worker.current.postMessage({id,request:{tables:tables.current,user,event,inputs}});});
-      let next=await evaluate();
+      let next=await evaluate();const didSave=next.mutations.length>0;
       if(ticket!==epoch.current)return;
       if(next.mutations.length){
         if(client){await applyMutations(client,next.mutations);await load();}
         else tables.current=next.tables;
         inputs=next.inputs;event=null;next=await evaluate();
       }
-      if(ticket===epoch.current){setResult(next);currentValues.current=next.inputs;setValues(next.inputs);}
+      if(ticket===epoch.current){setResult(next);currentValues.current=next.inputs;setValues(next.inputs);return {next,saved:didSave};}
     }catch(e){if(ticket===epoch.current)setError(e.message);}
     finally{if(ticket===epoch.current)setBusy(false);}
   }
   useEffect(()=>{if(user)run(null);},[user]);
+  async function openRevenue(cell){
+    setEditorError('');setEditorValue(cell.record?String(cell.record.amount).replace('.',','):'');setEditor(cell);
+    await run(null,{...currentValues.current,fatturato_mandante:cell.name,fatturato_mese:cell.monthName});
+  }
+  function editTable(records,column,index,open=false){
+    if(busy||values.schede_principali!=='Fatturato')return null;
+    const cell=revenueCell(records,column,index,tables.current,values.anno_fiscale_selezionato);
+    if(open&&cell?.editable)openRevenue(cell);
+    return cell;
+  }
+  function flatten(nodes){return (nodes||[]).flatMap(n=>[n,...flatten(n.children)]);}
+  async function saveRevenue(e){
+    e.preventDefault();setEditorError('');
+    try{
+      await load();
+      const fy=tables.current.fiscal_years.find(f=>f.id===editor.yearId);
+      if(fy?.status!=='open')throw Error('Anno chiuso: importi in sola lettura.');
+      const rows=tables.current.monthly_revenues.filter(r=>r.fiscal_year_id===editor.yearId&&r.principal_id===editor.principalId&&Number(r.month)===editor.month);
+      if(rows.length>1||rows.length!==(editor.record?1:0)||(editor.record&&(rows[0].id!==editor.record.id||String(rows[0].amount)!==String(editor.record.amount))))throw Error('Importo modificato altrove: annulla e riapri la cella.');
+      const nodes=flatten(result?.tree),field=nodes.find(n=>n.kind==='text_input'&&n.label==='Importo fatturato (IVA esclusa)'),submit=nodes.find(n=>n.kind==='button'&&n.label==='Salva importo');
+      if(!field||!submit)throw Error('Modulo non disponibile: annulla e riapri la cella.');
+      const saved=await run(submit.key,{...currentValues.current,[field.key]:editorValue});
+      if(saved?.saved)setEditor(null);
+      else setEditorError(flatten(saved?.next?.tree).filter(n=>['warning','error'].includes(n.kind)).map(n=>n.label).join(' ')||'Salvataggio non confermato. Controlla l’importo.');
+    }catch(e){setEditorError(e.message);}
+  }
   function change(key,value){
     if(key==='anno_fiscale_selezionato'){currentValues.current={};setResult(null);}
     currentValues.current={...currentValues.current,[key]:value};setValues(currentValues.current);
@@ -129,6 +157,6 @@ function App(){
   function findKind(nodes,key){for(const n of nodes||[]){if(n.key===key)return n.kind;const found=findKind(n.children,key);if(found)return found;}return null;}
   async function login(e){e.preventDefault();setBusy(true);setError('');const f=new FormData(e.target);const {error}=await client.auth.signInWithPassword({email:String(f.get('email')).trim(),password:String(f.get('password'))});e.target.reset();setBusy(false);if(error)setError('Accesso non riuscito. Controlla le credenziali.');}
   const page=values.schede_principali||'Fatturato';
-  return <div className="shell">{mobile&&<button className="backdrop" aria-label="Chiudi menu laterale" onClick={()=>setMobile(false)}/>}<aside aria-label="Menu principale" className={mobile?'sidebar shown':'sidebar'}><div className="brand"><div className="brand-icon"><Calculator/></div><div><strong>Gestionale</strong><small>Partita IVA · Personale</small></div><button className="side-close" aria-label="Chiudi menu" onClick={()=>setMobile(false)}><X size={18}/></button></div><div className="nav-label">IL TUO GESTIONALE</div><nav aria-label="Sezioni">{NAV.map((p,i)=><button key={p} className={page===p?'active':''} aria-current={page===p?'page':undefined} disabled={busy||!user} onClick={()=>{change('schede_principali',p);setMobile(false);}}>{React.createElement(NAV_ICONS[i],{size:18,"aria-hidden":true})}<span>{p}</span></button>)}</nav><Nodes nodes={result?.sidebar.filter(n=>!['Utente autenticato',user?.email,'Esci'].includes(n.label))} values={values} onChange={change} onClick={event=>run(event)} onUpload={upload} busy={busy}/><footer><ShieldCheck size={16}/> {client?'Accesso protetto':'Collaudo isolato'}<small>{user?.email}</small></footer></aside><main><header className="page-header"><div><p className="eyebrow">PARTITA IVA · PERSONALE</p><h1>{user?page:"Benvenuto"}</h1><p className="page-description">{user?"Un quadro chiaro della tua attività, mese dopo mese.":"Accedi al tuo spazio per tenere tutto sotto controllo."}</p></div><span className="environment-tag"><ShieldCheck size={15}/>{isStaging||!client?"Collaudo gratuito":"Accesso protetto"}</span></header><button className="menu" onClick={()=>setMobile(!mobile)} aria-label="Apri menu"><Menu/></button><div className="banner">{isStaging?'AMBIENTE DI COLLAUDO · dati sintetici · database separato':client?'Gestionale Partita IVA':'AMBIENTE DI COLLAUDO · dati sintetici · nessun collegamento al database reale'}</div>{client&&user&&<button onClick={async()=>{await client.auth.signOut({scope:'local'});}}>Esci</button>}{error&&<p role="alert" className="notice error">{error}</p>}{!user?<form onSubmit={login} className="login"><h1>Accedi</h1><label>Email<input name="email" type="email" required autoComplete="username"/></label><label>Password<input name="password" type="password" required autoComplete="current-password"/></label><button disabled={busy}>Accedi</button></form>:<>{busy&&<p role="status">{result?'Aggiornamento…':'Preparazione del gestionale e del motore di calcolo…'}</p>}<Nodes nodes={result?.tree} values={values} onChange={change} onClick={event=>run(event)} onUpload={upload} busy={busy}/><button disabled={busy} onClick={()=>run(null)}>Aggiorna prospetto</button></>}</main></div>;
+  return <div className="shell">{mobile&&<button className="backdrop" aria-label="Chiudi menu laterale" onClick={()=>setMobile(false)}/>}<aside aria-label="Menu principale" className={mobile?'sidebar shown':'sidebar'}><div className="brand"><div className="brand-icon"><Calculator/></div><div><strong>Gestionale</strong><small>Partita IVA · Personale</small></div><button className="side-close" aria-label="Chiudi menu" onClick={()=>setMobile(false)}><X size={18}/></button></div><div className="nav-label">IL TUO GESTIONALE</div><nav aria-label="Sezioni">{NAV.map((p,i)=><button key={p} className={page===p?'active':''} aria-current={page===p?'page':undefined} disabled={busy||!user} onClick={()=>{change('schede_principali',p);setMobile(false);}}>{React.createElement(NAV_ICONS[i],{size:18,"aria-hidden":true})}<span>{p}</span></button>)}</nav><Nodes nodes={result?.sidebar.filter(n=>!['Utente autenticato',user?.email,'Esci'].includes(n.label))} values={values} onChange={change} onClick={event=>run(event)} onUpload={upload} busy={busy}/><footer><ShieldCheck size={16}/> {client?'Accesso protetto':'Collaudo isolato'}<small>{user?.email}</small></footer></aside><main><header className="page-header"><div><p className="eyebrow">PARTITA IVA · PERSONALE</p><h1>{user?page:"Benvenuto"}</h1><p className="page-description">{user?"Un quadro chiaro della tua attività, mese dopo mese.":"Accedi al tuo spazio per tenere tutto sotto controllo."}</p></div><span className="environment-tag"><ShieldCheck size={15}/>{isStaging||!client?"Collaudo gratuito":"Accesso protetto"}</span></header><button className="menu" onClick={()=>setMobile(!mobile)} aria-label="Apri menu"><Menu/></button><div className="banner">{isStaging?'AMBIENTE DI COLLAUDO · dati sintetici · database separato':client?'Gestionale Partita IVA':'AMBIENTE DI COLLAUDO · dati sintetici · nessun collegamento al database reale'}</div>{client&&user&&<button onClick={async()=>{await client.auth.signOut({scope:'local'});}}>Esci</button>}{error&&<p role="alert" className="notice error">{error}</p>}{!user?<form onSubmit={login} className="login"><h1>Accedi</h1><label>Email<input name="email" type="email" required autoComplete="username"/></label><label>Password<input name="password" type="password" required autoComplete="current-password"/></label><button disabled={busy}>Accedi</button></form>:<>{busy&&<p role="status">{result?'Aggiornamento…':'Preparazione del gestionale e del motore di calcolo…'}</p>}<Nodes nodes={result?.tree} values={values} onChange={change} onClick={event=>run(event)} onUpload={upload} busy={busy} editTable={editTable}/><button disabled={busy} onClick={()=>run(null)}>Aggiorna prospetto</button></>}</main>{editor&&<div className="modal-backdrop"><section className="amount-dialog" role="dialog" aria-modal="true" aria-labelledby="amount-title"><form onSubmit={saveRevenue}><h2 id="amount-title">Modifica fatturato</h2><p>{editor.name} · {editor.monthName} {editor.year}</p><label>Importo fatturato (IVA esclusa)<input autoFocus value={editorValue} onChange={e=>setEditorValue(e.target.value)} disabled={busy} inputMode="decimal"/></label><p className="caption">Il valore sostituisce quello della cella. Inserisci 0 per un mese a zero; una cella vuota non è ancora compilata.</p>{editorError&&<p role="alert" className="notice error">{editorError}</p>}<div className="dialog-actions"><button type="button" disabled={busy} onClick={()=>setEditor(null)}>Annulla</button><button type="submit" disabled={busy}>Salva importo</button></div></form></section></div>}</div>;
 }
 createRoot(document.getElementById('root')).render(<App/>);

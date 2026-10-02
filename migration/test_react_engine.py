@@ -8,6 +8,27 @@ sys.path.insert(0,str(ROOT))
 import react_bridge as bridge
 
 class ReactEngine(unittest.TestCase):
+    def test_revenue_replacement_zero_and_closed_year(self):
+        def flatten(nodes):
+            return [item for n in nodes for item in [n, *flatten(n['children'])]]
+        initial=self.render(2026,'Fatturato')
+        name=self.tables['principals'][0]['name']
+        values={**initial['inputs'],'fatturato_mandante':name,'fatturato_mese':'Gennaio'}
+        view=self.render(2026,'Fatturato',inputs=values)
+        nodes=flatten(view['tree'])
+        field=next(n for n in nodes if n.get('label')=='Importo fatturato (IVA esclusa)')
+        submit=next(n for n in nodes if n.get('label')=='Salva importo')
+        values={**view['inputs'],field['key']:'0'}
+        saved=self.render(2026,'Fatturato',inputs=values,event=submit['key'])
+        self.assertEqual(len(saved['mutations']),1)
+        mutation=saved['mutations'][0]
+        self.assertEqual(mutation['operation'],'update')
+        self.assertEqual(mutation['payload']['amount'],'0.00')
+        self.assertIn(['amount','4500.00'],mutation['filters'])
+        fy=next(f for f in self.tables['fiscal_years'] if f['fiscal_year']==2026)
+        fy['status']='closed'
+        closed=self.render(2026,'Fatturato',inputs=values,event=submit['key'])
+        self.assertEqual(closed['mutations'],[])
     def setUp(self):
         self.tables=json.loads((ROOT/'web/public/demo.json').read_text())
         bridge.state.clear()
