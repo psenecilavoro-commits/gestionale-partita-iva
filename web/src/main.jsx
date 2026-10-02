@@ -78,7 +78,7 @@ function App(){
   useEffect(()=>{
     if(!client)return;
     client.auth.getUser().then(({data})=>setUser(data.user));
-    const {data}=client.auth.onAuthStateChange((event,session)=>{if(event==='TOKEN_REFRESHED')return;if(!session)worker.current?.postMessage({id:++seq.current,request:{operation:'clear_session'}});epoch.current++;tables.current=null;currentValues.current={};setBusy(false);setValues({});setResult(null);setUser(session?.user??null);});
+    const {data}=client.auth.onAuthStateChange((event,session)=>{if(event==='TOKEN_REFRESHED')return;if(!session){setEditor(null);setEditorValue('');}if(!session)worker.current?.postMessage({id:++seq.current,request:{operation:'clear_session'}});epoch.current++;tables.current=null;currentValues.current={};setBusy(false);setValues({});setResult(null);setUser(session?.user??null);});
     return()=>data.subscription.unsubscribe();
   },[]);
   async function load(){
@@ -117,7 +117,7 @@ function App(){
   }
   function flatten(nodes){return (nodes||[]).flatMap(n=>[n,...flatten(n.children)]);}
   async function saveRevenue(e){
-    e.preventDefault();setEditorError('');
+    e.preventDefault();setEditorError('');setBusy(true);
     try{
       await load();
       const fy=tables.current.fiscal_years.find(f=>f.id===editor.yearId);
