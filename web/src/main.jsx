@@ -110,7 +110,7 @@ function App(){
     await run(null,{...currentValues.current,fatturato_mandante:cell.name,fatturato_mese:cell.monthName});
   }
   function editTable(records,column,index,open=false){
-    if(busy||values.schede_principali!=='Fatturato')return null;
+    if(busy||(values.schede_principali||'Fatturato')!=='Fatturato')return null;
     const cell=revenueCell(records,column,index,tables.current,values.anno_fiscale_selezionato);
     if(open&&cell?.editable)openRevenue(cell);
     return cell;
@@ -119,7 +119,7 @@ function App(){
   async function saveRevenue(e){
     e.preventDefault();setEditorError('');setBusy(true);
     try{
-      await load();
+      if(client)await load();
       const fy=tables.current.fiscal_years.find(f=>f.id===editor.yearId);
       if(fy?.status!=='open')throw Error('Anno chiuso: importi in sola lettura.');
       const rows=tables.current.monthly_revenues.filter(r=>r.fiscal_year_id===editor.yearId&&r.principal_id===editor.principalId&&Number(r.month)===editor.month);
@@ -129,7 +129,7 @@ function App(){
       const saved=await run(submit.key,{...currentValues.current,[field.key]:editorValue});
       if(saved?.saved)setEditor(null);
       else setEditorError(flatten(saved?.next?.tree).filter(n=>['warning','error'].includes(n.kind)).map(n=>n.label).join(' ')||'Salvataggio non confermato. Controlla l’importo.');
-    }catch(e){setEditorError(e.message);}
+    }catch(e){setEditorError(e.message);}finally{setBusy(false);}
   }
   function change(key,value){
     if(key==='anno_fiscale_selezionato'){currentValues.current={};setResult(null);}
