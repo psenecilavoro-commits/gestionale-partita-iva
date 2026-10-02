@@ -324,7 +324,7 @@ begin
   -- eventuali frazioni di centesimo delle formule Excel vengono arrotondate.
   insert into public.annual_cost_estimates
     (fiscal_year_id,category_id,estimated_gross_amount,amount_includes_vat,notes)
-  select y2026,c.id,x.amount,false,'IMPORTATO DA FILE 2026 · STIMA ANNUA'
+  select y2026,c.id,x.amount,true,'IMPORTATO DA FILE 2026 · STIMA ANNUA'
   from (values
     ('rate_auto',6388.42::numeric),
     ('penale_km',0.00::numeric),
@@ -348,7 +348,7 @@ begin
      gross_amount,amount_includes_vat,vat_rate,vat_deductible_rate,
      cost_deductible_rate,fiscal_competence_year,notes)
   select
-    y2026,c.id,v_id,x.giorno,x.descrizione,x.importo,false,0,0,0,2026,
+    y2026,c.id,v_id,x.giorno,x.descrizione,x.importo,true,0,0,0,2026,
     'IMPORTATO DA FILE 2026 · giorno 01 tecnico'
   from (values
     ('carburante','2026-01-01'::date,'Carburante · gennaio',73.80::numeric),
