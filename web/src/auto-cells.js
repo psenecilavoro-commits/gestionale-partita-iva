@@ -18,6 +18,8 @@ export function autoCell(records,column,index,tables,year){
   if(vehicles.length!==1)return {kind:'auto-disabled',name:column,month:index+1,monthName:MONTHS[index],editable:false,reason:'Serve una sola auto associata.'};
   const vehicle=vehicles[0];
   const month=index+1;
+  const now=new Date();
+  const notFuture=Number(year)<now.getFullYear()||(Number(year)===now.getFullYear()&&month<=now.getMonth()+1);
 
   if(column==='Percorrenza'){
     const rows=(tables?.vehicle_monthly||[]).filter(r=>r.fiscal_year_id===fy.id&&r.vehicle_id===vehicle.id&&Number(r.month)===month);
@@ -25,7 +27,7 @@ export function autoCell(records,column,index,tables,year){
     return {
       kind:'auto-distance',
       year:Number(year),yearId:fy.id,vehicleId:vehicle.id,name:column,
-      month,monthName:MONTHS[index],record:rows[0]||null,editable:fy.status==='open',
+      month,monthName:MONTHS[index],record:rows[0]||null,editable:fy.status==='open'&&notFuture,
     };
   }
 
@@ -40,6 +42,6 @@ export function autoCell(records,column,index,tables,year){
   return {
     kind:code==='autostrada'?'auto-toll':'auto-installment',
     code,year:Number(year),yearId:fy.id,vehicleId:vehicle.id,category,name:column,
-    month,monthName:MONTHS[index],record:rows[0]||null,editable:fy.status==='open',
+    month,monthName:MONTHS[index],record:rows[0]||null,editable:fy.status==='open'&&notFuture,
   };
 }
