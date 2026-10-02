@@ -307,8 +307,9 @@ class Query:
         if self.operation != 'select':
             planned = {'table': self.table, 'operation': self.operation,
                        'payload': copy.deepcopy(self.payload), 'filters': copy.deepcopy(self.filters)}
-            if self.table == 'monthly_revenues' and self.operation == 'update' and len(matching) == 1:
-                planned['filters'].append(('amount', matching[0]['amount']))
+            if self.table in ('monthly_revenues', 'annual_cost_estimates') and self.operation == 'update' and len(matching) == 1:
+                amount_field = 'estimated_gross_amount' if self.table == 'annual_cost_estimates' else 'amount'
+                planned['filters'].append((amount_field, matching[0][amount_field]))
             mutations.append(planned)
             if self.operation == 'insert':
                 incoming = self.payload if isinstance(self.payload,list) else [self.payload]
@@ -402,3 +403,4 @@ def render(request):
     return json.dumps({'tree':tree,'sidebar':st.sidebar.node['children'],
                        'inputs':{k:state[k] for k in keys if k in state},
                        'mutations':mutations, 'tables':tables}, default=encode)
+

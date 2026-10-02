@@ -9,3 +9,17 @@ export function revenueCell(records,column,index,tables,year){
   if(rows.length>1)return null;
   return {year:Number(year),yearId:fy.id,principalId:principal.id,name:column,month,monthName:MONTHS[index],record:rows[0]||null,editable:fy.status==='open'};
 }
+
+export function costCell(records,column,index,tables,year){
+  if(Number(year)!==2026||column!=='Stima annua / valore file'||!records.every(r=>Object.hasOwn(r,'Voce')&&Object.hasOwn(r,'Registrato')&&Object.hasOwn(r,column)))return null;
+  const name=records[index]?.Voce;
+  if(['Auto · rate','Auto - rate','Autostrada','Carburante'].includes(name))return null;
+  const years=(tables?.fiscal_years||[]).filter(f=>Number(f.fiscal_year)===2026);
+  if(years.length!==1)return null;
+  const fy=years[0],cats=(tables.cost_categories||[]).filter(c=>c.fiscal_year_id===fy.id&&c.name===name);
+  if(cats.length!==1)return null;
+  const rows=(tables.annual_cost_estimates||[]).filter(r=>r.fiscal_year_id===fy.id&&r.category_id===cats[0].id);
+  if(rows.length!==1)return null;
+  return {kind:'cost',year:2026,yearId:fy.id,name,record:rows[0],editable:fy.status==='open'};
+}
+
