@@ -29,6 +29,31 @@ class ReactEngine(unittest.TestCase):
         fy['status']='closed'
         closed=self.render(2026,'Fatturato',inputs=values,event=submit['key'])
         self.assertEqual(closed['mutations'],[])
+    def test_annual_cost_replacement_confirmation_and_closed_year(self):
+        def flat(nodes):
+            return [item for n in nodes for item in [n, *flat(n['children'])]]
+        fy=next(f for f in self.tables['fiscal_years'] if f['fiscal_year']==2026)
+        record=next(r for r in self.tables['annual_cost_estimates'] if r['fiscal_year_id']==fy['id'])
+        initial=self.render(2026,'Costi')
+        values={**initial['inputs'],f"forfettario_stima_{fy['id']}":record['id']}
+        view=self.render(2026,'Costi',inputs=values)
+        nodes=flat(view['tree'])
+        field=next(n for n in nodes if n.get('label')=='Nuovo importo annuo (€)')
+        confirm=next(n for n in nodes if n.get('label')=='Confermo la modifica della stima annuale')
+        submit=next(n for n in nodes if n.get('label')=='Salva stima')
+        values={**view['inputs'],field['key']:'0',confirm['key']:False}
+        rejected=self.render(2026,'Costi',inputs=values,event=submit['key'])
+        self.assertEqual(rejected['mutations'],[])
+        values[confirm['key']]=True
+        saved=self.render(2026,'Costi',inputs=values,event=submit['key'])
+        self.assertEqual(len(saved['mutations']),1)
+        mutation=saved['mutations'][0]
+        self.assertEqual(mutation['table'],'annual_cost_estimates')
+        self.assertEqual(mutation['payload']['estimated_gross_amount'],'0.00')
+        self.assertIn(['estimated_gross_amount',record['estimated_gross_amount']],mutation['filters'])
+        fy['status']='closed'
+        closed=self.render(2026,'Costi',inputs=values,event=submit['key'])
+        self.assertEqual(closed['mutations'],[])
     def setUp(self):
         self.tables=json.loads((ROOT/'web/public/demo.json').read_text())
         bridge.state.clear()
@@ -90,3 +115,4 @@ class ReactEngine(unittest.TestCase):
         self.assertNotIn('private',bridge.state)
 
 if __name__=='__main__':unittest.main()
+

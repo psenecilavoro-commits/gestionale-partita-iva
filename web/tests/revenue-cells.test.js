@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {revenueCell} from '../src/revenue-cells.js';
+import {revenueCell,costCell} from '../src/revenue-cells.js';
 test('monthly cells distinguish blank and zero, lock closed years and exclude totals',()=>{
  const months=['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
  const records=months.map(Mese=>({Mese,A:'—','Totale mese':'—'}));
@@ -13,3 +13,16 @@ test('monthly cells distinguish blank and zero, lock closed years and exclude to
  assert.equal(revenueCell(records,'A',0,tables,2026).editable,false);
  assert.equal(revenueCell([{Mandante:'A',Fatturato:'100'}],'A',0,tables,2026),null);
 });
+
+test('cost estimates exclude derived columns, auto categories and closed years',()=>{
+ const names=['Assicurazione','Auto · rate','Autostrada','Carburante','PC'];
+ const records=names.map(Voce=>({Voce,Registrato:'—','Stima annua / valore file':'0,00 €'}));
+ const tables={fiscal_years:[{id:'y',fiscal_year:2026,status:'open'}],cost_categories:names.map((name,i)=>({id:String(i),name,fiscal_year_id:'y'})),annual_cost_estimates:names.map((_,i)=>({id:'e'+i,category_id:String(i),fiscal_year_id:'y',estimated_gross_amount:'0.00'}))};
+ assert.equal(costCell(records,'Registrato',0,tables,2026),null);
+ for(const i of [1,2,3])assert.equal(costCell(records,'Stima annua / valore file',i,tables,2026),null);
+ assert.equal(costCell(records,'Stima annua / valore file',4,tables,2026).record.estimated_gross_amount,'0.00');
+ tables.fiscal_years[0].status='closed';
+ assert.equal(costCell(records,'Stima annua / valore file',0,tables,2026).editable,false);
+ assert.equal(costCell(records,'Stima annua / valore file',0,tables,2027),null);
+});
+
