@@ -5,6 +5,7 @@ import {configuredClient,readTable,applyMutations} from './data.js';
 import './style.css';
 import {prepareDocument} from './documents.js';
 import {revenueCell,costCell} from './revenue-cells.js';
+import {autoCell} from './auto-cells.js';
 
 const NAV=['Fatturato','Costi','Auto','Accantonamenti','Conto economico','Imposte','Detrazioni e deduzioni','Ammortamenti'];
 const NAV_ICONS=[TrendingUp,Receipt,Car,Wallet,ChartNoAxesCombined,Landmark,BadgePercent,Layers];
@@ -28,11 +29,13 @@ function Download({node}){
 function Table({records,editTable}){
   if(!Array.isArray(records))return <p>Nessuna riga disponibile.</p>;
   const cols=[...new Set(records.flatMap(r=>Object.keys(r)))];
-  return <div className={`table-scroll${editTable&&((cols.includes('Totale mese')&&cols.includes('Mese'))||cols.includes('Stima annua / valore file'))?' revenue-sheet':''}`}><table><thead><tr>{cols.map(c=><th key={c}>{c==='Stima annua / valore file'?'Stima annua / valore finale':c}</th>)}</tr></thead><tbody>{records.map((r,i)=><tr key={i}>{cols.map(c=><td key={c}>{editTable?.(records,c,i)?<button className="cell-edit" disabled={!editTable(records,c,i).editable} aria-label={`Modifica ${r.Voce||c}, ${r.Mese||"stima annua"}`} onClick={()=>editTable(records,c,i,true)}>{String(r[c]??'—')}</button>:r[c]===null?'—':c==='IVA compresa'&&typeof r[c]==='boolean'?(r[c]?'Sì':'No'):String(r[c]??'')}</td>)}</tr>)}</tbody></table></div>;
+  const monthlySheet=(cols.includes('Totale mese')&&cols.includes('Mese'))||cols.includes('Stima annua / valore file')||(['Mese','Percorrenza','Carburante','Autostrada','Rate auto'].every(col=>cols.includes(col)));
+  return <div className={`table-scroll${editTable&&monthlySheet?' revenue-sheet':''}`}><table><thead><tr>{cols.map(c=><th key={c}>{c==='Stima annua / valore file'?'Stima annua / valore finale':c}</th>)}</tr></thead><tbody>{records.map((r,i)=><tr key={i}>{cols.map(c=><td key={c}>{editTable?.(records,c,i)?<button className="cell-edit" disabled={!editTable(records,c,i).editable} aria-label={`Modifica ${r.Voce||c}, ${r.Mese||"stima annua"}`} onClick={()=>editTable(records,c,i,true)}>{String(r[c]??'—')}</button>:r[c]===null?'—':c==='IVA compresa'&&typeof r[c]==='boolean'?(r[c]?'Sì':'No'):String(r[c]??'')}</td>)}</tr>)}</tbody></table></div>;
 }
 function Nodes({nodes=[],values,onChange,onClick,onUpload,busy,editTable}){
   return nodes.map(n=>{
     if(values.schede_principali==='Costi'&&Number(values.anno_fiscale_selezionato)===2026&&(n.label==='Spesa effettiva da registrare o modificare'||(n.kind==='form'&&n.children?.some(c=>c.kind==='button'&&c.label==='Conferma spesa effettiva'))))return null;
+    if(values.schede_principali==='Auto'&&n.kind==='selectbox'&&n.label==='Che cosa vuoi registrare o modificare?')return null;
     // Keep the original engine form available to the cell dialog, without rendering the old entry section.
     if(n.kind==='expander'&&['Elimina un importo registrato','Elimina manualmente un importo','Modifica una stima annuale importata dal file'].includes(n.label))return null;
     if(n.label==='**Inserisci o modifica un mese**'||['fatturato_mandante','fatturato_mese'].includes(n.key)||(n.kind==='caption'&&n.label?.startsWith('Mese già registrato: salvando sostituisci'))||(n.kind==='form'&&n.children?.some(c=>c.kind==='text_input'&&c.label==='Importo fatturato (IVA esclusa)')))return null;
@@ -42,8 +45,8 @@ function Nodes({nodes=[],values,onChange,onClick,onUpload,busy,editTable}){
     let el;
     switch(n.kind){
       case 'title':el=n.label==='Gestionale Partita IVA'?null:<h1>{n.label}</h1>;break;
-      case 'subheader':el=<h2>{n.label}</h2>;break;
-      case 'caption':el=<p className="caption">{n.label}</p>;break;
+      case 'subheader':el=<h2>{values.schede_principali==='Auto'&&n.label==='Registra o modifica le spese'?'Registra carburante':n.label}</h2>;break;
+      case 'caption':el=<p className="caption">{values.schede_principali==='Auto'&&n.label?.startsWith('Inserisci qui i chilometri mensili oppure una singola spesa di carburante')?'Registra qui ogni singola transazione di carburante. Percorrenza, autostrada e rate auto si modificano direttamente nella tabella sottostante.':n.label}</p>;break;
       case 'markdown':el=<Markdown text={n.label}/>;break;
       case 'write':case 'code':el=<p style={{whiteSpace:'pre-wrap'}}>{n.label}</p>;break;
       case 'info':case 'warning':case 'error':case 'success':el=<p role={n.kind==='error'?'alert':undefined} className={`notice ${n.kind}`}>{n.label}</p>;break;
@@ -97,12 +100,22 @@ function App(){
     try{
       if(!tables.current)await load();
       const evaluate=()=>new Promise((resolve,reject)=>{const id=++seq.current;pending.current.set(id,{resolve,reject});worker.current.postMessage({id,request:{tables:tables.current,user,event,inputs}});});
-      let next=await evaluate();const didSave=next.mutations.length>0;
+      let next=await evaluate();
+      const forceFuel=async current=>{
+        const autoKey=Object.keys(current?.inputs||{}).find(key=>key.startsWith('auto_tipo_'));
+        const page=current?.inputs?.schede_principali??inputs?.schede_principali;
+        if(event===null&&page==='Auto'&&autoKey&&current.inputs[autoKey]!=='carburante'){
+          inputs={...current.inputs,[autoKey]:'carburante'};
+          return await evaluate();
+        }
+        return current;
+      };
+      next=await forceFuel(next);const didSave=next.mutations.length>0;
       if(ticket!==epoch.current)return;
       if(next.mutations.length){
         if(client){await applyMutations(client,next.mutations);await load();}
         else tables.current=next.tables;
-        inputs=next.inputs;event=null;next=await evaluate();
+        inputs=next.inputs;event=null;next=await evaluate();next=await forceFuel(next);
       }
       if(ticket===epoch.current){setResult(next);currentValues.current=next.inputs;setValues(next.inputs);return {next,saved:didSave};}
     }catch(e){if(ticket===epoch.current)setError(e.message);}
@@ -110,20 +123,81 @@ function App(){
   }
   useEffect(()=>{if(user)run(null);},[user]);
   async function openRevenue(cell){
-    setEditorError('');setEditorConfirmed(false);setEditorValue(cell.record?String(cell.kind==='cost'?cell.record.estimated_gross_amount:cell.record.amount).replace('.',','):'');setEditor(cell);
+    setEditorError('');setEditorConfirmed(false);
+    const auto=cell.kind?.startsWith('auto-');
+    const raw=cell.record?(cell.kind==='cost'?cell.record.estimated_gross_amount:cell.kind==='auto-distance'?cell.record.distance_km:auto?cell.record.gross_amount:cell.record.amount):'';
+    setEditorValue(String(raw??'').replace('.',','));setEditor(cell);
+    if(auto)return;
     await run(null,cell.kind==='cost'?{...currentValues.current,[`forfettario_stima_${cell.yearId}`]:cell.record.id}:{...currentValues.current,fatturato_mandante:cell.name,fatturato_mese:cell.monthName});
   }
   function editTable(records,column,index,open=false){
     if(busy)return null;
     const page=values.schede_principali||'Fatturato';
-    const cell=page==='Fatturato'?revenueCell(records,column,index,tables.current,values.anno_fiscale_selezionato):page==='Costi'?costCell(records,column,index,tables.current,values.anno_fiscale_selezionato):null;
+    const cell=page==='Fatturato'?revenueCell(records,column,index,tables.current,values.anno_fiscale_selezionato):page==='Costi'?costCell(records,column,index,tables.current,values.anno_fiscale_selezionato):page==='Auto'?autoCell(records,column,index,tables.current,values.anno_fiscale_selezionato):null;
     if(open&&cell?.editable)openRevenue(cell);
     return cell;
   }
   function flatten(nodes){return (nodes||[]).flatMap(n=>[n,...flatten(n.children)]);}
+  function decimalValue(raw,max){
+    let text=String(raw??'').trim().replace(/\s/g,'');
+    if(!text)throw Error('Inserisci un valore.');
+    if(text.includes(','))text=text.replace(/\./g,'').replace(',','.');
+    if(!/^\d+(?:\.\d{1,2})?$/.test(text))throw Error('Inserisci un numero con al massimo due decimali.');
+    const value=Number(text);
+    if(!Number.isFinite(value)||value<0||value>max)throw Error('Valore non valido.');
+    return value.toFixed(2);
+  }
+  function applyLocalMutation(mutation){
+    const rows=tables.current[mutation.table]||(tables.current[mutation.table]=[]);
+    if(mutation.operation==='insert'){
+      rows.push({id:crypto.randomUUID(),user_id:user?.id,...mutation.payload});
+      return;
+    }
+    const matches=row=>mutation.filters.every(([key,value])=>String(row[key])===String(value));
+    const indexes=rows.map((row,index)=>matches(row)?index:-1).filter(index=>index>=0);
+    if(indexes.length!==mutation.expected_rows)throw Error('Salvataggio non confermato o dati modificati altrove: aggiorna prima di riprovare.');
+    if(mutation.operation==='update')rows[indexes[0]]={...rows[indexes[0]],...mutation.payload};
+  }
+  async function persistAutoCell(){
+    if(client)await load();
+    const fy=(tables.current.fiscal_years||[]).find(f=>f.id===editor.yearId);
+    if(fy?.status!=='open')throw Error('Anno chiuso: importi in sola lettura.');
+    const vehicles=tables.current.vehicles||[];
+    if(vehicles.length!==1||vehicles[0].id!==editor.vehicleId)throw Error('Auto associata cambiata: annulla e riapri la cella.');
+    const now=new Date();
+    if(editor.year>now.getFullYear()||(editor.year===now.getFullYear()&&editor.month>now.getMonth()+1))throw Error('Non registrare come effettivo un mese futuro.');
+
+    const isDistance=editor.kind==='auto-distance';
+    const value=decimalValue(editorValue,isDistance?9999999999.99:999999999999.99);
+    let mutation;
+    if(isDistance){
+      const rows=(tables.current.vehicle_monthly||[]).filter(r=>r.fiscal_year_id===editor.yearId&&r.vehicle_id===editor.vehicleId&&Number(r.month)===editor.month);
+      if(rows.length!==(editor.record?1:0)||(editor.record&&(rows[0].id!==editor.record.id||String(rows[0].distance_km)!==String(editor.record.distance_km))))throw Error('Percorrenza modificata altrove: annulla e riapri la cella.');
+      mutation=editor.record?{
+        table:'vehicle_monthly',operation:'update',payload:{distance_km:value,notes:'Percorrenza effettiva dichiarata'},
+        filters:[['id',editor.record.id],['fiscal_year_id',editor.yearId],['vehicle_id',editor.vehicleId],['month',editor.month],['distance_km',editor.record.distance_km]],expected_rows:1,
+      }:{
+        table:'vehicle_monthly',operation:'insert',payload:{fiscal_year_id:editor.yearId,vehicle_id:editor.vehicleId,month:editor.month,distance_km:value,notes:'Percorrenza effettiva dichiarata'},filters:[],expected_rows:1,result_ids:[crypto.randomUUID()],
+      };
+    }else{
+      const rows=(tables.current.costs||[]).filter(r=>r.fiscal_year_id===editor.yearId&&r.vehicle_id===editor.vehicleId&&r.category_id===editor.category.id&&Number(String(r.expense_date).slice(5,7))===editor.month);
+      if(rows.length!==(editor.record?1:0)||(editor.record&&(rows[0].id!==editor.record.id||String(rows[0].gross_amount)!==String(editor.record.gross_amount)||String(rows[0].expense_date)!==String(editor.record.expense_date))))throw Error('Importo modificato altrove: annulla e riapri la cella.');
+      const date=`${editor.year}-${String(editor.month).padStart(2,'0')}-01`;
+      const description=`${editor.kind==='auto-toll'?'Autostrada':'Rata auto'} · ${editor.monthName.toLowerCase()}`;
+      mutation=editor.record?{
+        table:'costs',operation:'update',payload:{gross_amount:value},
+        filters:[['id',editor.record.id],['fiscal_year_id',editor.yearId],['category_id',editor.category.id],['vehicle_id',editor.vehicleId],['gross_amount',editor.record.gross_amount],['expense_date',editor.record.expense_date]],expected_rows:1,
+      }:{
+        table:'costs',operation:'insert',payload:{fiscal_year_id:editor.yearId,category_id:editor.category.id,vehicle_id:editor.vehicleId,expense_date:date,description,gross_amount:value,amount_includes_vat:true,vat_rate:editor.category.vat_rate,vat_deductible_rate:editor.category.vat_deductible_rate,cost_deductible_rate:editor.category.cost_deductible_rate,deductible_limit:editor.category.deductible_limit,fiscal_competence_year:editor.year,notes:'Spesa auto inserita manualmente; parametri fiscali da verificare'},filters:[],expected_rows:1,result_ids:[crypto.randomUUID()],
+      };
+    }
+    if(client){await applyMutations(client,[mutation]);await load();}else applyLocalMutation(mutation);
+    await run(null);setEditor(null);
+  }
   async function saveRevenue(e){
     e.preventDefault();setEditorError('');setBusy(true);
     try{
+      if(editor?.kind?.startsWith('auto-')){await persistAutoCell();return;}
       if(client)await load();
       const fy=tables.current.fiscal_years.find(f=>f.id===editor.yearId);
       if(fy?.status!=='open')throw Error('Anno chiuso: importi in sola lettura.');
@@ -166,7 +240,7 @@ function App(){
   function findKind(nodes,key){for(const n of nodes||[]){if(n.key===key)return n.kind;const found=findKind(n.children,key);if(found)return found;}return null;}
   async function login(e){e.preventDefault();setBusy(true);setError('');const f=new FormData(e.target);const {error}=await client.auth.signInWithPassword({email:String(f.get('email')).trim(),password:String(f.get('password'))});e.target.reset();setBusy(false);if(error)setError('Accesso non riuscito. Controlla le credenziali.');}
   const page=values.schede_principali||'Fatturato';
-  return <div className="shell">{mobile&&<button className="backdrop" aria-label="Chiudi menu laterale" onClick={()=>setMobile(false)}/>}<aside inert={editor?'':undefined} aria-label="Menu principale" className={mobile?'sidebar shown':'sidebar'}><div className="brand"><div className="brand-icon"><Calculator/></div><div><strong>Gestionale</strong><small>Partita IVA · Personale</small></div><button className="side-close" aria-label="Chiudi menu" onClick={()=>setMobile(false)}><X size={18}/></button></div><div className="nav-label">IL TUO GESTIONALE</div><nav aria-label="Sezioni">{NAV.map((p,i)=><button key={p} className={page===p?'active':''} aria-current={page===p?'page':undefined} disabled={busy||!user} onClick={()=>{change('schede_principali',p);setMobile(false);}}>{React.createElement(NAV_ICONS[i],{size:18,"aria-hidden":true})}<span>{p}</span></button>)}</nav><Nodes nodes={result?.sidebar.filter(n=>!['Utente autenticato',user?.email,'Esci'].includes(n.label))} values={values} onChange={change} onClick={event=>run(event)} onUpload={upload} busy={busy}/><footer><ShieldCheck size={16}/> {client?'Accesso protetto':'Collaudo isolato'}<small>{user?.email}</small></footer></aside><main inert={editor?'':undefined}><header className="page-header"><div><p className="eyebrow">PARTITA IVA · PERSONALE</p><h1>{user?page:"Benvenuto"}</h1><p className="page-description">{user?"Un quadro chiaro della tua attività, mese dopo mese.":"Accedi al tuo spazio per tenere tutto sotto controllo."}</p></div><span className="environment-tag"><ShieldCheck size={15}/>{isStaging||!client?"Collaudo gratuito":"Accesso protetto"}</span></header><button className="menu" onClick={()=>setMobile(!mobile)} aria-label="Apri menu"><Menu/></button><div className="banner">{isStaging?'AMBIENTE DI COLLAUDO · dati sintetici · database separato':client?'Gestionale Partita IVA':'AMBIENTE DI COLLAUDO · dati sintetici · nessun collegamento al database reale'}</div>{client&&user&&<button onClick={async()=>{await client.auth.signOut({scope:'local'});}}>Esci</button>}{error&&<p role="alert" className="notice error">{error}</p>}{!user?<form onSubmit={login} className="login"><h1>Accedi</h1><label>Email<input name="email" type="email" required autoComplete="username"/></label><label>Password<input name="password" type="password" required autoComplete="current-password"/></label><button disabled={busy}>Accedi</button></form>:<>{busy&&<p role="status">{result?'Aggiornamento…':'Preparazione del gestionale e del motore di calcolo…'}</p>}<Nodes nodes={result?.tree} values={values} onChange={change} onClick={event=>run(event)} onUpload={upload} busy={busy} editTable={editTable}/><button disabled={busy} onClick={()=>run(null)}>Aggiorna prospetto</button></>}</main>{editor&&<div className="modal-backdrop"><section className="amount-dialog" role="dialog" onKeyDown={e=>{if(e.key==='Escape'&&!busy)setEditor(null);}} aria-modal="true" aria-labelledby="amount-title"><form onSubmit={saveRevenue}><h2 id="amount-title">{editor.name}</h2><p>{editor.kind==='cost'?'Stima annua ·':editor.monthName} {editor.year}</p><label>{editor.kind==='cost'?'Importo annuo lordo (€)':'Importo fatturato (IVA esclusa)'}<input autoFocus value={editorValue} onChange={e=>setEditorValue(e.target.value)} disabled={busy} inputMode="decimal"/></label><p className="caption">{editor.kind==='cost'?'Il valore sostituisce la stima annuale e aggiorna i riepiloghi. Inserisci 0 per un importo nullo.':'Il valore sostituisce quello della cella. Inserisci 0 per un mese a zero; una cella vuota non è ancora compilata.'}</p>{editor.kind==='cost'&&<label className="check"><input type="checkbox" checked={editorConfirmed} disabled={busy} onChange={e=>setEditorConfirmed(e.target.checked)}/>Confermo la modifica della stima annuale</label>}{editorError&&<p role="alert" className="notice error">{editorError}</p>}<div className="dialog-actions"><button type="button" disabled={busy} onClick={()=>setEditor(null)}>Annulla</button><button className="primary" type="submit" disabled={busy}>{busy?'Salvataggio…':'Salva importo'}</button></div></form></section></div>}</div>;
+  return <div className="shell">{mobile&&<button className="backdrop" aria-label="Chiudi menu laterale" onClick={()=>setMobile(false)}/>}<aside inert={editor?'':undefined} aria-label="Menu principale" className={mobile?'sidebar shown':'sidebar'}><div className="brand"><div className="brand-icon"><Calculator/></div><div><strong>Gestionale</strong><small>Partita IVA · Personale</small></div><button className="side-close" aria-label="Chiudi menu" onClick={()=>setMobile(false)}><X size={18}/></button></div><div className="nav-label">IL TUO GESTIONALE</div><nav aria-label="Sezioni">{NAV.map((p,i)=><button key={p} className={page===p?'active':''} aria-current={page===p?'page':undefined} disabled={busy||!user} onClick={()=>{change('schede_principali',p);setMobile(false);}}>{React.createElement(NAV_ICONS[i],{size:18,"aria-hidden":true})}<span>{p}</span></button>)}</nav><Nodes nodes={result?.sidebar.filter(n=>!['Utente autenticato',user?.email,'Esci'].includes(n.label))} values={values} onChange={change} onClick={event=>run(event)} onUpload={upload} busy={busy}/><footer><ShieldCheck size={16}/> {client?'Accesso protetto':'Collaudo isolato'}<small>{user?.email}</small></footer></aside><main inert={editor?'':undefined}><header className="page-header"><div><p className="eyebrow">PARTITA IVA · PERSONALE</p><h1>{user?page:"Benvenuto"}</h1><p className="page-description">{user?"Un quadro chiaro della tua attività, mese dopo mese.":"Accedi al tuo spazio per tenere tutto sotto controllo."}</p></div><span className="environment-tag"><ShieldCheck size={15}/>{isStaging||!client?"Collaudo gratuito":"Accesso protetto"}</span></header><button className="menu" onClick={()=>setMobile(!mobile)} aria-label="Apri menu"><Menu/></button><div className="banner">{isStaging?'AMBIENTE DI COLLAUDO · dati sintetici · database separato':client?'Gestionale Partita IVA':'AMBIENTE DI COLLAUDO · dati sintetici · nessun collegamento al database reale'}</div>{client&&user&&<button onClick={async()=>{await client.auth.signOut({scope:'local'});}}>Esci</button>}{error&&<p role="alert" className="notice error">{error}</p>}{!user?<form onSubmit={login} className="login"><h1>Accedi</h1><label>Email<input name="email" type="email" required autoComplete="username"/></label><label>Password<input name="password" type="password" required autoComplete="current-password"/></label><button disabled={busy}>Accedi</button></form>:<>{busy&&<p role="status">{result?'Aggiornamento…':'Preparazione del gestionale e del motore di calcolo…'}</p>}<Nodes nodes={result?.tree} values={values} onChange={change} onClick={event=>run(event)} onUpload={upload} busy={busy} editTable={editTable}/><button disabled={busy} onClick={()=>run(null)}>Aggiorna prospetto</button></>}</main>{editor&&<div className="modal-backdrop"><section className="amount-dialog" role="dialog" onKeyDown={e=>{if(e.key==='Escape'&&!busy)setEditor(null);}} aria-modal="true" aria-labelledby="amount-title"><form onSubmit={saveRevenue}><h2 id="amount-title">{editor.name}</h2><p>{editor.kind==='cost'?'Stima annua ·':editor.monthName} {editor.year}</p><label>{editor.kind==='cost'?'Importo annuo lordo (€)':editor.kind==='auto-distance'?'Chilometri effettivi':editor.kind?.startsWith('auto-')?'Importo mensile lordo (€)':'Importo fatturato (IVA esclusa)'}<input autoFocus value={editorValue} onChange={e=>setEditorValue(e.target.value)} disabled={busy} inputMode="decimal"/></label><p className="caption">{editor.kind==='cost'?'Il valore sostituisce la stima annuale e aggiorna i riepiloghi. Inserisci 0 per un importo nullo.':editor.kind==='auto-distance'?'Il valore sostituisce la percorrenza del mese. Inserisci 0 se il mese è realmente a zero.':editor.kind?.startsWith('auto-')?'Il valore sostituisce l’importo del mese e aggiorna automaticamente riepiloghi e stima annua. Inserisci 0 se il mese è realmente a zero.':'Il valore sostituisce quello della cella. Inserisci 0 per un mese a zero; una cella vuota non è ancora compilata.'}</p>{editor.kind==='cost'&&<label className="check"><input type="checkbox" checked={editorConfirmed} disabled={busy} onChange={e=>setEditorConfirmed(e.target.checked)}/>Confermo la modifica della stima annuale</label>}{editorError&&<p role="alert" className="notice error">{editorError}</p>}<div className="dialog-actions"><button type="button" disabled={busy} onClick={()=>setEditor(null)}>Annulla</button><button className="primary" type="submit" disabled={busy}>{busy?'Salvataggio…':'Salva importo'}</button></div></form></section></div>}</div>;
 }
 createRoot(document.getElementById('root')).render(<App/>);
 
