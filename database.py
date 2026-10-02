@@ -46,9 +46,11 @@ def set_fiscal_year_status(client: Client, anno: dict, nuovo_stato: str) -> dict
     if (stato_corrente, nuovo_stato) not in transizioni:
         raise ValueError("Transizione dello stato fiscale non consentita.")
 
+    from accantonamenti_riporto import prepara_chiusura, nota_originale
+    notes = prepara_chiusura(client, anno) if nuovo_stato == "closed" else nota_originale(anno)
     risposta = (
         client.table("fiscal_years")
-        .update({"status": nuovo_stato})
+        .update({"status": nuovo_stato, "notes": notes or None})
         .eq("id", anno["id"])
         .eq("fiscal_year", int(anno["fiscal_year"]))
         .eq("status", stato_corrente)
@@ -63,3 +65,4 @@ def set_fiscal_year_status(client: Client, anno: dict, nuovo_stato: str) -> dict
     if aggiornato is not None and aggiornato.get("id") == anno["id"] and aggiornato.get("status") == nuovo_stato:
         return aggiornato
     raise RuntimeError("Cambio di stato non confermato dal database.")
+
