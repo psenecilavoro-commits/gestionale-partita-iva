@@ -1,0 +1,2 @@
+# Accantonamenti celle — checkpoint 2026-10-02
+Branch feature/accantonamenti-celle. Due colonne manuali modificabili con sostituzione, zero distinto dal vuoto, note preservate, anni chiusi e concorrenza protetti. Intestazioni rinominate solo React; moduli manuali e caricamento fatture nascosti solo su Accantonamenti. Formule originali e RLS invariati. Build e test selezione/mutazioni passati. Prossimo passo: collaudo Cloudflare demo senza backend, poi pubblicazione main. Nessuna scrittura dati reali nei test.
