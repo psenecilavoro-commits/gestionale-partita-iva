@@ -161,7 +161,7 @@ def costi_forfettario(client, anno_id: str) -> tuple[list[dict], D]:
         righe.append({
             "Voce": categoria["name"],
             "Registrato": _fmt(registrato) if registrato is not None else "—",
-            "Stima annua / valore finale": _fmt(stima),
+            "Stima annua / valore file": _fmt(stima),
         })
     return righe, totale
 
