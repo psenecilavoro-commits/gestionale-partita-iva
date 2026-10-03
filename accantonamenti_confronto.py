@@ -128,6 +128,13 @@ def mostra_confronto_accantonamenti(client: Client, anno: dict) -> None:
             obiettivo, descrizione = _obiettivo_2026(client, anno)
         else:
             obiettivo, descrizione = _obiettivo_ordinario(client, anno)
+        from accantonamenti_riporto import riporto, snapshot
+        avanzo, _ = riporto(client, anno)
+        chiusura = snapshot(anno) if anno.get("status") == "closed" else None
+        if chiusura:
+            obiettivo = D(chiusura["gross_need"])
+        obiettivo_lordo = obiettivo
+        obiettivo = obiettivo_lordo - avanzo
         ripartizione = ripartisci_residuo(
             obiettivo, gia_accantonato, len(mesi_compilati)
         )
@@ -139,7 +146,10 @@ def mostra_confronto_accantonamenti(client: Client, anno: dict) -> None:
         return
 
     c1, c2, c3 = st.columns(3)
-    c1.metric("Fabbisogno fiscale annuo stimato", _fmt(obiettivo))
+    c1.metric("Fabbisogno fiscale annuo stimato", _fmt(max(obiettivo, D("0"))))
+    if avanzo > 0:
+        st.metric("Avanzo riportato dall’anno precedente", _fmt(avanzo))
+        st.caption(f"Fabbisogno prima del riporto: {_fmt(obiettivo_lordo)}. L’avanzo riduce soltanto la copertura da accantonare, non le imposte.")
     c2.metric("Già accantonato", _fmt(gia_accantonato))
     c3.metric("Residuo da accantonare", _fmt(ripartizione["residuo"]))
 
@@ -176,3 +186,4 @@ def mostra_confronto_accantonamenti(client: Client, anno: dict) -> None:
         "È un riparto previsionale: se cambiano fatturato, costi, imposte o "
         "accantonamenti registrati, la quota viene ricalcolata automaticamente."
     )
+

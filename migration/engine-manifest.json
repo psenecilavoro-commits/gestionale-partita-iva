@@ -1,7 +1,8 @@
 {
   "accantonamenti.py": "e4a9c7f375fba067d736489f241de1e427980e5b251af9480badaf53a14855ec",
   "accantonamenti_completi.py": "732162a1b6249f1407ea5e1b6576cd4b64785000bd1ff39bb385ea7a41f59a67",
-  "accantonamenti_confronto.py": "d57e181e13fc127a556f4122018773e8a0b95a8c47b80077a15dc7af287a2cdb",
+  "accantonamenti_confronto.py": "06d20de5739b70a0edda9fff6e0b403a435ce7c3b26b316371280e90352a98fa",
+  "accantonamenti_riporto.py": "160da78d7ea7b7b30640cb3f236c67f982d4646553f9beecbcd5158e310500a0",
   "ammortamenti.py": "b30b36b2aab24b2b16827398120071f52bb91c47f22fc21d1fa2b65eac4e8db8",
   "app.py": "4cd5f0e39966e76e916718326defd1c56ffa18dc0636113a5f2d1bbdefff1385",
   "app_ordini.py": "aaffc01b51d44793ee48aef6adb083bfa5da251e99bb2086fb39fa37aed7d7f1",
@@ -20,7 +21,7 @@
   "costi_manutenzione.py": "b068e90943503c9004921295eff1c22b44bb03630649034f8ca9ddc829db88ef",
   "costi_scheda.py": "f3eaa7d3af8c1a83c2a9df5c473b20ea500c654027a3882c3e0a28c6ba8608ba",
   "costi_tabella.py": "0c6a187e9498c5fe5bcd6a56a34e8388e260fa37c05c7a4a091834c0e1284a44",
-  "database.py": "20186b9b05ddb9ca3a4414cb22c5df2340f8088d5f870b7b27273bf5c54ffef0",
+  "database.py": "27a34573444980a1e5a4a947008c9d458f2afb5488295cc71cfb27cc99b24d61",
   "detrazioni_deduzioni.py": "4a27b884a4dd063d06798663272c047c0f85cdfe03415a0a5ec631f4b389c887",
   "fatturato.py": "c77d13b4f2ef410c9eb86f745ec466a6f28530869386b464b6c7697b5fbf1d07",
   "fatture_acquisto_xml.py": "e722f4e1804b869ddace46deb8754343523a00e7b876820189b3e3d16eae44da",
