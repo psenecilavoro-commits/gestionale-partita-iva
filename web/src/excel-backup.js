@@ -42,7 +42,7 @@ export function createBackupWorkbook({year,tables,views,exportedAt=new Date()}){
     if(['header','subheader'].includes(n.kind))heading(ws,n.label);
     if(n.kind==='metric')ws.addRow([n.label,numericValue(n.value)]).getCell(2).numFmt=money;
     if(n.kind==='table'&&Array.isArray(n.records))table(ws,n.records);
-    if(['info','warning','error','caption'].includes(n.kind)&&n.label){const row=ws.addRow([n.label]);row.getCell(1).alignment={wrapText:true};row.height=36;}
+    if(['info','warning','error','caption'].includes(n.kind)&&n.label){const row=ws.addRow([n.label]);ws.mergeCells(row.number,1,row.number,5);row.getCell(1).alignment={wrapText:true,vertical:'top'};row.height=Math.max(30,Math.ceil(n.label.length/100)*16+10);}
     visit(ws,n.children);
   }}
   for(const name of BACKUP_PAGES){

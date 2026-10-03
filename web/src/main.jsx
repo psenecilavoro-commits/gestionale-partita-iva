@@ -272,7 +272,7 @@ function App(){
   }
   function findKind(nodes,key){for(const n of nodes||[]){if(n.key===key)return n.kind;const found=findKind(n.children,key);if(found)return found;}return null;}
   async function exportBackup(){
-    const ticket=epoch.current,savedInputs={...currentValues.current};setBusy(true);setError('');
+    const ticket=epoch.current,savedInputs={...currentValues.current,schede_principali:currentValues.current.schede_principali||'Fatturato'};setBusy(true);setError('');
     const evaluate=inputs=>new Promise((resolve,reject)=>{const id=++seq.current;pending.current.set(id,{resolve,reject});worker.current.postMessage({id,request:{tables:tables.current,user,event:null,inputs}});});
     try{
       if(client)await load();
