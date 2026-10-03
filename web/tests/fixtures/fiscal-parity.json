@@ -764,23 +764,23 @@
       "records": [
         {
           "VOCE": "Fatturato",
-          "VALORE": "—"
+          "VALORE": "54.000,00 €"
         },
         {
           "VOCE": "Costi annui",
-          "VALORE": "—"
+          "VALORE": "7.467,40 €"
         },
         {
           "VOCE": "Netto annuo stimato",
-          "VALORE": "—"
+          "VALORE": "28.689,08 €"
         },
         {
           "VOCE": "Netto/12 medio",
-          "VALORE": "—"
+          "VALORE": "2.390,76 €"
         },
         {
           "VOCE": "Netto/12 senza costi",
-          "VALORE": "—"
+          "VALORE": "3.013,04 €"
         }
       ]
     },
@@ -900,23 +900,23 @@
       "records": [
         {
           "VOCE": "Fatturato",
-          "VALORE": "—"
+          "VALORE": "54.000,00 €"
         },
         {
           "VOCE": "Costi annui",
-          "VALORE": "—"
+          "VALORE": "7.467,40 €"
         },
         {
           "VOCE": "Netto annuo stimato",
-          "VALORE": "—"
+          "VALORE": "28.689,08 €"
         },
         {
           "VOCE": "Netto/12 medio",
-          "VALORE": "—"
+          "VALORE": "2.390,76 €"
         },
         {
           "VOCE": "Netto/12 senza costi",
-          "VALORE": "—"
+          "VALORE": "3.013,04 €"
         }
       ]
     },
@@ -980,11 +980,11 @@
         {
           "Voce": "Manutenzione auto",
           "Registrato": "—",
-          "Totale annuo stimato": "—",
-          "IVA scorporata": "—",
-          "Costo netto": "—",
-          "% deducibilità": "—",
-          "Da dedurre": "—"
+          "Totale annuo stimato": "800,00 €",
+          "IVA scorporata": "144,26 €",
+          "Costo netto": "655,74 €",
+          "% deducibilità": "80.0%",
+          "Da dedurre": "524,59 €"
         },
         {
           "Voce": "Commercialista",
@@ -1025,11 +1025,11 @@
         {
           "Voce": "TOTALE SPESE",
           "Registrato": "—",
-          "Totale annuo stimato": "8.001,83 €",
-          "IVA scorporata": "1.190,16 €",
-          "Costo netto": "6.811,67 €",
+          "Totale annuo stimato": "8.801,83 €",
+          "IVA scorporata": "1.334,43 €",
+          "Costo netto": "7.467,40 €",
           "% deducibilità": "—",
-          "Da dedurre": "5.775,55 €"
+          "Da dedurre": "6.300,14 €"
         }
       ]
     },
@@ -1075,23 +1075,23 @@
       "records": [
         {
           "VOCE": "Fatturato",
-          "VALORE": "—"
+          "VALORE": "54.000,00 €"
         },
         {
           "VOCE": "Costi annui",
-          "VALORE": "—"
+          "VALORE": "7.467,40 €"
         },
         {
           "VOCE": "Netto annuo stimato",
-          "VALORE": "—"
+          "VALORE": "28.689,08 €"
         },
         {
           "VOCE": "Netto/12 medio",
-          "VALORE": "—"
+          "VALORE": "2.390,76 €"
         },
         {
           "VOCE": "Netto/12 senza costi",
-          "VALORE": "—"
+          "VALORE": "3.013,04 €"
         }
       ]
     },
@@ -1205,23 +1205,23 @@
       "records": [
         {
           "VOCE": "Fatturato",
-          "VALORE": "—"
+          "VALORE": "54.000,00 €"
         },
         {
           "VOCE": "Costi annui",
-          "VALORE": "—"
+          "VALORE": "7.467,40 €"
         },
         {
           "VOCE": "Netto annuo stimato",
-          "VALORE": "—"
+          "VALORE": "28.689,08 €"
         },
         {
           "VOCE": "Netto/12 medio",
-          "VALORE": "—"
+          "VALORE": "2.390,76 €"
         },
         {
           "VOCE": "Netto/12 senza costi",
-          "VALORE": "—"
+          "VALORE": "3.013,04 €"
         }
       ]
     },
@@ -1328,6 +1328,26 @@
       "kind": "metric",
       "label": "Differenza parziale · mesi completi",
       "value": "26.400,00 €"
+    },
+    {
+      "kind": "metric",
+      "label": "Fabbisogno fiscale annuo stimato",
+      "value": "9.042,88 €"
+    },
+    {
+      "kind": "metric",
+      "label": "Già accantonato",
+      "value": "4.800,00 €"
+    },
+    {
+      "kind": "metric",
+      "label": "Residuo da accantonare",
+      "value": "4.242,88 €"
+    },
+    {
+      "kind": "metric",
+      "label": "Quota indicativa per ciascuno dei 4 mesi restanti",
+      "value": "1.060,72 €"
     },
     {
       "kind": "table",
@@ -1752,23 +1772,84 @@
       "records": [
         {
           "VOCE": "Fatturato",
-          "VALORE": "—"
+          "VALORE": "54.000,00 €"
         },
         {
           "VOCE": "Costi annui",
-          "VALORE": "—"
+          "VALORE": "7.467,40 €"
         },
         {
           "VOCE": "Netto annuo stimato",
-          "VALORE": "—"
+          "VALORE": "28.689,08 €"
         },
         {
           "VOCE": "Netto/12 medio",
-          "VALORE": "—"
+          "VALORE": "2.390,76 €"
         },
         {
           "VOCE": "Netto/12 senza costi",
-          "VALORE": "—"
+          "VALORE": "3.013,04 €"
+        }
+      ]
+    },
+    {
+      "kind": "table",
+      "records": [
+        {
+          "Voce": "Fatturato stimato integrale",
+          "Importo": "54.000,00 €"
+        },
+        {
+          "Voce": "Deduzione forfettaria agenti",
+          "Importo": "600,95 €"
+        },
+        {
+          "Voce": "Imponibile INPS",
+          "Importo": "47.098,91 €"
+        },
+        {
+          "Voce": "Imponibile IRPEF",
+          "Importo": "26.596,64 €"
+        },
+        {
+          "Voce": "Contributi INPS stimati",
+          "Importo": "11.537,25 €"
+        },
+        {
+          "Voce": "Enasarco stimato",
+          "Importo": "2.590,63 €"
+        },
+        {
+          "Voce": "Costi netti stimati",
+          "Importo": "7.467,40 €"
+        },
+        {
+          "Voce": "IRPEF + addizionali prima delle detrazioni",
+          "Importo": "6.657,14 €"
+        },
+        {
+          "Voce": "Detrazioni utilizzate",
+          "Importo": "2.941,51 €"
+        },
+        {
+          "Voce": "Fondo pensione deducibile",
+          "Importo": "5.300,00 €"
+        },
+        {
+          "Voce": "Netto annuo teorico",
+          "Importo": "28.689,08 €"
+        },
+        {
+          "Voce": "Netto teorico / 12",
+          "Importo": "2.390,76 €"
+        },
+        {
+          "Voce": "Netto teorico senza costi",
+          "Importo": "36.156,49 €"
+        },
+        {
+          "Voce": "Netto teorico senza costi / 12",
+          "Importo": "3.013,04 €"
         }
       ]
     }
@@ -1779,23 +1860,23 @@
       "records": [
         {
           "VOCE": "Fatturato",
-          "VALORE": "—"
+          "VALORE": "54.000,00 €"
         },
         {
           "VOCE": "Costi annui",
-          "VALORE": "—"
+          "VALORE": "7.467,40 €"
         },
         {
           "VOCE": "Netto annuo stimato",
-          "VALORE": "—"
+          "VALORE": "28.689,08 €"
         },
         {
           "VOCE": "Netto/12 medio",
-          "VALORE": "—"
+          "VALORE": "2.390,76 €"
         },
         {
           "VOCE": "Netto/12 senza costi",
-          "VALORE": "—"
+          "VALORE": "3.013,04 €"
         }
       ]
     },
@@ -1951,23 +2032,23 @@
       "records": [
         {
           "VOCE": "Fatturato",
-          "VALORE": "—"
+          "VALORE": "54.000,00 €"
         },
         {
           "VOCE": "Costi annui",
-          "VALORE": "—"
+          "VALORE": "7.467,40 €"
         },
         {
           "VOCE": "Netto annuo stimato",
-          "VALORE": "—"
+          "VALORE": "28.689,08 €"
         },
         {
           "VOCE": "Netto/12 medio",
-          "VALORE": "—"
+          "VALORE": "2.390,76 €"
         },
         {
           "VOCE": "Netto/12 senza costi",
-          "VALORE": "—"
+          "VALORE": "3.013,04 €"
         }
       ]
     },
@@ -2000,23 +2081,23 @@
       "records": [
         {
           "VOCE": "Fatturato",
-          "VALORE": "—"
+          "VALORE": "54.000,00 €"
         },
         {
           "VOCE": "Costi annui",
-          "VALORE": "—"
+          "VALORE": "7.467,40 €"
         },
         {
           "VOCE": "Netto annuo stimato",
-          "VALORE": "—"
+          "VALORE": "28.689,08 €"
         },
         {
           "VOCE": "Netto/12 medio",
-          "VALORE": "—"
+          "VALORE": "2.390,76 €"
         },
         {
           "VOCE": "Netto/12 senza costi",
-          "VALORE": "—"
+          "VALORE": "3.013,04 €"
         }
       ]
     },
