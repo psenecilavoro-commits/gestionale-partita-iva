@@ -9,3 +9,5 @@
 /* Auto: show the entire monthly summary without an internal scrollbar. */
 main:has(.auto-sheet){max-width:none}.auto-sheet{width:100%;height:auto;max-height:none;overflow:visible}.auto-sheet table{width:100%;table-layout:fixed}.auto-sheet th,.auto-sheet td{white-space:normal;overflow-wrap:anywhere;padding:14px 16px}.auto-sheet th{position:static}.auto-sheet th:first-child,.auto-sheet td:first-child{width:24%}@media(max-width:650px){.auto-sheet th,.auto-sheet td{padding:10px 5px;font-size:11px}}
 
+.top-actions{display:flex;gap:12px;align-items:center;margin:12px 0;flex-wrap:wrap}
+
