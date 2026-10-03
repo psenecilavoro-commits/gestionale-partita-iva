@@ -53,6 +53,15 @@
       "estimated_gross_amount": "1060.86",
       "amount_includes_vat": true,
       "notes": "DATI DI PROVA - costo Assicurazione dal foglio originale"
+    },
+    {
+      "id": "demo-year-2027-cat-manutenzione_auto-estimate",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2027",
+      "category_id": "demo-year-2027-cat-manutenzione_auto",
+      "estimated_gross_amount": "800",
+      "amount_includes_vat": true,
+      "notes": "DATI DI PROVA - manutenzione auto annuale dal foglio originale"
     }
   ],
   "annual_settings": [],
@@ -207,6 +216,19 @@
       "fiscal_year_id": "demo-year-2027",
       "code": "rate_auto",
       "name": "Rate Auto",
+      "vat_rate": "0.22",
+      "vat_deductible_rate": "1",
+      "cost_deductible_rate": "0.8",
+      "deductible_limit": null,
+      "active": true,
+      "notes": "Parametri di confronto dal foglio; verificare prima dell'uso reale."
+    },
+    {
+      "id": "demo-year-2027-cat-manutenzione_auto",
+      "user_id": "demo-owner",
+      "fiscal_year_id": "demo-year-2027",
+      "code": "manutenzione_auto",
+      "name": "Manutenzione auto",
       "vat_rate": "0.22",
       "vat_deductible_rate": "1",
       "cost_deductible_rate": "0.8",
