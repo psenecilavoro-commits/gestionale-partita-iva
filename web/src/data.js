@@ -42,6 +42,6 @@ export async function applyMutations(client,mutations){
     if(error)throw error;
     const expected=mutation.expected_rows;
     if(!data||data.length!==expected)throw Error('Salvataggio non confermato o dati modificati altrove: aggiorna prima di riprovare.');
-    if(mutation.operation==='insert')for(let i=0;i<data.length;i++)insertedIds.set(mutation.result_ids[i],data[i].id);
+    if(mutation.operation==='insert')for(let i=0;i<(mutation.result_ids?.length||0);i++)insertedIds.set(mutation.result_ids[i],data[i].id);
   }
 }

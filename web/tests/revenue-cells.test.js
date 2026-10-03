@@ -14,6 +14,19 @@ test('monthly cells distinguish blank and zero, lock closed years and exclude to
  assert.equal(revenueCell([{Mandante:'A',Fatturato:'100'}],'A',0,tables,2026),null);
 });
 
+test('ordinary annual cells work for every future year, including blanks, while derived values stay locked',()=>{
+ for(const year of [2027,2028,2040]){
+  const records=['Assicurazione','PC','Penale km','Carburante','Totale'].map(Voce=>({Voce,Registrato:'—','Totale annuo stimato':'—','Da dedurre':'—'}));
+  const tables={fiscal_years:[{id:'y',fiscal_year:year,status:'open'}],cost_categories:[{id:'a',name:'Assicurazione',code:'assicurazione',fiscal_year_id:'y'}],annual_cost_estimates:[{id:'e',category_id:'a',fiscal_year_id:'y',estimated_gross_amount:'0.00'}]};
+  assert.equal(costCell(records,'Totale annuo stimato',0,tables,year).record.estimated_gross_amount,'0.00');
+  assert.equal(costCell(records,'Totale annuo stimato',1,tables,year).record,null);
+  for(const i of [2,3,4])assert.equal(costCell(records,'Totale annuo stimato',i,tables,year),null);
+  assert.equal(costCell(records,'Da dedurre',0,tables,year),null);
+  tables.fiscal_years[0].status='closed';
+  assert.equal(costCell(records,'Totale annuo stimato',0,tables,year).editable,false);
+ }
+});
+
 test('cost estimates exclude derived columns, auto categories and closed years',()=>{
  const names=['Assicurazione','Auto · rate','Autostrada','Carburante','PC'];
  const records=names.map(Voce=>({Voce,Registrato:'—','Stima annua / valore file':'0,00 €'}));
@@ -25,4 +38,3 @@ test('cost estimates exclude derived columns, auto categories and closed years',
  assert.equal(costCell(records,'Stima annua / valore file',0,tables,2026).editable,false);
  assert.equal(costCell(records,'Stima annua / valore file',0,tables,2027),null);
 });
-
