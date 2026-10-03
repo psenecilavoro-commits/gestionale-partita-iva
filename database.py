@@ -11,7 +11,7 @@ def get_fiscal_year(client: Client, year: int = 2027) -> dict | None:
     """Legge l'anno visibile all'utente corrente (filtrato anche dalla RLS)."""
     result = (
         client.table("fiscal_years")
-        .select("id,fiscal_year,status")
+        .select("id,fiscal_year,status,notes")
         .eq("fiscal_year", year)
         .limit(1)
         .execute()
