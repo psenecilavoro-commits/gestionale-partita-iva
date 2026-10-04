@@ -1,0 +1,24 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {readFile} from 'node:fs/promises';
+import {gunzipSync} from 'node:zlib';
+import {loadPyodide} from 'pyodide';
+test('gross metadata and net amount save together, no VAT document is generated, inconsistent split is rejected',async()=>{
+ const py=await loadPyodide(),tables=JSON.parse(await readFile('public/demo.json','utf8'));
+ py.FS.mkdir('/app');
+ for(const [p,s] of Object.entries(JSON.parse(gunzipSync(await readFile('public/engine.json.gz')).toString())))py.FS.writeFile('/app/'+p,s);
+ py.runPython("import sys,json\nsys.path.insert(0,'/app')\nimport react_bridge");
+ const render=request=>{py.globals.set('request',JSON.stringify(request));return JSON.parse(py.runPython('react_bridge.render(json.loads(request))'));};
+ const flat=nodes=>nodes.flatMap(n=>[n,...flat(n.children||[])]);
+ const user={id:'demo-owner',email:'demo@example.invalid'};
+ let result=render({tables,user,inputs:{anno_fiscale_selezionato:2027,schede_principali:'Fatturato'}});
+ const nodes=flat(result.tree),field=nodes.find(n=>n.label==='Importo fatturato (IVA esclusa)'),submit=nodes.find(n=>n.kind==='button'&&n.label==='Salva importo');
+ result=render({tables,user,event:submit.key,inputs:{...result.inputs,[field.key]:'0.02',fatturato_lordo_originale:'0.03'}});
+ const mutation=result.mutations.find(m=>m.table==='monthly_revenues');
+ assert.equal(mutation.payload.amount,'0.02');
+ assert.ok(mutation.payload.notes.endsWith('[PIVA_GROSS_22_V1]0.03'));
+ assert.equal(result.mutations.some(m=>m.table==='sales_vat_invoices'),false);
+ result=render({tables,user,event:submit.key,inputs:{...result.inputs,[field.key]:'100',fatturato_lordo_originale:'1220'}});
+ assert.equal(result.mutations.length,0);
+ assert.ok(flat(result.tree).some(n=>n.label==='Scorporo IVA non coerente con il fatturato.'));
+});

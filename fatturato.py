@@ -91,19 +91,19 @@ def leggi_fatturato(client: Client, anno_id: str) -> list[dict]:
 
 
 def salva_fatturato(client: Client, anno_id: str, mandante_id: str, mese: int,
-                    importo: Decimal, esistente: dict | None) -> None:
+                    importo: Decimal, esistente: dict | None, notes: str | None = None) -> None:
     if mese not in range(1, 13):
         raise ValueError("Mese non valido.")
     if esistente is not None:
         risposta = (client.table("monthly_revenues")
-                    .update({"amount": str(importo), "notes": None})
+                    .update({"amount": str(importo), "notes": notes})
                     .eq("id", esistente["id"])
                     .eq("fiscal_year_id", anno_id)
                     .eq("principal_id", mandante_id).execute())
     else:
         risposta = client.table("monthly_revenues").insert({
             "fiscal_year_id": anno_id, "principal_id": mandante_id,
-            "month": mese, "amount": str(importo),
+            "month": mese, "amount": str(importo), **({"notes": notes} if notes is not None else {}),
         }).execute()
     if len(risposta.data or []) != 1:
         raise RuntimeError("Salvataggio non confermato")

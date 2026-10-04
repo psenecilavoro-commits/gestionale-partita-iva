@@ -77,10 +77,19 @@ def mostra_fatturato(client, anno: dict, mandanti: list[dict]) -> None:
             value=str(presente["amount"]).replace(".", ",") if presente else "",
             help="Inserisci 0 solo se il fatturato del mese è realmente zero.")
         salva = st.form_submit_button("Salva importo", type="primary")
+        lordo_originale = st.text_input("Lordo IVA 22% originale", value="", key="fatturato_lordo_originale")
     if salva:
         try:
             anno_aperto(client, anno)
-            salva_fatturato(client, anno["id"], nomi[nome], mese, importo_valido(testo), presente)
+            valore = importo_valido(testo)
+            note = None
+            if int(anno['fiscal_year']) != 2026 and lordo_originale:
+                lordo = importo_valido(lordo_originale)
+                if (lordo / D('1.22')).quantize(CENT, rounding=ROUND_HALF_UP) != valore:
+                    raise ValueError('Scorporo IVA non coerente con il fatturato.')
+                originale = str((presente or {}).get('notes') or '').split('\n[PIVA_GROSS_22_V1]')[0]
+                note = originale + '\n[PIVA_GROSS_22_V1]' + f'{lordo:.2f}'
+            salva_fatturato(client, anno["id"], nomi[nome], mese, valore, presente, notes=note)
         except ValueError as exc:
             st.warning(str(exc))
         except Exception:
