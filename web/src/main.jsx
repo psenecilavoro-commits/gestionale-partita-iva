@@ -36,7 +36,7 @@ function Table({records,editTable}){
   return <div className={`table-scroll${editTable&&monthlySheet?' revenue-sheet':''}${cols.includes('Percorrenza')&&cols.includes('Rate auto')?' auto-sheet':''}`}><table><thead><tr>{cols.map(c=><th key={c}>{c==='Stima annua / valore file'?'Stima annua / valore finale':(reserveSheet?RESERVE_LABELS[c]||c:c)}</th>)}</tr></thead><tbody>{records.map((r,i)=><tr key={i}>{cols.map(c=><td key={c}>{editTable?.(records,c,i)?<button className="cell-edit" disabled={!editTable(records,c,i).editable} aria-label={`Modifica ${r.Voce||c}, ${r.Mese||"stima annua"}`} onClick={()=>editTable(records,c,i,true)}>{String(r[c]??'—')}</button>:r[c]===null?'—':c==='IVA compresa'&&typeof r[c]==='boolean'?(r[c]?'Sì':'No'):String(r[c]??'')}</td>)}</tr>)}</tbody></table></div>;
 }
 function Nodes({nodes=[],values,onChange,onClick,onUpload,busy,editTable}){
-  if(values.schede_principali==='Fatturato'&&Number(values.anno_fiscale_selezionato)!==2026){
+  if((values.schede_principali||'Fatturato')==='Fatturato'&&Number(values.anno_fiscale_selezionato)!==2026){
     const start=nodes.findIndex(n=>n.label==='IVA vendite documentata');
     if(start>=0){
       const end=nodes.findIndex((n,i)=>i>start&&n.kind==='subheader');
@@ -75,7 +75,7 @@ function Nodes({nodes=[],values,onChange,onClick,onUpload,busy,editTable}){
   }
   return nodes.map(n=>{
     if(n.key==='fatturato_lordo_originale')return null;
-    if(n.kind==='caption'&&n.label?.startsWith('Importi fatturati IVA esclusa.')&&values.schede_principali==='Fatturato'&&Number(values.anno_fiscale_selezionato)!==2026)return <p className="caption" key={n.key||n.label}>Inserisci gli importi IVA compresa cliccando sulle celle. Il gestionale scorpora il 22%; la tabella e i riepiloghi mostrano il fatturato IVA esclusa. Un mese mancante è distinto da zero.</p>;
+    if(n.kind==='caption'&&n.label?.startsWith('Importi fatturati IVA esclusa.')&&(values.schede_principali||'Fatturato')==='Fatturato'&&Number(values.anno_fiscale_selezionato)!==2026)return <p className="caption" key={n.key||n.label}>Inserisci gli importi IVA compresa cliccando sulle celle. Il gestionale scorpora il 22%; la tabella e i riepiloghi mostrano il fatturato IVA esclusa. Un mese mancante è distinto da zero.</p>;
     if(values.schede_principali==='Accantonamenti'&&(n.key==='accantonamenti_mese'||['#### Inserisci o modifica le provvigioni nette','#### Aggiungi o modifica un accantonamento'].includes(n.label)||(n.kind==='form'&&n.children?.some(c=>['Salva provvigioni nette','Salva accantonamento'].includes(c.label)))||(n.kind==='checkbox'&&n.label?.startsWith("Confermo l'eliminazione"))||['Elimina provvigioni nette del mese','Elimina accantonamento del mese'].includes(n.label)||(n.kind==='info'&&n.label?.startsWith('Anno 2026 in regime forfettario: i prospetti IVA ordinari'))))return null;
     if(values.schede_principali==='Auto'&&(n.label==='Limite chilometrico e penale'||(n.kind==='write'&&n.label?.startsWith('**Limite annuo:'))||(n.kind==='caption'&&(n.label?.startsWith('La penale è')||n.label?.startsWith('Nessun limite e nessuna tariffa')))))return null;
     if(values.schede_principali==='Costi'&&Number(values.anno_fiscale_selezionato)===2026&&(n.label==='Spesa effettiva da registrare o modificare'||(n.kind==='form'&&n.children?.some(c=>c.kind==='button'&&c.label==='Conferma spesa effettiva'))))return null;
