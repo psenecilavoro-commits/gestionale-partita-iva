@@ -36,11 +36,12 @@ function Table({records,editTable}){
   return <div className={`table-scroll${editTable&&monthlySheet?' revenue-sheet':''}${cols.includes('Percorrenza')&&cols.includes('Rate auto')?' auto-sheet':''}`}><table><thead><tr>{cols.map(c=><th key={c}>{c==='Stima annua / valore file'?'Stima annua / valore finale':(reserveSheet?RESERVE_LABELS[c]||c:c)}</th>)}</tr></thead><tbody>{records.map((r,i)=><tr key={i}>{cols.map(c=><td key={c}>{editTable?.(records,c,i)?<button className="cell-edit" disabled={!editTable(records,c,i).editable} aria-label={`Modifica ${r.Voce||c}, ${r.Mese||"stima annua"}`} onClick={()=>editTable(records,c,i,true)}>{String(r[c]??'—')}</button>:r[c]===null?'—':c==='IVA compresa'&&typeof r[c]==='boolean'?(r[c]?'Sì':'No'):String(r[c]??'')}</td>)}</tr>)}</tbody></table></div>;
 }
 function Nodes({nodes=[],values,onChange,onClick,onUpload,busy,editTable}){
-  const invoiceStart=nodes.findIndex(n=>n.kind==='selectbox'&&n.label==='Registra o modifica una fattura');
-  const invoiceEnd=nodes.findIndex((n,i)=>i>invoiceStart&&n.kind==='form'&&n.children?.some(c=>c.kind==='button'&&c.label==='Salva fattura verificata'));
+  const disclosure=nodes.some(n=>n.kind==='selectbox'&&n.label==='Versamento pensione da registrare o modificare')?{label:'Versamento pensione da registrare o modificare',submit:'Conferma versamento pensione'}:{label:'Registra o modifica una fattura',submit:'Salva fattura verificata'};
+  const invoiceStart=nodes.findIndex(n=>n.kind==='selectbox'&&n.label===disclosure.label);
+  const invoiceEnd=nodes.findIndex((n,i)=>i>invoiceStart&&n.kind==='form'&&n.children?.some(c=>c.kind==='button'&&c.label===disclosure.submit));
   if(invoiceStart>=0&&invoiceEnd>invoiceStart){
     const props={values,onChange,onClick,onUpload,busy,editTable};
-    return <><Nodes nodes={nodes.slice(0,invoiceStart)} {...props}/><details><summary>Registra o modifica una fattura</summary><Nodes nodes={nodes.slice(invoiceStart,invoiceStart+1)} {...props}/><Nodes nodes={nodes.slice(invoiceStart+1,invoiceEnd+1)} {...props}/></details><Nodes nodes={nodes.slice(invoiceEnd+1)} {...props}/></>;
+    return <><Nodes nodes={nodes.slice(0,invoiceStart)} {...props}/><details><summary>{disclosure.label}</summary><Nodes nodes={nodes.slice(invoiceStart,invoiceStart+1)} {...props}/><Nodes nodes={nodes.slice(invoiceStart+1,invoiceEnd+1)} {...props}/></details><Nodes nodes={nodes.slice(invoiceEnd+1)} {...props}/></>;
   }
   if((values.schede_principali||'Fatturato')==='Fatturato'&&Number(values.anno_fiscale_selezionato)!==2026){
     const start=nodes.findIndex(n=>n.label==='IVA vendite documentata');
