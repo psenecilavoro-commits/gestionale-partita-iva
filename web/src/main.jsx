@@ -8,6 +8,7 @@ import {revenueCell,costCell} from './revenue-cells.js';
 import {reserveCell,reserveMutation,RESERVE_LABELS} from './reserve-cells.js';
 import {autoCell} from './auto-cells.js';
 import {splitGross,grossForRecord} from './revenue-vat.js';
+import {watchSession} from './auth-session.js';
 
 const NAV=['Fatturato','Costi','Auto','Accantonamenti','Conto economico','Imposte','Detrazioni e deduzioni','Ammortamenti'];
 const NAV_ICONS=[TrendingUp,Receipt,Car,Wallet,ChartNoAxesCombined,Landmark,BadgePercent,Layers];
@@ -135,9 +136,12 @@ function App(){
   },[]);
   useEffect(()=>{
     if(!client)return;
-    client.auth.getUser().then(({data})=>setUser(data.user));
-    const {data}=client.auth.onAuthStateChange((event,session)=>{if(event==='TOKEN_REFRESHED')return;if(!session){setEditor(null);setEditorValue('');}if(!session)worker.current?.postMessage({id:++seq.current,request:{operation:'clear_session'}});epoch.current++;tables.current=null;currentValues.current={};setBusy(false);setValues({});setResult(null);setUser(session?.user??null);});
-    return()=>data.subscription.unsubscribe();
+    return watchSession(client.auth,session=>{
+      setEditor(null);setEditorValue('');setEditorError('');setEditorConfirmed(false);
+      worker.current?.postMessage({id:++seq.current,request:{operation:'clear_session'}});
+      epoch.current++;tables.current=null;currentValues.current={};
+      setBusy(false);setValues({});setResult(null);setUser(session?.user??null);
+    });
   },[]);
   async function load(){
     if(!client){tables.current=await (await fetch('/demo.json')).json();return;}
