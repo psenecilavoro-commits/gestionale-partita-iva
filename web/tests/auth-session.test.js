@@ -2,19 +2,23 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {watchSession} from '../src/auth-session.js';
 const session=(id='s1',user='owner',token=1)=>({user:{id:user},access_token:`x.${Buffer.from(JSON.stringify({session_id:id,token})).toString('base64url')}.x`});
-function fixture(){
+function fixture(onChange=()=>{}){
   let emit,finish,unsubscribed=false;
   const changes=[];
-  const stop=watchSession({onAuthStateChange(fn){emit=fn;return {data:{subscription:{unsubscribe(){unsubscribed=true;}}}};},getUser(){return new Promise(resolve=>finish=resolve);}},s=>changes.push(s));
+  const stop=watchSession({onAuthStateChange(fn){emit=fn;return {data:{subscription:{unsubscribe(){unsubscribed=true;}}}};},getUser(){return new Promise(resolve=>finish=resolve);}},s=>{changes.push(s);onChange(s);});
   return {emit:(...args)=>emit(...args),finish:r=>finish(r),changes,stop,get unsubscribed(){return unsubscribed;}};
 }
 test('tab return and token renewal preserve loaded screen, draft and disclosure',()=>{
-  const f=fixture();f.emit('INITIAL_SESSION',session());
   const state={data:[1],draft:'temporary unsaved text',page:'Costi',open:true};
+  const f=fixture(()=>{state.data=null;state.draft='';state.page='Fatturato';state.open=false;});
+  f.emit('INITIAL_SESSION',session());
+  Object.assign(state,{data:[1],draft:'temporary unsaved text',page:'Costi',open:true});
   const original=f.changes.length;
   f.emit('SIGNED_IN',session());f.emit('TOKEN_REFRESHED',session('s1','owner',2));
   assert.equal(f.changes.length,original); // App reset callback never runs.
   assert.deepEqual(state,{data:[1],draft:'temporary unsaved text',page:'Costi',open:true});
+  f.emit('SIGNED_OUT',null);
+  assert.deepEqual(state,{data:null,draft:'',page:'Fatturato',open:false});
 });
 test('new login of same owner and different-session refresh invalidate',()=>{
   const f=fixture();f.emit('SIGNED_IN',session());f.emit('SIGNED_IN',session('s2'));f.emit('TOKEN_REFRESHED',session('s3'));
