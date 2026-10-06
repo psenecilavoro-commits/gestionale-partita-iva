@@ -11,3 +11,6 @@ main:has(.auto-sheet){max-width:none}.auto-sheet{width:100%;height:auto;max-heig
 
 .top-actions{display:flex;gap:12px;align-items:center;margin:12px 0;flex-wrap:wrap}
 
+
+/* Center the content in the space remaining beside the sidebar. */
+.shell>main{margin-inline:auto}
