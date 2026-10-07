@@ -13,4 +13,4 @@ main:has(.auto-sheet){max-width:none}.auto-sheet{width:100%;height:auto;max-heig
 
 
 /* Center the content in the space remaining beside the sidebar. */
-.shell>main{margin-inline:auto}
+.shell>main{margin-inline:auto;max-width:none}
