@@ -1,4 +1,5 @@
 import {createClient} from '@supabase/supabase-js';
+import {readWithJwtRetry} from './read-retry.js';
 export const PERSONAL_REF='mmkjtvebgtwsjatwifjv';
 export function validateConfig(url,key,mode){
   if(!['staging','production'].includes(mode)) throw Error('Ambiente non configurato');
@@ -18,7 +19,7 @@ export function configuredClient(){
 export async function readTable(client,table){
   const rows=[],ids=new Set();let offset=0,total;
   while(true){
-    const {data,error,count}=await client.from(table).select('*',{count:'exact'}).order('id').range(offset,offset+499);
+    const {data,error,count}=await readWithJwtRetry(()=>client.from(table).select('*',{count:'exact'}).order('id').range(offset,offset+499));
     if(error)throw error;
     if(!data)throw Error('Lettura non confermata');
     if(total!==undefined&&count!==total)throw Error('Dati cambiati durante la lettura');
