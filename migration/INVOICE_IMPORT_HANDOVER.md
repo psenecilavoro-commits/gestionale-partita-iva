@@ -12,6 +12,6 @@ Verifiche: 43 test JS passati inizialmente (10 nuovi per XML, PDF, date, anno ch
 
 Browser: due inizializzazioni CUA fallite con "trusted Node process exited unexpectedly". Non dichiarare collaudo visuale eseguito. Non sono state salvate fatture reali.
 
-Prossimo passo: completare test sicurezza SQL e nuova compilazione; applicare la sola migrazione additiva nel progetto Personale mmkjtvebgtwsjatwifjv; verificare RLS e advisor; commit/push main, verificare deploy Cloudflare del commit esatto. Un futuro collaudo visivo deve usare un documento senza confermarne la registrazione, a meno di esplicita richiesta dell'utente.
+Implementazione: commit 85a05a38c62f5ff366b1e8491983210c7e67be06 su main. Migrazione e test sicurezza completati; pubblicazione Cloudflare avviata. Prossimo passo esatto per il collaudo visivo: aprire Carica fattura, selezionare il PDF di esempio o un XML TD01, controllare voci/date/destinazioni senza premere Conferma importazione, poi Annulla. Gli strumenti browser di questa sessione non consentono di completare questa verifica.
 
 Migrazione invoice_import_atomic_preview applicata nel solo progetto Personale mmkjtvebgtwsjatwifjv. Registro vuoto, RLS attiva, RPC invoker e anon non autorizzato verificati. Test: 43 JavaScript, 52 Python, SQL rollback inclusi isolamento e anon. Advisor senza segnalazioni sulle nuove risorse; preesistenti rls_auto_enable eseguibile e protezione password compromesse disattivata, non modificati. Resta verifica visiva browser (strumenti non accessibili), usare documento senza confermare salvataggio.
