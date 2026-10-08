@@ -14,3 +14,5 @@ main:has(.auto-sheet){max-width:none}.auto-sheet{width:100%;height:auto;max-heig
 
 /* Center the content in the space remaining beside the sidebar. */
 .shell>main{margin-inline:auto;max-width:none}
+
+.invoice-nav{margin-top:20px;padding-top:18px;border-top:1px solid #d9e7f3}.invoice-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.invoice-vat-row{grid-template-columns:repeat(4,minmax(0,1fr));padding:15px;border:1px solid #e0ebf4;border-radius:10px;margin-bottom:12px}.invoice-import form{background:transparent;padding:0;border:0}.invoice-import li{line-height:1.8}.invoice-import h3{margin-top:24px}@media(max-width:850px){.invoice-grid{grid-template-columns:1fr}}
