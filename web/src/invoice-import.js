@@ -79,11 +79,13 @@ export function planInvoice(invoice,options,tables,today=todayISO()){
   destinations.push(`Fatturato · ${principal.name} · ${payment.slice(0,7)}: ${money(base)} € da aggiungere (totale ${money(cents(monthly[0]?.amount??0)+base)} €)`);
   if(ordinary)destinations.push(`IVA vendite · ${d.slice(0,7)}: ${money(vat)} €`);
  }else if(options.direction==='ricevuta'){
-  const category=(tables.cost_categories||[]).find(c=>c.id===options.categoryId&&c.fiscal_year_id===economic.id);if(!category)throw Error('Seleziona una categoria configurata per l’anno del pagamento.');
-  if(['pc','telefono_tablet','penale_km'].includes(category.code))throw Error('Questa voce può richiedere ammortamenti o altri controlli: usa il modulo completo.');
-  payload.category_id=category.id;
-  const auto=['rate_auto','carburante','autostrada','manutenzione_auto','assicurazione','bollo'].includes(category.code);
-  if(auto){const vehicles=tables.vehicles||[];if(vehicles.length!==1)throw Error('Serve una sola auto associata.');payload.vehicle_id=vehicles[0].id;}
+  const asset=options.purchaseKind==='asset';
+  const category=(tables.cost_categories||[]).find(c=>c.id===options.categoryId&&c.fiscal_year_id===economic.id);
+  if(!asset&&!category)throw Error('Seleziona una categoria configurata per l’anno del pagamento.');
+  if(!asset&&['pc','telefono_tablet','penale_km'].includes(category.code))throw Error('Per PC e telefono scegli «Bene da ammortizzare»; per le penali usa il modulo completo.');
+  if(!asset)payload.category_id=category.id;
+  const auto=asset?options.assetVatCategory==='auto':['rate_auto','carburante','autostrada','manutenzione_auto','assicurazione','bollo'].includes(category.code);
+  if(auto&&!asset){const vehicles=tables.vehicles||[];if(vehicles.length!==1)throw Error('Serve una sola auto associata.');payload.vehicle_id=vehicles[0].id;}
   const registered=validDate(options.registeredDate,today),received=validDate(options.receivedDate||d,today);
   if(received<d||registered<received)throw Error('Ricezione e registrazione devono seguire la data fattura.');
   const vatYear=fy(registered);payload.vat_year_id=vatYear.id;payload.received_date=received;payload.registered_date=registered;
@@ -91,7 +93,25 @@ export function planInvoice(invoice,options,tables,today=todayISO()){
   if(cents(payload.deductible_vat)>vat)throw Error('L’IVA detraibile non può superare l’IVA indicata.');
   payload.vat_category=auto?'auto':'altro';
   if((tables.purchase_vat_invoices||[]).some(r=>r.supplier.toLowerCase().trim()===subject.name.toLowerCase().trim()&&r.invoice_number.toLowerCase().trim()===payload.invoice_number.toLowerCase()&&r.invoice_date===d))throw Error('Fattura già presente nel registro IVA acquisti.');
-  destinations.push(`Costi${auto?' e Auto':''} · ${category.name} · ${payment.slice(0,7)}: ${money(total)} €`);
+  if(asset){
+   const purchase=validDate(options.assetPurchaseDate||d,today),assetYear=fy(purchase);
+   const description=String(options.assetDescription||'').trim().replace(/\s+/g,' ');
+   if(!description||description.length>200)throw Error('Inserisci una descrizione del bene, fino a 200 caratteri.');
+   if(!['auto','altro'].includes(options.assetVatCategory))throw Error('Seleziona la categoria IVA del bene.');
+   if((Number(assetYear.fiscal_year)===2026)!==(Number(vatYear.fiscal_year)===2026))throw Error('Bene e IVA a cavallo del cambio di regime: usa il modulo completo per la verifica.');
+   const fiscalCost=total-cents(payload.deductible_vat);
+   let rate='1';
+   if(fiscalCost>51646n){
+    const percent=String(options.assetRate||'').trim().replace(',','.');
+    if(!/^\d{1,3}(?:\.\d{1,4})?$/.test(percent)||Number(percent)<=0||Number(percent)>100)throw Error('Per questo bene inserisci il coefficiente di ammortamento, maggiore di 0 e fino a 100%.');
+    rate=(Number(percent)/100).toFixed(6);
+   }
+   if((tables.depreciable_assets||[]).some(a=>!a.is_planned&&a.purchase_date===purchase&&String(a.description).trim().toLowerCase()===description.toLowerCase()&&cents(a.gross_amount)===total))throw Error('Un bene con questa descrizione, data e importo è già registrato.');
+   payload.purchase_kind='asset';payload.asset_year_id=assetYear.id;payload.asset_description=description;payload.asset_purchase_date=purchase;payload.asset_rate=rate;
+   destinations.push(`Ammortamenti · ${description} · acquisto ${purchase}: costo fiscale ${money(fiscalCost)} €`);
+   destinations.push(fiscalCost<=51646n?'Deduzione integrale secondo il modello esistente.':`Coefficiente ${options.assetRate}% · quote annuali calcolate dalla scheda Ammortamenti.`);
+   destinations.push('L’importo non viene aggiunto al registro delle spese ordinarie.');
+  }else destinations.push(`Costi${auto?' e Auto':''} · ${category.name} · ${payment.slice(0,7)}: ${money(total)} €`);
   if(Number(vatYear.fiscal_year)!==2026)destinations.push(`IVA acquisti · ${registered.slice(0,7)}: ${payload.deductible_vat} € detraibili`);
  }else throw Error('Scegli fattura emessa o ricevuta.');
  return {payload,destinations,assumedPayment:!options.paymentDate,key};
