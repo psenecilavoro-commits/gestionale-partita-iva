@@ -3,6 +3,15 @@ function cents(value){
   if(!match)throw Error('Importo non valido');
   return BigInt(match[1])*100n+BigInt((match[2]||'').padEnd(2,'0'));
 }
+export function enasarcoSummary(records,alerts){
+  if(!Array.isArray(records)||!records.length||!alerts.length||
+    !records.every(r=>['Mandante','Mesi compilati','Fatturato','Media mesi compilati','Stima annua'].every(key=>Object.hasOwn(r,key))))return records;
+  return records.map(row=>{
+    const matches=alerts.filter(a=>a.name===row.Mandante);
+    const status=matches.length===1?matches[0].status:null;
+    return {...row,Enasarco:['stop','reached'].includes(status)?'STOP':['go','empty'].includes(status)?'VAI':'—'};
+  });
+}
 export function enasarcoAlerts(tables,year){
   const years=(tables?.fiscal_years||[]).filter(f=>Number(f.fiscal_year)===Number(year));
   if(years.length!==1)return [];

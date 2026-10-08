@@ -1,7 +1,13 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {enasarcoAlerts} from '../src/enasarco-alerts.js';
+import {enasarcoAlerts,enasarcoSummary} from '../src/enasarco-alerts.js';
 function fixture(){return {fiscal_years:[{id:'y26',fiscal_year:2026,status:'open'},{id:'y27',fiscal_year:2027,status:'closed'}],principals:[{id:'a',name:'A',enasarco_relationship:'plurimandatario'},{id:'b',name:'B',enasarco_relationship:'plurimandatario'}],fiscal_parameters:[{fiscal_year_id:'y26',code:'enasarco_massimale_pluri',value:'30478',is_provisional:false},{fiscal_year_id:'y27',code:'enasarco_massimale_pluri',value:'31000',is_provisional:true}],monthly_revenues:[]};}
+test('only principal summary gets a final read-only STOP/VAI column, without mutating records',()=>{
+  const records=['A','B','C'].map(Mandante=>({Mandante,'Mesi compilati':1,Fatturato:'100 €','Media mesi compilati':'100 €','Stima annua':'1200 €'}));
+  const result=enasarcoSummary(records,[{name:'A',status:'stop'},{name:'B',status:'go'},{name:'C',status:'missing'}]);
+  assert.deepEqual(result.map(r=>r.Enasarco),['STOP','VAI','—']);assert.equal(Object.keys(result[0]).at(-1),'Enasarco');assert.equal(Object.hasOwn(records[0],'Enasarco'),false);
+  const other=[{Mese:'Gennaio','Totale mese':'100 €'}];assert.equal(enasarcoSummary(other,[{name:'A',status:'stop'}]),other);
+});
 test('STOP uses registered net annual revenues per principal, not projection or all principals combined',()=>{
   const t=fixture();t.monthly_revenues=[{fiscal_year_id:'y26',principal_id:'a',month:1,amount:'30478.01'},{fiscal_year_id:'y26',principal_id:'b',month:1,amount:'20000'}];
   const [a,b]=enasarcoAlerts(t,2026);assert.equal(a.status,'stop');assert.equal(a.total,3047801n);assert.equal(b.status,'go');assert.equal(b.remaining,1047800n);
