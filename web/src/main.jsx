@@ -39,6 +39,7 @@ function Table({records,editTable}){
   const alerts=useContext(EnasarcoContext);
   records=enasarcoSummary(records,alerts);
   if(!Array.isArray(records))return <p>Nessuna riga disponibile.</p>;
+  if(!editTable&&records.every(r=>Object.hasOwn(r,'VOCE')&&Object.hasOwn(r,'VALORE')))records=records.map(r=>r.VOCE==='Fatturato'?{...r,VOCE:'Fatturato stimato'}:r);
   const cols=[...new Set(records.flatMap(r=>Object.keys(r)))];
   const reserveSheet=cols.includes('Accantonato · manuale')&&cols.includes('Provvigioni nette · manuale');
   const monthlySheet=reserveSheet||(cols.includes('Totale mese')&&cols.includes('Mese'))||cols.includes('Stima annua / valore file')||cols.includes('Totale annuo stimato')||(['Mese','Percorrenza','Carburante','Autostrada','Rate auto'].every(col=>cols.includes(col)));
