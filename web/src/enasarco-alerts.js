@@ -6,10 +6,17 @@ function cents(value){
 export function enasarcoSummary(records,alerts){
   if(!Array.isArray(records)||!records.length||!alerts.length||
     !records.every(r=>['Mandante','Mesi compilati','Fatturato','Media mesi compilati','Stima annua'].every(key=>Object.hasOwn(r,key))))return records;
-  return records.map(row=>{
+  const estimates=records.map(row=>{
+    try{return cents(String(row['Stima annua']).replace(/[€\s]/g,'').replace(/\./g,'').replace(',','.'));}catch{return null;}
+  });
+  const totalEstimate=estimates.reduce((sum,value)=>sum+(value??0n),0n);
+  return records.map((row,index)=>{
     const matches=alerts.filter(a=>a.name===row.Mandante);
     const status=matches.length===1?matches[0].status:null;
-    return {...row,Enasarco:['stop','reached'].includes(status)?'STOP':['go','empty'].includes(status)?'VAI':'—'};
+    const estimate=estimates[index];
+    const incidence=totalEstimate>0n&&estimate!==null
+      ?new Intl.NumberFormat('it-IT',{minimumFractionDigits:2,maximumFractionDigits:2}).format(Number((estimate*10000n+totalEstimate/2n)/totalEstimate)/100)+' %':'—';
+    return {...row,Enasarco:['stop','reached'].includes(status)?'STOP':['go','empty'].includes(status)?'VAI':'—',Incidenza:incidence};
   });
 }
 export function enasarcoAlerts(tables,year){
