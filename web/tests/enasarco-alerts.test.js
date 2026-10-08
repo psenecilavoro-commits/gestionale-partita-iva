@@ -1,0 +1,21 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {enasarcoAlerts} from '../src/enasarco-alerts.js';
+function fixture(){return {fiscal_years:[{id:'y26',fiscal_year:2026,status:'open'},{id:'y27',fiscal_year:2027,status:'closed'}],principals:[{id:'a',name:'A',enasarco_relationship:'plurimandatario'},{id:'b',name:'B',enasarco_relationship:'plurimandatario'}],fiscal_parameters:[{fiscal_year_id:'y26',code:'enasarco_massimale_pluri',value:'30478',is_provisional:false},{fiscal_year_id:'y27',code:'enasarco_massimale_pluri',value:'31000',is_provisional:true}],monthly_revenues:[]};}
+test('STOP uses registered net annual revenues per principal, not projection or all principals combined',()=>{
+  const t=fixture();t.monthly_revenues=[{fiscal_year_id:'y26',principal_id:'a',month:1,amount:'30478.01'},{fiscal_year_id:'y26',principal_id:'b',month:1,amount:'20000'}];
+  const [a,b]=enasarcoAlerts(t,2026);assert.equal(a.status,'stop');assert.equal(a.total,3047801n);assert.equal(b.status,'go');assert.equal(b.remaining,1047800n);
+});
+test('exact cap, zero and missing month remain distinct',()=>{
+  const t=fixture();t.monthly_revenues=[{fiscal_year_id:'y26',principal_id:'a',month:1,amount:'30478'},{fiscal_year_id:'y26',principal_id:'b',month:1,amount:'0'}];
+  assert.deepEqual(enasarcoAlerts(t,2026).map(r=>r.status),['reached','go']);t.monthly_revenues.pop();assert.equal(enasarcoAlerts(t,2026)[1].status,'empty');
+});
+test('every year uses only its configured cap and preserves provisional and closed-year status',()=>{
+  const t=fixture();t.monthly_revenues=[{fiscal_year_id:'y27',principal_id:'a',month:1,amount:'30500'},{fiscal_year_id:'y26',principal_id:'a',month:1,amount:'40000'}];
+  const a=enasarcoAlerts(t,2027)[0];assert.equal(a.status,'go');assert.equal(a.remaining,50000n);assert.equal(a.provisional,true);assert.deepEqual(enasarcoAlerts(t,2028),[]);
+});
+test('missing/duplicate parameters, unknown relationships and ambiguous records never produce advice',()=>{
+  const t=fixture();t.fiscal_parameters=[];assert.equal(enasarcoAlerts(t,2026)[0].status,'missing');
+  const u=fixture();u.monthly_revenues=[{fiscal_year_id:'y26',principal_id:'a',month:1,amount:'100'},{fiscal_year_id:'y26',principal_id:'a',month:1,amount:'200'}];assert.equal(enasarcoAlerts(u,2026)[0].status,'invalid');
+  u.principals[1].enasarco_relationship='unknown';assert.equal(enasarcoAlerts(u,2026)[1].status,'missing');
+});
