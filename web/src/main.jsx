@@ -10,6 +10,7 @@ import {autoCell} from './auto-cells.js';
 import {splitGross,grossForRecord} from './revenue-vat.js';
 import {watchSession} from './auth-session.js';
 import InvoiceImport from './InvoiceImport.jsx';
+import {autoSummary} from './auto-summary.js';
 import {enasarcoAlerts,enasarcoSummary} from './enasarco-alerts.js';
 const EnasarcoContext=createContext([]);
 
@@ -38,13 +39,13 @@ function tableValue(value,column,fallback=''){
 }
 function Table({records,editTable}){
   const alerts=useContext(EnasarcoContext);
-  records=enasarcoSummary(records,alerts);
+  records=autoSummary(enasarcoSummary(records,alerts));
   if(!Array.isArray(records))return <p>Nessuna riga disponibile.</p>;
   if(!editTable&&records.every(r=>Object.hasOwn(r,'VOCE')&&Object.hasOwn(r,'VALORE')))records=records.map(r=>r.VOCE==='Fatturato'?{...r,VOCE:'Fatturato stimato'}:r);
   const cols=[...new Set(records.flatMap(r=>Object.keys(r)))];
   const reserveSheet=cols.includes('Accantonato · manuale')&&cols.includes('Provvigioni nette · manuale');
   const monthlySheet=reserveSheet||(cols.includes('Totale mese')&&cols.includes('Mese'))||cols.includes('Stima annua / valore file')||cols.includes('Totale annuo stimato')||(['Mese','Percorrenza','Carburante','Autostrada','Rate auto'].every(col=>cols.includes(col)));
-  return <div className={`table-scroll${editTable&&monthlySheet?' revenue-sheet':''}${cols.includes('Percorrenza')&&cols.includes('Rate auto')?' auto-sheet':''}`}><table><thead><tr>{cols.map(c=><th key={c}>{c==='Stima annua / valore file'?'Stima annua / valore finale':(reserveSheet?RESERVE_LABELS[c]||c:c)}</th>)}</tr></thead><tbody>{records.map((r,i)=><tr key={i}>{cols.map(c=><td key={c}>{editTable?.(records,c,i)?<button className="cell-edit" disabled={!editTable(records,c,i).editable} aria-label={`Modifica ${r.Voce||c}, ${r.Mese||"stima annua"}`} onClick={()=>editTable(records,c,i,true)}>{tableValue(r[c],c,'—')}</button>:r[c]===null?'—':c==='IVA compresa'&&typeof r[c]==='boolean'?(r[c]?'Sì':'No'):tableValue(r[c],c)}</td>)}</tr>)}</tbody></table></div>;
+  return <div className={`table-scroll${editTable&&monthlySheet?' revenue-sheet':''}${cols.includes('Percorrenza')&&cols.includes('Rate auto')?' auto-sheet':''}`}><table><thead><tr>{cols.map(c=><th key={c}>{c==='Stima annua / valore file'?'Stima annua / valore finale':(reserveSheet?RESERVE_LABELS[c]||c:c)}</th>)}</tr></thead><tbody>{records.map((r,i)=><tr key={i} className={r.Mese==="Totale registrato"?"summary-row summary-start":["Media mensile","Stima annua"].includes(r.Mese)?"summary-row":undefined}>{cols.map(c=><td key={c}>{editTable?.(records,c,i)?<button className="cell-edit" disabled={!editTable(records,c,i).editable} aria-label={`Modifica ${r.Voce||c}, ${r.Mese||"stima annua"}`} onClick={()=>editTable(records,c,i,true)}>{tableValue(r[c],c,'—')}</button>:r[c]===null?'—':c==='IVA compresa'&&typeof r[c]==='boolean'?(r[c]?'Sì':'No'):tableValue(r[c],c)}</td>)}</tr>)}</tbody></table></div>;
 }
 function Nodes({nodes=[],values,onChange,onClick,onUpload,busy,editTable}){
   const disclosure=nodes.some(n=>n.kind==='selectbox'&&n.label==='Versamento pensione da registrare o modificare')?{label:'Versamento pensione da registrare o modificare',submit:'Conferma versamento pensione'}:{label:'Registra o modifica una fattura',submit:'Salva fattura verificata'};

@@ -1,0 +1,6 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {autoSummary} from '../src/auto-summary.js';
+const fixture=()=>[...Array.from({length:12},(_,i)=>({Mese:String(i),Percorrenza:i<2?['0,00 km','2.000,00 km'][i]:'—',Carburante:i<2?['0,00 €','100,01 €'][i]:'—',Autostrada:'—','Rate auto':i===0?'600,00 €':'—'})),{Mese:'Totale registrato'},{Mese:'Stima annua'}];
+test('monthly averages count zero but exclude blank separately per column; preserve totals and source',()=>{const input=fixture(),before=JSON.stringify(input),rows=autoSummary(input);assert.equal(rows[13].Mese,'Media mensile');assert.equal(rows[13].Percorrenza,'1.000 km');assert.equal(rows[13].Carburante,'50,01 €');assert.equal(rows[13].Autostrada,'—');assert.equal(rows[13]['Rate auto'],'600,00 €');assert.equal(rows[14],input[13]);assert.equal(JSON.stringify(input),before);});
+test('empty annual tables preserve missing data and unrelated tables are unchanged',()=>{const rows=fixture();for(const row of rows.slice(0,12))for(const column of ['Percorrenza','Carburante','Autostrada','Rate auto'])row[column]='—';assert.equal(autoSummary(rows)[13].Carburante,'—');const other=[{Mese:'Totale'}];assert.equal(autoSummary(other),other);});
