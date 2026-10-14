@@ -50,3 +50,6 @@ tbody tr:hover,.revenue-sheet tbody tr:hover{background:#f3f4f4}
 .dialog-actions .primary,.login button{background:#535d62;border-color:#535d62;color:#fff}
 .dialog-actions .primary:hover:not(:disabled),.login button:hover:not(:disabled){background:#414a4f}
 @media(max-width:650px){.auto-sheet th,.auto-sheet td{padding:9px 5px;font-size:11px}}
+
+/* Sidebar economic summary in inverse contrast, for every year. */
+.sidebar .table-scroll{background:#303639;border-color:#596064}.sidebar table{color:#f0f2f1}.sidebar th{background:#485154;color:#e6ebea}.sidebar td{background:#363e41;border-color:#50595c}.sidebar tbody tr:nth-child(even) td{background:#3b4447}.sidebar tbody tr:hover td{background:#465054}
