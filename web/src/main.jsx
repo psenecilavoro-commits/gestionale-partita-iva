@@ -3,6 +3,7 @@ import {createRoot} from 'react-dom/client';
 import {Calculator,Menu,ShieldCheck,TrendingUp,Receipt,Car,Wallet,ChartNoAxesCombined,Landmark,BadgePercent,Layers,Upload,X} from 'lucide-react';
 import {configuredClient,readTable,applyMutations} from './data.js';
 import './style.css';
+import './grey-theme.css';
 import {prepareDocument} from './documents.js';
 import {revenueCell,costCell} from './revenue-cells.js';
 import {reserveCell,reserveMutation,RESERVE_LABELS} from './reserve-cells.js';

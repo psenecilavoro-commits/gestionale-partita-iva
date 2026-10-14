@@ -1,0 +1,52 @@
+/* Shared presentation for every fiscal year; no data or calculation changes. */
+:root{color:#363d43;background:#f5f5f3;--blue:#555d64;--line:#dedfdd;--muted:#777d80}
+button,.download-link{background:#fff;border-color:#d6d9d7;color:#464e54;border-radius:6px;box-shadow:none}
+button:hover:not(:disabled),.download-link:hover{background:#e9ebe9;box-shadow:none}
+button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible,.download-link:focus-visible{outline-color:#929a9e}
+.sidebar{background:#303639;border-color:#303639;color:#f2f3f2}
+.brand-icon{background:#e7e9e6;color:#41484d;border-color:#e7e9e6;border-radius:7px;box-shadow:none}
+.brand small,.nav-label,.sidebar .caption,.sidebar .prose p,footer{color:#bac0c2}
+nav button{color:#edf0ee;border-radius:6px}
+nav button.active,nav button:hover:not(:disabled){background:#4b5356;border-color:transparent;color:#fff;box-shadow:none}
+.sidebar h2,.sidebar h3,.sidebar .prose strong{color:#f0f2f0}
+.sidebar>.prose,.invoice-nav,footer{border-color:#50585b}
+.sidebar label{color:#dce0df}
+.sidebar .table-scroll{background:#f7f8f6;border-color:#596064}
+.sidebar table{color:#41494e}
+.sidebar th{background:#e4e7e3;color:#4e575c}
+.sidebar td{border-color:#e1e4e0}
+.page-header h1,h1,h2,h3,.prose strong{color:#343c41}
+.prose p,label{color:#646d72}
+.card,.login{border-color:var(--line);border-radius:10px;box-shadow:none}
+.metric{background:#f0f1ee;border-color:#e0e2dd;border-radius:8px}
+.metric small{color:#727a7d}.metric strong{color:#3f484d}
+input,select{color:#3d454a;border-color:#d5d9d5;border-radius:6px}
+input:hover,select:hover{border-color:#a8b0ad}
+.check input{accent-color:#555e63}
+.form,details{background:#f8f9f6;border-color:#dfe3dc;border-radius:8px}
+summary,a{color:#535e64}
+.notice.info,.banner{background:#edf0ec;border-color:#dbe0d8;color:#59665c}
+.notice.success{background:#edf2ec;border-color:#d8e1d4;color:#4b6550}
+.invoice-vat-row{border-color:#dfe3dc}
+.table-scroll{border-color:#dce0d9;border-radius:9px}
+table,.revenue-sheet table{font-size:12px;border-collapse:separate;border-spacing:0}
+th,.revenue-sheet th{background:#e4e6e6;color:#535e60;font-size:11px;font-weight:650;height:auto}
+th,td,.revenue-sheet th,.revenue-sheet td,.auto-sheet th,.auto-sheet td{padding:9px 13px;border-bottom:1px solid #edf0eb;border-right:1px solid #e5e8e1}
+th:last-child,td:last-child{border-right:0}
+tbody tr:nth-child(even),.revenue-sheet tbody tr:nth-child(even){background:#fff}
+tbody tr:hover,.revenue-sheet tbody tr:hover{background:#f3f4f4}
+.revenue-sheet th:first-child{background:#e4e6e6}
+.revenue-sheet td:first-child{color:#455054;border-color:#e5e8e1}
+.revenue-sheet td:last-child{background:#f5f6f6}
+.revenue-sheet .cell-edit{font-size:12px}
+.revenue-sheet .cell-edit:hover:not(:disabled){color:#424e51!important;background:#e9ebeb!important;outline-color:#e9ebeb}
+.auto-sheet .summary-row td,.auto-sheet .summary-row td:first-child,.auto-sheet .summary-row td:last-child{background:#eff0f0;color:#414c4f;font-weight:650}
+.auto-sheet .summary-start td{border-top-color:#f5f5f3}
+.auto-sheet .summary-row:hover td{background:#e5e7e7}
+.modal-backdrop{background:#252a2e66}
+.amount-dialog{box-shadow:0 20px 70px #0002;border-radius:12px}
+.amount-dialog>form>p:first-of-type{color:#747d81}
+.amount-dialog input{border-color:#b9c1bc}
+.dialog-actions .primary,.login button{background:#535d62;border-color:#535d62;color:#fff}
+.dialog-actions .primary:hover:not(:disabled),.login button:hover:not(:disabled){background:#414a4f}
+@media(max-width:650px){.auto-sheet th,.auto-sheet td{padding:9px 5px;font-size:11px}}
