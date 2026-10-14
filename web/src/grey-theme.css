@@ -53,3 +53,6 @@ tbody tr:hover,.revenue-sheet tbody tr:hover{background:#f3f4f4}
 
 /* Sidebar economic summary in inverse contrast, for every year. */
 .sidebar .table-scroll{background:#303639;border-color:#596064}.sidebar table{color:#f0f2f1}.sidebar th{background:#485154;color:#e6ebea}.sidebar td{background:#363e41;border-color:#50595c}.sidebar tbody tr:nth-child(even) td{background:#3b4447}.sidebar tbody tr:hover td{background:#465054}
+
+/* Soft pastel grey sidebar, shared across all pages and years. */
+.sidebar{background:#dce1e1;border-color:#cbd2d2;color:#394548}.brand strong,.sidebar h2,.sidebar h3,.sidebar .prose strong{color:#394548}.brand small,.nav-label,.sidebar .caption,.sidebar .prose p,footer{color:#5d6b6e}.brand-icon{background:#f2f5f4;color:#556367;border-color:#cbd4d3}nav button{color:#49585c}nav button.active,nav button:hover:not(:disabled){background:#c5cece;color:#303e42}.sidebar>.prose,.invoice-nav,footer{border-color:#bcc7c7}.sidebar label{color:#4b5c60}.sidebar .table-scroll{background:#cdd5d5;border-color:#bbc6c6}.sidebar table{color:#35474b}.sidebar th{background:#becaca;color:#33474c}.sidebar td{background:#d2dada;border-color:#bbc7c7}.sidebar tbody tr:nth-child(even) td{background:#cbd5d5}.sidebar tbody tr:hover td{background:#becbcb}
