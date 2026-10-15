@@ -28,6 +28,21 @@ export function parseInvoiceXML(text,Parser=globalThis.DOMParser){
  const special=all(body,'DatiCassaPrevidenziale').length>0||all(body,'ScontoMaggiorazione').length>0||all(body,'DatiBollo').length>0;
  return {source:'XML',number:val(general,'Numero'),invoiceDate:val(general,'Data'),supplier:party('CedentePrestatore'),customer:party('CessionarioCommittente'),groups,total:declared||money(total),description:all(body,'DettaglioLinee').map(r=>val(r,'Descrizione')).join(' · '),lines:all(body,'DettaglioLinee').map(r=>({description:val(r,'Descrizione'),amount:val(r,'PrezzoTotale'),rate:val(r,'AliquotaIVA'),nature:val(r,'Natura')})),special,receivedDate:'',dueDate:val(body,'DataScadenzaPagamento')};
 }
+export function pdfParty(text,heading){
+ const lines=text.replace(/\r/g,'').split('\n').map(line=>line.trim());
+ const labels={supplier:['FORNITORE','CEDENTE/PRESTATORE','CEDENTE / PRESTATORE'],customer:['CLIENTE','CESSIONARIO/COMMITTENTE','CESSIONARIO / COMMITTENTE']};
+ const starts=lines.map((line,index)=>labels[heading].includes(line.toUpperCase())?index:-1).filter(index=>index>=0);
+ if(starts.length!==1)return {name:'',taxId:''};
+ const block=[];
+ for(let i=starts[0]+1;i<lines.length;i++){
+  if(Object.values(labels).flat().includes(lines[i].toUpperCase())||/^(PRODOTTI E SERVIZI|DATI GENERALI|DETTAGLIO|RIEPILOGO IVA)\b/i.test(lines[i]))break;
+  if(lines[i])block.push(lines[i]);
+ }
+ const ids=[...block.join('\n').matchAll(/(?:P\s*\.?\s*IVA|PARTITA\s+IVA)\s*:?\s*((?:IT\s*)?\d{11})\b/gi)].map(m=>m[1].replace(/\s/g,'').toUpperCase());
+ // A merged two-column/OCR block is ambiguous: do not guess the party.
+ if(new Set(ids).size!==1||!block[0]||/^(P\.?IVA|C\.?F\.?|VIA\b)/i.test(block[0]))return {name:'',taxId:''};
+ return {name:block[0],taxId:ids[0]};
+}
 export function parseInvoiceText(text){
  const amount='([0-9][0-9.]*,[0-9]{2})';
  const read=label=>new RegExp(label+'\\s*'+amount,'i').exec(text)?.[1]?.replace(/\./g,'').replace(',','.')||'';
@@ -37,7 +52,7 @@ export function parseInvoiceText(text){
  const groups=[];
  if(base&&vat)groups.push({rate:'22',base,vat,nature:'',payability:'I'});
  if(excluded&&cents(excluded)>0n)groups.push({rate:'0',base:excluded,vat:'0.00',nature:'N1',payability:'I'});
- return {source:'PDF / immagine',number:/\b(?:nr\.|n\.)\s*([^\s]+)/i.exec(text)?.[1]||'',invoiceDate:date?`${date[3]}-${date[2]}-${date[1]}`:'',supplier:{name:'',taxId:''},customer:{name:'',taxId:''},groups,total,description:text.slice(0,2000),lines:[],special:false,receivedDate:received?`${received[3]}-${received[2]}-${received[1]}`:'',dueDate:''};
+ return {source:'PDF / immagine',number:/\b(?:nr\.|n\.)\s*([^\s]+)/i.exec(text)?.[1]||'',invoiceDate:date?`${date[3]}-${date[2]}-${date[1]}`:'',supplier:pdfParty(text,'supplier'),customer:pdfParty(text,'customer'),groups,total,description:text.slice(0,2000),lines:[],special:false,receivedDate:received?`${received[3]}-${received[2]}-${received[1]}`:'',dueDate:''};
 }
 export function suggestCategory(invoice,categories){
  const text=(invoice.description+' '+invoice.supplier.name).toLowerCase();
