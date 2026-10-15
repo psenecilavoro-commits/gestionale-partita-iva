@@ -25,7 +25,7 @@ test('Auto rende modificabili percorrenza, autostrada e rate ma non carburante',
   assert.equal(autoCell(records,'Percorrenza',0,tables,2026).record.id,'km');
   assert.equal(autoCell(records,'Autostrada',0,tables,2026).record.id,'toll-1');
   assert.equal(autoCell(records,'Rate auto',0,tables,2026).record.id,'lease-1');
-  assert.equal(autoCell(records,'Carburante',0,tables,2026),null);
+  assert.equal(autoCell(records,'Carburante',0,tables,2026).editable,false);
   assert.equal(autoCell(records,'Autostrada',12,tables,2026),null);
 });
 
@@ -35,8 +35,11 @@ test('Auto permette una nuova cella mensile e blocca ambiguità o anno chiuso',(
   assert.equal(empty.editable,true);
 
   const duplicate={...tables,costs:[...tables.costs,{...tables.costs[0],id:'toll-2'}]};
-  assert.equal(autoCell(records,'Autostrada',0,duplicate,2026).editable,false);
+  assert.equal(autoCell(records,'Autostrada',0,duplicate,2026).editable,true);
+  assert.equal(autoCell(records,'Autostrada',0,duplicate,2026).records.length,2);
 
   const closed={...tables,fiscal_years:[{id:'fy',fiscal_year:2026,status:'closed'}]};
   assert.equal(autoCell(records,'Percorrenza',0,closed,2026).editable,false);
 });
+
+test('every month including future November and December is editable in open years',()=>{for(const year of [2026,2027,2035]){const future={...tables,fiscal_years:[{id:'fy',fiscal_year:year,status:'open'}]};for(const index of [9,10,11]){assert.equal(autoCell(records,'Percorrenza',index,future,year).editable,true);assert.equal(autoCell(records,'Rate auto',index,future,year).editable,true);}}});
