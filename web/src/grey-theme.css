@@ -62,3 +62,6 @@ tbody tr:hover,.revenue-sheet tbody tr:hover{background:#f3f4f4}
 
 /* Revenue section already has its own card boundary. */
 main[data-page='Fatturato'] .card>hr:first-child{display:none}main[data-page='Fatturato'] .card>hr:first-child+h2{margin-top:0}
+
+/* Auto installments are input values, not a totals column. */
+.auto-sheet tbody tr:not(.summary-row) td:last-child{background:transparent;font-weight:inherit}
