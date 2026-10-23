@@ -1,3 +1,4 @@
+import {OFFLINE,requireOnline} from './offline-mode.js';
 import {createClient} from '@supabase/supabase-js';
 import {readWithJwtRetry} from './read-retry.js';
 export const PERSONAL_REF='mmkjtvebgtwsjatwifjv';
@@ -10,6 +11,7 @@ export function validateConfig(url,key,mode){
   return ref;
 }
 export function configuredClient(){
+  if(OFFLINE)return null;
   const mode=import.meta.env.VITE_APP_MODE || 'demo';
   if(mode==='demo')return null;
   const url=import.meta.env.VITE_SUPABASE_URL,key=import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
@@ -31,6 +33,7 @@ export async function readTable(client,table){
   return rows;
 }
 export async function applyMutations(client,mutations){
+  requireOnline();
   const {data:identity,error:authError}=await client.auth.getUser();
   if(authError||!identity?.user)throw Error('Sessione scaduta: accedi nuovamente.');
   const insertedIds=new Map();

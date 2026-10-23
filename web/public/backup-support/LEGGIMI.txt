@@ -1,0 +1,40 @@
+GESTIONALE PARTITA IVA - BACKUP COMPLETO
+
+1. Estrai TUTTO lo ZIP in una cartella sul tuo PC (non aprire l'app dentro lo ZIP).
+2. Fai doppio clic su Avvia-offline.cmd. Si apre il browser con il gestionale.
+3. Lascia aperta la finestra di avvio. Chiudila per terminare la consultazione.
+Windows e un browser moderno sono sufficienti. Non serve Internet, Python o Node.
+La copia e' in SOLA CONSULTAZIONE. Nessun salvataggio o sincronizzazione online.
+Il programma usa solo l'indirizzo locale 127.0.0.1 e blocca connessioni esterne.
+Se Windows blocca l'esecuzione dello script, conserva comunque l'archivio e chiedi
+assistenza: e' possibile servire la cartella offline con un server HTTP locale.
+
+CONTENUTO
+- offline/: programma compilato, formule, runtime e dati di TUTTI gli anni.
+- ripristino/dati-tutti-gli-anni.json: dati completi senza filtri di anno.
+- ripristino/sorgenti/: codice e dipendenze bloccate, schema SQL e configurazione.
+- MANIFESTO.json: data, versione, conteggi e impronte SHA-256.
+Questo ZIP contiene dati fiscali personali in chiaro: conservalo su un dispositivo
+personale protetto; mantieni piu' copie datate, almeno una su disco esterno.
+Non contiene password, sessioni di accesso, chiavi segrete, PDF/XML originali.
+
+RIPRISTINO ONLINE (da eseguire con assistenza, solo in un progetto NUOVO)
+1. Crea un nuovo progetto Supabase e il tuo utente di accesso.
+2. Esegui ripristino/sorgenti/migration/recovery-schema.sql sul database vuoto.
+   Lo schema include tabelle, vincoli, funzioni, trigger, indici e policy RLS.
+3. Con Python 3 esegui ripristina-dati.py, inserendo l'UUID del nuovo utente.
+   Lo script genera ripristino/ripristina-dati.sql, senza collegarsi a Internet.
+4. Esegui il SQL generato sul NUOVO database; verifica conteggi e permessi RLS.
+   Non eseguirlo mai sul progetto originale. Richiede il ruolo amministrativo.
+5. Ricrea il repository dai sorgenti; installa Node e pnpm, poi in web esegui
+   pnpm install --frozen-lockfile e pnpm build.
+6. Configura le nuove variabili VITE_SUPABASE_URL, VITE_SUPABASE_PUBLISHABLE_KEY,
+   VITE_APP_MODE=production e aggiorna PERSONAL_REF in web/src/data.js al nuovo
+   progetto verificato. Non usare mai chiavi segrete nel frontend.
+7. Pubblica web/dist su Cloudflare Pages o altro hosting statico compatibile.
+
+L'account Supabase Auth va ricreato: il backup non ripristina la vecchia password.
+Lo schema e' versionato insieme al codice (data in MANIFESTO.json); dopo modifiche
+manuali alla struttura del database occorre aggiornare anche lo schema di recupero.
+Non e' un backup dell'intero account dei fornitori (fatture, domini, account,
+impostazioni console, archivi Storage e segreti restano da ricreare separatamente).
