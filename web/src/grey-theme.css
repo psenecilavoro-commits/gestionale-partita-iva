@@ -65,3 +65,6 @@ main[data-page='Fatturato'] .card>hr:first-child{display:none}main[data-page='Fa
 
 /* Auto installments are input values, not a totals column. */
 .auto-sheet tbody tr:not(.summary-row) td:last-child{background:transparent;font-weight:inherit}
+
+/* Title and first-page actions share a row; wrap on narrow screens. */
+.page-header{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}.page-header h1{margin:0}.page-header .top-actions{display:flex;align-items:center;justify-content:flex-end;gap:12px;flex-wrap:wrap;margin:0 0 0 auto}.page-header .top-actions:empty{display:none}
