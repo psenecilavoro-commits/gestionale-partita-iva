@@ -103,3 +103,5 @@ tbody tr:hover,.revenue-sheet tbody tr:hover{background:#f0f4f5}.revenue-sheet t
 @media(max-width:1100px){.shell>main{padding:28px 24px 40px}.metric{padding:20px}}
 @media(max-width:850px){.shell>main{padding:25px 16px 35px}.page-header h1{font-size:26px}.card{padding:18px}.sidebar.shown{width:min(86vw,290px)}}
 @media(max-width:650px){.page-header .top-actions{width:100%;gap:8px}.page-header .top-actions button{font-size:12px;padding:9px 11px}.metric strong{font-size:30px}.auto-sheet th,.auto-sheet td{font-size:12px;padding:10px 6px}}
+
+.principal-toolbar{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-top:20px}.principal-toolbar .prose p{margin:0}.principal-action{width:48px;min-width:48px;text-align:center!important}.icon-button{display:inline-flex;align-items:center;justify-content:center;padding:7px;margin:0;background:transparent;border-color:transparent}.icon-button:hover:not(:disabled){background:#eee3e3;color:#8d4f4f}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
