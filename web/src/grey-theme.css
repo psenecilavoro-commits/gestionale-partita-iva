@@ -105,3 +105,8 @@ tbody tr:hover,.revenue-sheet tbody tr:hover{background:#f0f4f5}.revenue-sheet t
 @media(max-width:650px){.page-header .top-actions{width:100%;gap:8px}.page-header .top-actions button{font-size:12px;padding:9px 11px}.metric strong{font-size:30px}.auto-sheet th,.auto-sheet td{font-size:12px;padding:10px 6px}}
 
 .principal-toolbar{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-top:20px}.principal-toolbar .prose p{margin:0}.principal-action{width:48px;min-width:48px;text-align:center!important}.icon-button{display:inline-flex;align-items:center;justify-content:center;padding:7px;margin:0;background:transparent;border-color:transparent}.icon-button:hover:not(:disabled){background:#eee3e3;color:#8d4f4f}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+/* Read-only Cost values share the existing Da dedurre background. */
+.revenue-sheet td.cost-readonly,.revenue-sheet tbody tr:hover td.cost-readonly,.table-scroll td.cost-readonly{background:#f2f5f6}
+
+.cost-sheet td:not(.cost-readonly){background:#fcfdfc}.cost-sheet tbody tr:hover td:not(.cost-readonly){background:#f0f4f5}
