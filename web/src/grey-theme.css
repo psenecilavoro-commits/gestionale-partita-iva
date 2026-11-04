@@ -68,3 +68,38 @@ main[data-page='Fatturato'] .card>hr:first-child{display:none}main[data-page='Fa
 
 /* Title and first-page actions share a row; wrap on narrow screens. */
 .page-header{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}.page-header h1{margin:0}.page-header .top-actions{display:flex;align-items:center;justify-content:flex-end;gap:12px;flex-wrap:wrap;margin:0 0 0 auto}.page-header .top-actions:empty{display:none}
+
+/* House dashboard proportions, adapted to the original pastel grey palette.
+   Shared selectors cover every page and fiscal year, including offline copies. */
+:root{color:#354047;background:#f3f4f4;--blue:#657780;--line:#d9dfe1;--muted:#738087}
+.shell>main{background:#f3f4f4;padding:38px 38px 50px}
+.sidebar{width:232px;flex-basis:232px;background:#dfe3e5;border-color:#cfd6d9;padding:30px 18px;color:#35434b}
+.brand{gap:11px;margin:0 5px 30px}.brand strong{font-size:19px;font-weight:700}.brand-icon{width:36px;height:36px;flex:none;border-radius:9px;background:#f4f6f6;border-color:#cbd3d7;color:#52636d}
+.brand small,.nav-label,.sidebar .caption,.sidebar .prose p,footer{color:#63737c}
+.nav-label{font-size:10px;letter-spacing:1.2px;margin-bottom:16px}
+nav{gap:7px}nav button{font-size:14px;line-height:1.45;padding:12px;border-radius:8px;color:#45565f;font-weight:500}
+nav button.active,nav button:hover:not(:disabled){background:#cbd4d8;color:#2f424c;border-color:transparent;box-shadow:none}nav button.active{font-weight:650;box-shadow:inset 3px 0 #82949e}
+.sidebar>.prose,.invoice-nav,footer{border-color:#c1ccd1}.sidebar h2,.sidebar h3,.sidebar .prose strong,.brand strong{color:#35464f}
+.page-header{margin-bottom:24px}.page-header h1{font-size:32px;line-height:1.25;letter-spacing:-1px;font-weight:600;color:#34454f}
+h1,h2,h3,.prose strong{color:#34454f}h2{font-size:18px;font-weight:600;letter-spacing:-.25px}h3{font-size:15px;font-weight:600}
+.card,.login{background:#fcfdfc;border:1px solid #dce1e2;border-radius:12px;box-shadow:none}.card{padding:24px;margin:24px 0}.card>h2:first-child{margin-top:0}
+.columns{gap:18px}.metric{padding:23px 25px;background:#edf0f1;border:1px solid #d7dfe2;border-radius:12px;box-shadow:none}.metric small{font-size:14px;color:#6a7b84}.metric strong{display:block;margin-top:12px;font-size:clamp(25px,2.4vw,34px);font-weight:500;letter-spacing:-.8px;color:#3a505c;font-variant-numeric:tabular-nums}
+button,.download-link{background:#fafcfb;border:1px solid #cfd8dc;border-radius:7px;padding:10px 16px;font-size:14px;font-weight:500;color:#415761;box-shadow:none}
+button:hover:not(:disabled),.download-link:hover{background:#e7edef;box-shadow:none}button:disabled{cursor:not-allowed}
+button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible,a:focus-visible{outline:3px solid #8d9fa9;outline-offset:2px}
+label,.prose p{color:#64757f}input,select{background:#fff;color:#364b57;border:1px solid #cfd9de;border-radius:8px;padding:11px 14px;font-size:14px}input:hover,select:hover{border-color:#a0b0b8}.check input{accent-color:#7f939f}
+.form,details{background:#eef2f3;border-color:#d7e0e4;border-radius:10px}.form{padding:20px}.caption{color:#73818a;font-size:12px;line-height:1.7}summary,a{color:#536c7a}
+.table-scroll{background:#fcfdfc;border:1px solid #d9e0e3;border-radius:12px;margin:18px 0}
+table,.revenue-sheet table{width:100%;border-collapse:separate;border-spacing:0;font-size:14px;font-variant-numeric:tabular-nums;line-height:1.45}
+th,td,.revenue-sheet th,.revenue-sheet td,.auto-sheet th,.auto-sheet td{padding:12px 15px;text-align:right;border-bottom:1px solid #e7ebed;border-right:1px solid #e3e8eb;font-size:14px}
+th,.revenue-sheet th,.revenue-sheet th:first-child,.auto-sheet th{background:#e3e8eb;color:#5d727e;font-size:12px;font-weight:600;height:45px}
+th:first-child,td:first-child,.revenue-sheet th:first-child,.revenue-sheet td:first-child{text-align:left}td:first-child,.revenue-sheet td:first-child{color:#405761;font-weight:500}
+th:last-child,td:last-child{border-right:0}tbody tr,tbody tr:nth-child(even),.revenue-sheet tbody tr:nth-child(even),.revenue-sheet td:first-child{background:#fcfdfc}
+tbody tr:hover,.revenue-sheet tbody tr:hover{background:#f0f4f5}.revenue-sheet td:last-child{background:#f2f5f6}.revenue-sheet .cell-edit{font-size:14px;font-weight:inherit}.revenue-sheet .cell-edit:hover:not(:disabled){background:#e4ecef!important;outline-color:#e4ecef;color:#3d5c6b!important}
+.auto-sheet tbody tr:not(.summary-row) td:last-child{background:transparent;font-weight:inherit}
+.auto-sheet .summary-row td,.auto-sheet .summary-row td:first-child,.auto-sheet .summary-row td:last-child{background:#e7edef;color:#3d535f;font-weight:600}.auto-sheet .summary-start td{border-top:18px solid #f3f4f4}.auto-sheet .summary-row:hover td{background:#dfe7eb}
+.sidebar .table-scroll{background:#d3dce0;border-color:#bfccd3;border-radius:9px}.sidebar table{color:#354c58;font-size:11px}.sidebar th{background:#c3cfd6;color:#344e5d;height:auto;font-size:10px}.sidebar td,.sidebar th{padding:9px 8px;font-size:11px}.sidebar td,.sidebar tbody tr:nth-child(even) td{background:#d6dfe4;border-color:#c3cfd5}.sidebar tbody tr:hover td{background:#c9d6dd}
+.invoice-vat-row{background:#f4f7f8;border-color:#d7e0e4}.amount-dialog{background:#fcfdfc;border-radius:16px;box-shadow:0 20px 70px #27364026}.amount-dialog input{border-color:#b8c8d1}.modal-backdrop{background:#26394466}.dialog-actions .primary,.login button{background:#7d949f;border-color:#748d9a;color:#fff}.dialog-actions .primary:hover:not(:disabled),.login button:hover:not(:disabled){background:#687f8d}
+@media(max-width:1100px){.shell>main{padding:28px 24px 40px}.metric{padding:20px}}
+@media(max-width:850px){.shell>main{padding:25px 16px 35px}.page-header h1{font-size:26px}.card{padding:18px}.sidebar.shown{width:min(86vw,290px)}}
+@media(max-width:650px){.page-header .top-actions{width:100%;gap:8px}.page-header .top-actions button{font-size:12px;padding:9px 11px}.metric strong{font-size:30px}.auto-sheet th,.auto-sheet td{font-size:12px;padding:10px 6px}}
