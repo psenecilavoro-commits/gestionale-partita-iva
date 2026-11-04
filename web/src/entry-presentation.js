@@ -1,3 +1,4 @@
+import {autoCell} from './auto-cells.js';
 import {costCell} from './revenue-cells.js';
 export const FUEL_CONFIRMATION='Confermo spesa, importi e assenza di registrazioni duplicate';
 export const VAT_CONFIRMATION="Confermo gli importi manuali e l'operazione";
@@ -28,4 +29,9 @@ export function confirmExplicitSubmission(nodes,event,inputs){
   const nested=confirmExplicitSubmission(node.children,event,inputs);if(nested!==inputs)return nested;
  }
  return inputs;
+}
+
+export function isAutoReadonly(records,column,index,tables,year,readonly=false){
+ if(column==='Mese'||!records?.length||!['Percorrenza','Carburante','Autostrada','Rate auto'].every(c=>Object.hasOwn(records[0],c)))return false;
+ return readonly||!autoCell(records,column,index,tables,year)?.editable;
 }

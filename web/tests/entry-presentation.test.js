@@ -1,6 +1,6 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {isCostReadonly,isCostSummary,confirmExplicitSubmission,FUEL_CONFIRMATION,VAT_CONFIRMATION,withoutLegacyPurchaseXML} from '../src/entry-presentation.js';
+import {isAutoReadonly,isCostReadonly,isCostSummary,confirmExplicitSubmission,FUEL_CONFIRMATION,VAT_CONFIRMATION,withoutLegacyPurchaseXML} from '../src/entry-presentation.js';
 
 test('grey Cost values use actual edit eligibility in every regime, including closed and offline years',()=>{
  for(const year of [2026,2027,2040]){
@@ -30,4 +30,20 @@ test('legacy XML importer is removed without hiding adjacent manual invoice and 
  const nodes=[before,divider,{kind:'subheader',label:"Importa una fattura d'acquisto XML"},{kind:'caption'},{kind:'file_uploader'},divider,after];
  assert.deepEqual(withoutLegacyPurchaseXML(nodes),[before,divider,after]);
  const other=[before,after];assert.equal(withoutLegacyPurchaseXML(other),other);
+});
+
+test('Auto shades only noneditable numeric cells for every year, including summaries, closed and offline views',()=>{
+ const months=['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
+ const records=[...months,'Totale registrato','Media mensile','Stima annua'].map(Mese=>({Mese,Percorrenza:'—',Carburante:'—',Autostrada:'—','Rate auto':'—'}));
+ for(const year of [2026,2027,2040]){
+  const tables={fiscal_years:[{id:'y',fiscal_year:year,status:'open'}],vehicles:[{id:'v'}],cost_categories:['carburante','autostrada','rate_auto'].map(code=>({id:code,code,fiscal_year_id:'y'}))};
+  assert.equal(isAutoReadonly(records,'Mese',0,tables,year),false);
+  for(const col of ['Percorrenza','Carburante','Autostrada','Rate auto']){
+   for(let i=0;i<12;i++)assert.equal(isAutoReadonly(records,col,i,tables,year),false);
+   for(let i=12;i<15;i++)assert.equal(isAutoReadonly(records,col,i,tables,year),true);
+   assert.equal(isAutoReadonly(records,col,0,tables,year,true),true);
+  }
+  tables.fiscal_years[0].status='closed';assert.equal(isAutoReadonly(records,'Percorrenza',0,tables,year),true);
+ }
+ assert.equal(isAutoReadonly([{Voce:'Altro'}],'Valore',0,{},2027),false);
 });
