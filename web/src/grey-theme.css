@@ -111,4 +111,4 @@ tbody tr:hover,.revenue-sheet tbody tr:hover{background:#f0f4f5}.revenue-sheet t
 
 .cost-sheet td:not(.cost-readonly){background:#fcfdfc}.cost-sheet tbody tr:hover td:not(.cost-readonly){background:#f0f4f5}
 
-.auto-sheet tbody tr td.auto-readonly,.auto-sheet tbody tr:hover td.auto-readonly{background:#f2f5f6}
+.auto-sheet tbody tr td.auto-readonly,.auto-sheet tbody tr:hover td.auto-readonly{background:#f2f5f6!important}
