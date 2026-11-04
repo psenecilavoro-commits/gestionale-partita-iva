@@ -1889,18 +1889,15 @@
       "records": [
         {
           "Parametro": "Aliquota quota personale",
-          "Valore configurato": "0,08 €",
-          "Stato": "Provvisorio"
+          "Valore": "8,5%"
         },
         {
-          "Parametro": "Massimale plurimandatario · riferimento 2026 provvisorio",
-          "Valore configurato": "30.478,00 €",
-          "Stato": "Provvisorio"
+          "Parametro": "Massimale plurimandatario",
+          "Valore": "30.478,00 €"
         },
         {
-          "Parametro": "Massimale monomandatario · riferimento 2026 provvisorio",
-          "Valore configurato": "45.717,00 €",
-          "Stato": "Provvisorio"
+          "Parametro": "Massimale monomandatario",
+          "Valore": "45.717,00 €"
         }
       ]
     },
@@ -1909,33 +1906,27 @@
       "records": [
         {
           "Parametro": "INPS fisso",
-          "Valore configurato": "4.611,64 €",
-          "Stato": "Provvisorio"
+          "Valore": "4.611,64 €"
         },
         {
-          "Parametro": "Minimale · riferimento 2026 provvisorio",
-          "Valore configurato": "18.808,00 €",
-          "Stato": "Provvisorio"
+          "Parametro": "Minimale",
+          "Valore": "18.808,00 €"
         },
         {
           "Parametro": "Aliquota prima fascia",
-          "Valore configurato": "0,24 €",
-          "Stato": "Provvisorio"
+          "Valore": "24,48%"
         },
         {
           "Parametro": "Soglia seconda fascia",
-          "Valore configurato": "56.224,00 €",
-          "Stato": "Provvisorio"
+          "Valore": "56.224,00 €"
         },
         {
           "Parametro": "Aliquota seconda fascia",
-          "Valore configurato": "0,25 €",
-          "Stato": "Provvisorio"
+          "Valore": "25,48%"
         },
         {
           "Parametro": "Massimale",
-          "Valore configurato": "122.295,00 €",
-          "Stato": "Provvisorio"
+          "Valore": "122.295,00 €"
         }
       ]
     },
@@ -1943,34 +1934,28 @@
       "kind": "table",
       "records": [
         {
-          "Parametro": "Prima soglia · modello definitivo",
-          "Valore configurato": "6.197,48 €",
-          "Stato": "Provvisorio"
+          "Parametro": "Prima soglia",
+          "Valore": "6.197,48 €"
         },
         {
-          "Parametro": "Aliquota prima fascia · modello definitivo",
-          "Valore configurato": "0,03 €",
-          "Stato": "Provvisorio"
+          "Parametro": "Aliquota prima fascia",
+          "Valore": "3%"
         },
         {
-          "Parametro": "Seconda soglia · modello definitivo",
-          "Valore configurato": "77.468,53 €",
-          "Stato": "Provvisorio"
+          "Parametro": "Seconda soglia",
+          "Valore": "77.468,53 €"
         },
         {
-          "Parametro": "Aliquota seconda fascia · modello definitivo",
-          "Valore configurato": "0,01 €",
-          "Stato": "Provvisorio"
+          "Parametro": "Aliquota seconda fascia",
+          "Valore": "1%"
         },
         {
-          "Parametro": "Terza soglia · modello definitivo",
-          "Valore configurato": "92.962,24 €",
-          "Stato": "Provvisorio"
+          "Parametro": "Terza soglia",
+          "Valore": "92.962,24 €"
         },
         {
-          "Parametro": "Aliquota terza fascia · modello definitivo",
-          "Valore configurato": "0,00 €",
-          "Stato": "Provvisorio"
+          "Parametro": "Aliquota terza fascia",
+          "Valore": "0,5%"
         }
       ]
     },
@@ -1979,38 +1964,74 @@
       "records": [
         {
           "Parametro": "Aliquota prima fascia",
-          "Valore configurato": "0,23 €",
-          "Stato": "Provvisorio"
+          "Valore": "23%"
         },
         {
           "Parametro": "Soglia seconda fascia",
-          "Valore configurato": "28.000,00 €",
-          "Stato": "Provvisorio"
+          "Valore": "28.000,00 €"
         },
         {
           "Parametro": "Aliquota seconda fascia",
-          "Valore configurato": "0,33 €",
-          "Stato": "Provvisorio"
+          "Valore": "33%"
         },
         {
           "Parametro": "Soglia terza fascia",
-          "Valore configurato": "50.000,00 €",
-          "Stato": "Provvisorio"
+          "Valore": "50.000,00 €"
         },
         {
           "Parametro": "Aliquota terza fascia",
-          "Valore configurato": "0,43 €",
-          "Stato": "Provvisorio"
+          "Valore": "43%"
         },
         {
           "Parametro": "Addizionale Veneto",
-          "Valore configurato": "0,01 €",
-          "Stato": "Provvisorio"
+          "Valore": "1,23%"
         },
         {
           "Parametro": "Addizionale Verona",
-          "Valore configurato": "0,01 €",
-          "Stato": "Provvisorio"
+          "Valore": "0,8%"
+        }
+      ]
+    },
+    {
+      "kind": "table",
+      "records": [
+        {
+          "Mandante": "Mandante dimostrativa",
+          "Provvigioni registrate": "36.000,00 €",
+          "Stima annuale": "54.000,00 €",
+          "Massimale di scenario": "30.478,00 €",
+          "Enasarco stimato (separato)": "2.590,63 €",
+          "Controllo massimale": "STOP"
+        }
+      ]
+    },
+    {
+      "kind": "metric",
+      "label": "Enasarco annuo stimato · separato dal fatturato",
+      "value": "2.590,63 €"
+    },
+    {
+      "kind": "table",
+      "records": [
+        {
+          "Voce": "Contributi INPS stimati",
+          "Importo": "11.537,25 €"
+        },
+        {
+          "Voce": "IRPEF",
+          "Importo": "6.117,23 €"
+        },
+        {
+          "Voce": "Addizionale Veneto",
+          "Importo": "327,14 €"
+        },
+        {
+          "Voce": "Addizionale Verona",
+          "Importo": "212,77 €"
+        },
+        {
+          "Voce": "Imposte al netto delle detrazioni",
+          "Importo": "3.715,63 €"
         }
       ]
     },

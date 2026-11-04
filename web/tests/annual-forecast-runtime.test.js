@@ -11,7 +11,7 @@ test('annual forecast uses shared moved fields, no duplicate cash forms, paramet
  const flat=nodes=>(nodes||[]).flatMap(n=>[n,...flat(n.children)]);
  let r=render({anno_fiscale_selezionato:2027,schede_principali:'Imposte'});
  const ap=flat(r.tree).find(n=>n.key?.startsWith('conto_contributi_ap_'));assert.ok(ap);
- assert.equal(r.mutations.length,0);assert.ok(!flat(r.tree).some(n=>n.label?.startsWith('Modifica un parametro')));
+ assert.equal(r.mutations.length,0);assert.ok(!flat(r.tree).some(n=>/^(Modifica parametro|Inserisci parametro mancante)/.test(n.label||'')));assert.ok(!JSON.stringify(r.tree).includes('Valore configurato'));assert.ok(JSON.stringify(r.tree).includes('\"Valore\"'));
  r=render({...r.inputs,[ap.key]:4000});
  r=render({...r.inputs,schede_principali:'Detrazioni e deduzioni'});
  const fondo=flat(r.tree).find(n=>n.key?.startsWith('conto_fondo_pensione_'));assert.ok(fondo);
