@@ -1996,24 +1996,6 @@
       "kind": "table",
       "records": [
         {
-          "Mandante": "Mandante dimostrativa",
-          "Provvigioni registrate": "36.000,00 €",
-          "Stima annuale": "54.000,00 €",
-          "Massimale di scenario": "30.478,00 €",
-          "Enasarco stimato (separato)": "2.590,63 €",
-          "Controllo massimale": "STOP"
-        }
-      ]
-    },
-    {
-      "kind": "metric",
-      "label": "Enasarco annuo stimato · separato dal fatturato",
-      "value": "2.590,63 €"
-    },
-    {
-      "kind": "table",
-      "records": [
-        {
           "Voce": "Contributi INPS stimati",
           "Importo": "11.537,25 €"
         },

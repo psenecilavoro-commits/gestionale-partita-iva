@@ -137,7 +137,6 @@ def mostra_imposte(client: Client, anno: dict) -> None:
             hide_index=True, width="stretch")
     if anno["status"] != "open":
         st.info("Anno chiuso: parametri in sola lettura.")
-    mostra_confronto_enasarco(client, anno, presenti)
     from conto_economico import valori_conto_corrente, DEFAULT_CONTRIBUTI_AP, DEFAULT_FONDO_PENSIONE
     try:
         valori = valori_conto_corrente(client, anno,
