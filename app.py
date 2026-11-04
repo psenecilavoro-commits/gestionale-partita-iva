@@ -11,7 +11,8 @@ from auth import current_user, get_client, sign_in, sign_out, reset_fiscal_input
 from auto import prepara_auto_unica
 from auto_spese_reali import mostra_spese_auto
 from contributi_versati import mostra_contributi_versati
-from conto_economico import mostra_conto_economico
+from conto_economico import (mostra_conto_economico, mostra_contributi_ap_previsionali,
+                             mostra_fondo_pensione_previsionale)
 from costi_scheda import mostra_tabella_costi
 from forfettario_2026 import (
     mostra_soglie_fatturato as mostra_soglie_forfettario,
@@ -35,7 +36,7 @@ from registri import avvia_cache_letture
 from riepilogo_laterale import mostra_base
 from stile import applica_stile
 from struttura_ui import (mostra_vendite, mostra_periodi_iva, mostra_pensione,
-                          mostra_conto_registrato, mostra_riconciliazione)
+                          mostra_riconciliazione)
 
 st.set_page_config(page_title="Gestionale Partita IVA", page_icon="📊", layout="wide",
                    initial_sidebar_state="expanded")
@@ -238,14 +239,14 @@ if scheda_conto_economico.open:
             mostra_conto_forfettario(client, fiscal_year)
         else:
             mostra_conto_economico(client, fiscal_year)
-            st.divider()
-            mostra_conto_registrato(client, fiscal_year)
+
 
 if scheda_imposte.open:
     with scheda_imposte:
         if forfettario:
             mostra_imposte_forfettario(client, fiscal_year)
         else:
+            mostra_contributi_ap_previsionali(fiscal_year)
             mostra_imposte(client, fiscal_year)
         mostra_contributi_versati(client, fiscal_year)
 
@@ -258,6 +259,7 @@ if scheda_detrazioni.open:
                 "gestiti nel prospetto forfettario dedicato."
             )
         else:
+            mostra_fondo_pensione_previsionale(fiscal_year)
             mostra_detrazioni_unificate(client, fiscal_year)
             mostra_pensione(client, fiscal_year)
 

@@ -1,0 +1,142 @@
+[
+  [
+    [
+      "enasarco_tasso_foglio",
+      "Aliquota quota personale",
+      "0.085",
+      "RATE"
+    ],
+    [
+      "enasarco_massimale_pluri",
+      "Massimale plurimandatario",
+      "30478",
+      "EUR"
+    ],
+    [
+      "enasarco_massimale_mono",
+      "Massimale monomandatario",
+      "45717",
+      "EUR"
+    ]
+  ],
+  [
+    [
+      "inps_fisso_foglio",
+      "INPS fisso",
+      "4611.64",
+      "EUR"
+    ],
+    [
+      "inps_minimale_foglio",
+      "Minimale",
+      "18808",
+      "EUR"
+    ],
+    [
+      "inps_aliquota_prima_foglio",
+      "Aliquota prima fascia",
+      "0.2448",
+      "RATE"
+    ],
+    [
+      "inps_soglia_seconda_foglio",
+      "Soglia seconda fascia",
+      "56224",
+      "EUR"
+    ],
+    [
+      "inps_aliquota_seconda_foglio",
+      "Aliquota seconda fascia",
+      "0.2548",
+      "RATE"
+    ],
+    [
+      "inps_massimale_foglio",
+      "Massimale",
+      "122295",
+      "EUR"
+    ]
+  ],
+  [
+    [
+      "agenti_soglia_1_foglio",
+      "Prima soglia",
+      "6197.48",
+      "EUR"
+    ],
+    [
+      "agenti_aliquota_1_foglio",
+      "Aliquota prima fascia",
+      "0.03",
+      "RATE"
+    ],
+    [
+      "agenti_soglia_2_foglio",
+      "Seconda soglia",
+      "77468.53",
+      "EUR"
+    ],
+    [
+      "agenti_aliquota_2_foglio",
+      "Aliquota seconda fascia",
+      "0.01",
+      "RATE"
+    ],
+    [
+      "agenti_soglia_3_foglio",
+      "Terza soglia",
+      "92962.24",
+      "EUR"
+    ],
+    [
+      "agenti_aliquota_3_foglio",
+      "Aliquota terza fascia",
+      "0.005",
+      "RATE"
+    ]
+  ],
+  [
+    [
+      "irpef_aliquota_1_foglio",
+      "Aliquota prima fascia",
+      "0.23",
+      "RATE"
+    ],
+    [
+      "irpef_soglia_2_foglio",
+      "Soglia seconda fascia",
+      "28000",
+      "EUR"
+    ],
+    [
+      "irpef_aliquota_2_foglio",
+      "Aliquota seconda fascia",
+      "0.33",
+      "RATE"
+    ],
+    [
+      "irpef_soglia_3_foglio",
+      "Soglia terza fascia",
+      "50000",
+      "EUR"
+    ],
+    [
+      "irpef_aliquota_3_foglio",
+      "Aliquota terza fascia",
+      "0.43",
+      "RATE"
+    ],
+    [
+      "addizionale_veneto_foglio",
+      "Addizionale Veneto",
+      "0.0123",
+      "RATE"
+    ],
+    [
+      "addizionale_verona_foglio",
+      "Addizionale Verona",
+      "0.008",
+      "RATE"
+    ]
+  ]
+]

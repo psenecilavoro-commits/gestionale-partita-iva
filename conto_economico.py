@@ -9,7 +9,7 @@ from fatturato import euro, leggi_fatturato, riepilogo
 from imposte_enasarco import calcola_confronto
 from imposte_parametri import _leggi as leggi_parametri
 from mandanti import elenco_mandanti
-from riepilogo_costi import VOCI, calcola_riepilogo
+from costi_tabella import totali_annui_previsionali
 
 CENT=D("0.01")
 DEFAULT_CONTRIBUTI_AP=D("8000")
@@ -54,6 +54,7 @@ def calcola_conto_foglio(fatturato:D,iva_costi:D,costi_netti:D,costi_deducibili:
       "B11":r["inps_totale"],
       "B12":enasarco,
       "B13":costi_netti,
+      "COSTI_DEDUCIBILI":costi_deducibili,
       "B14":r["imposte_lorde"],
       "B15":r["detrazioni_usate"],
       "B16":fondo,
@@ -76,6 +77,7 @@ VOCI_CONTO=(
  ("B11","Contributi INPS stimati"),
  ("B12","Enasarco stimato"),
  ("B13","Costi netti stimati"),
+ ("COSTI_DEDUCIBILI","Costi deducibili annui stimati"),
  ("B14","IRPEF + addizionali prima delle detrazioni"),
  ("B15","Detrazioni utilizzate"),
  ("B16","Fondo pensione deducibile"),
@@ -101,31 +103,37 @@ def valori_conto_corrente(client:Client,anno:dict,contributi_ap:D,fondo:D)->dict
     )
     if mono:
         raise ValueError("Completa la gestione Enasarco monomandataria prima del prospetto.")
-    costi,mancanti,non_test=calcola_riepilogo(client,anno["id"])
-    if mancanti or non_test or len(costi)!=len(VOCI):
-        raise ValueError("Il confronto automatico richiede le voci del modello complete.")
-    iva=sum((r["IVA"] for r in costi),D("0"))
-    netto=sum((r["Netto"] for r in costi),D("0"))
-    ded=sum((r["Deducibile"] for r in costi),D("0"))
+    costi = totali_annui_previsionali(client, anno["id"])
+    iva, netto, ded = costi["iva"], costi["netto"], costi["deducibile"]
     return calcola_conto_foglio(
         fatturato,iva,netto,ded,enasarco,contributi_ap,fondo,
         detrazioni_anteprima_foglio(),p
     )
 
 
-def mostra_conto_economico(client:Client,anno:dict,sidebar_slot=None)->None:
-    st.subheader("Conto economico · modello definitivo")
-    st.caption("Il prospetto replica il modello 2027 approvato. I parametri fiscali annuali restano configurabili finché non saranno ufficiali.")
-    ap=st.number_input(
+def mostra_contributi_ap_previsionali(anno):
+    st.number_input(
         "Contributi anni precedenti effettivamente pagati nell'anno (€)",
-        min_value=0.0,value=float(DEFAULT_CONTRIBUTI_AP),step=100.0,
-        key=f"conto_contributi_ap_{anno['id']}",
+        min_value=0.0, value=float(DEFAULT_CONTRIBUTI_AP), step=100.0,
+        key=f"conto_contributi_ap_{anno['id']}", disabled=anno["status"] != "open",
     )
-    fondo=st.number_input(
+
+
+def mostra_fondo_pensione_previsionale(anno):
+    st.number_input(
         "Fondo pensione deducibile (€)",
-        min_value=0.0,value=float(DEFAULT_FONDO_PENSIONE),step=100.0,
-        key=f"conto_fondo_pensione_{anno['id']}",
+        min_value=0.0, value=float(DEFAULT_FONDO_PENSIONE), step=100.0,
+        key=f"conto_fondo_pensione_{anno['id']}", disabled=anno["status"] != "open",
     )
+
+
+def mostra_conto_economico(client:Client,anno:dict,sidebar_slot=None)->None:
+    st.subheader("Conto economico · previsione annuale")
+    st.caption("Fatturato annualizzato e costi ripresi dalla scheda Costi. "
+               "I contributi degli anni precedenti si impostano in Imposte; "
+               "il fondo pensione in Detrazioni e deduzioni.")
+    ap = st.session_state.get(f"conto_contributi_ap_{anno['id']}", DEFAULT_CONTRIBUTI_AP)
+    fondo = st.session_state.get(f"conto_fondo_pensione_{anno['id']}", DEFAULT_FONDO_PENSIONE)
     try:
         valori=valori_conto_corrente(client,anno,D(str(ap)),D(str(fondo)))
     except ValueError as exc:

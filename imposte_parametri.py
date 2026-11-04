@@ -1,9 +1,4 @@
-"""Parametri di scenario distinti da regole fiscali confermate.
-
-Nessun parametro viene creato automaticamente all'apertura. Le tre famiglie
-sono caricabili su richiesta, restano PROVVISORIE e modificabili. Nessun
-risultato qui calcolato viene utilizzato come netto, debito o contributo.
-"""
+"""Parametri annuali in uso, modificabili dalla tabella."""
 from decimal import Decimal, InvalidOperation
 
 import streamlit as st
@@ -81,7 +76,12 @@ def _leggi(client: Client, anno_id: str) -> dict[str, dict]:
         campi="id,code,description,value,unit,source,source_date,is_provisional",
         fiscal_year_id=anno_id,
     )
-    return {r["code"]: r for r in righe}
+    presenti = {r["code"]: r for r in righe}
+    for _gruppo, voci in GRUPPI:
+        for codice, descrizione, valore, unita, _cella in voci:
+            presenti.setdefault(codice, {"code": codice, "description": descrizione,
+                "value": valore, "unit": unita, "is_provisional": False})
+    return presenti
 
 
 def _carica_gruppo(client: Client, anno_id: str, voci: tuple, presenti: dict) -> int:
@@ -93,7 +93,7 @@ def _carica_gruppo(client: Client, anno_id: str, voci: tuple, presenti: dict) ->
         "value": valore,
         "unit": unita,
         "source": "CONFRONTO NON VERIFICATO: foglio originale " + cella,
-        "is_provisional": True,
+        "is_provisional": False,
     } for codice, descrizione, valore, unita, cella in voci if codice not in presenti]
     if not nuovi:
         return 0
@@ -108,8 +108,8 @@ def _modifica(client: Client, anno_id: str, riga: dict, valore: Decimal) -> None
         client.table("fiscal_parameters")
         .update({
             "value": str(valore),
-            "is_provisional": True,
-            "source": "VALORE MODIFICATO MANUALMENTE; da verificare prima dei calcoli",
+            "is_provisional": False,
+            "source": "Parametro annuale modificato manualmente",
             "source_date": None,
         })
         .eq("id", riga["id"])
@@ -123,72 +123,32 @@ def _modifica(client: Client, anno_id: str, riga: dict, valore: Decimal) -> None
 
 def mostra_imposte(client: Client, anno: dict) -> None:
     st.subheader("Imposte · parametri")
-    st.warning("PARAMETRI PROVVISORI: aliquote, soglie, massimali e detrazioni devono "
-               "essere verificati per l'anno fiscale selezionato. Non sono importi da versare.")
-    st.info("L'Enasarco personale non riduce il fatturato registrato. Provvigioni, "
-            "trattenute, importo delle fatture e imponibile IVA restano distinti.")
-    st.caption("Tre gruppi configurabili. I valori iniziali sono soltanto esempi di calcolo "
-               "e sono salvati unicamente su tua richiesta.")
     try:
         presenti = _leggi(client, anno["id"])
     except Exception:
-        st.error("Impossibile leggere i parametri: nessun dato modificato.")
+        st.error("Impossibile leggere i parametri.")
         return
     for nome_gruppo, voci in GRUPPI:
         st.markdown(f"### {nome_gruppo}")
         st.dataframe([{
-            "Parametro": descrizione,
-            "Valore di prova": _formato(valore, unita),
-            "Valore configurato": _formato(presenti[codice]["value"], presenti[codice]["unit"])
-            if codice in presenti else "—",
+            "Parametro": descrizione.split(" · ")[0],
+            "Valore": _formato(presenti[codice]["value"], unita),
         } for codice, descrizione, valore, unita, _cella in voci],
             hide_index=True, width="stretch")
-        if nome_gruppo == "INPS":
-            st.caption("Minimale, soglia, aliquote e massimale sono riferimenti 2026 usati provvisoriamente per il 2027. "
-                       "I contributi di anni precedenti si deducono solo se effettivamente pagati nell'anno selezionato.")
-        if nome_gruppo == "Enasarco":
-            st.caption("L'8,5% è la quota personale del modello. I massimali 30.478 € / 45.717 € sono riferimenti 2026 "
-                       "provvisori per il 2027 e restano modificabili per anno.")
-        if anno["status"] != "open":
-            continue
-        mancanti = [v for v in voci if v[0] not in presenti]
-        if mancanti:
-            if st.button(f"Carica i parametri di prova · {nome_gruppo}", key=f"imposte_carica_{voci[0][0]}"):
-                try:
-                    _carica_gruppo(client, anno["id"], voci, presenti)
-                except Exception:
-                    st.error("Caricamento non confermato: aggiorna e controlla i valori prima di riprovare.")
-                else:
-                    st.rerun()
-        modificabili = [v for v in voci if v[0] in presenti]
-        if modificabili:
-            with st.expander(f"Modifica un parametro · {nome_gruppo}"):
-                dizionario = {v[0]: v for v in modificabili}
-                selezione = st.selectbox("Parametro", list(dizionario),
-                                         format_func=lambda codice: dizionario[codice][1],
-                                         key=f"imposte_scelta_{voci[0][0]}")
-                record = presenti[selezione]
-                with st.form(f"imposte_modifica_{selezione}"):
-                    testo = st.text_input(
-                        "Nuovo valore (aliquote in forma decimale: 0,085 = 8,5%)",
-                        value=str(record["value"]).replace(".", ","),
-                        help="Puoi modificare il parametro. Resterà provvisorio.",
-                    )
-                    conferma = st.form_submit_button("Salva parametro")
-                if conferma:
-                    try:
-                        valore = _numero(testo, record["unit"])
-                        _modifica(client, anno["id"], record, valore)
-                    except ValueError as exc:
-                        st.warning(str(exc))
-                    except Exception:
-                        st.error("Modifica non confermata: verifica la tabella prima di riprovare.")
-                    else:
-                        st.rerun()
     if anno["status"] != "open":
         st.info("Anno chiuso: parametri in sola lettura.")
     mostra_confronto_enasarco(client, anno, presenti)
-    mostra_confronto_inps(client, anno, presenti)
-    mostra_confronto_irpef(client, anno, presenti)
-    st.caption("Per un utilizzo fiscale effettivo occorrono parametri aggiornati, "
-               "versamenti documentati, deduzioni e detrazioni verificate e documenti IVA completi.")
+    from conto_economico import valori_conto_corrente, DEFAULT_CONTRIBUTI_AP, DEFAULT_FONDO_PENSIONE
+    try:
+        valori = valori_conto_corrente(client, anno,
+            D(str(st.session_state.get(f"conto_contributi_ap_{anno['id']}", DEFAULT_CONTRIBUTI_AP))),
+            D(str(st.session_state.get(f"conto_fondo_pensione_{anno['id']}", DEFAULT_FONDO_PENSIONE))))
+    except ValueError as exc:
+        st.info(str(exc))
+        return
+    st.subheader("Imposte · previsione annuale")
+    st.dataframe([{"Voce": nome, "Importo": euro(valori[codice])} for codice, nome in (
+        ("B11", "Contributi INPS stimati"), ("IRPEF", "IRPEF"),
+        ("VENETO", "Addizionale Veneto"), ("VERONA", "Addizionale Verona"),
+        ("IMPOSTE_NETTE", "Imposte al netto delle detrazioni"),
+    )], hide_index=True, width="stretch")

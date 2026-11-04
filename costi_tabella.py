@@ -102,7 +102,7 @@ def _crea_categoria(client, anno_id, codice):
     return r.data[0]
 
 
-def _tabella(categorie, stime, spese, impostazioni, km):
+def _tabella(categorie, stime, spese, impostazioni, km, *, totali_output=None):
     per_cat = defaultdict(list)
     for spesa in spese:
         per_cat[spesa["category_id"]].append(spesa)
@@ -175,7 +175,23 @@ def _tabella(categorie, stime, spese, impostazioni, km):
                         "Costo netto": "—" if incompleti else _euro(totali["netto"]),
                         "% deducibilità": "—",
                         "Da dedurre": "—" if incompleti else _euro(totali["deducibile"])})
+    if totali_output is not None:
+        totali_output.update(totali)
     return tabella, incompleti, origini
+
+
+
+def totali_annui_previsionali(client, anno_id):
+    """Stessi dati, proiezioni e quote della tabella Costi, senza arrotondamenti intermedi."""
+    categorie, stime, spese, _veicoli, impostazioni, km = _leggi(client, anno_id)
+    totali = {}
+    tabella, incompleti, _origini = _tabella(
+        categorie, stime, spese, impostazioni, km, totali_output=totali)
+    if not any(r["Voce"] == "TOTALE SPESE" for r in tabella):
+        raise ValueError("Inserisci le stime annuali nella scheda Costi per costruire la previsione.")
+    if incompleti:
+        raise ValueError("Completa le quote fiscali nella scheda Costi: " + ", ".join(sorted(incompleti)) + ".")
+    return totali
 
 
 def _nuova(client, anno, codice, importo, quando=None, veicolo_id=None, descrizione=""):
