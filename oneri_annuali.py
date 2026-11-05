@@ -68,7 +68,7 @@ def calcola_personali(deduzioni, pensioni):
         if cat == 'Fondo pensione': fondo += quota
         else: altre += quota
         righe.append({'Categoria':cat,'Causale':r['description'],'Anno':None,
-            'Importo':importo,'Quota deducibile':quota,'Origine':'Inserimento manuale'})
+            'Importo':importo,'Quota deducibile':quota,'Origine':metadati(r).get('origine','Inserimento manuale')})
     if not esplicito:
         for r in pensioni:
             valore = D(str(r['amount'])); fondo += valore
@@ -100,7 +100,7 @@ def _visuale(righe, campi_denaro):
     vista=[]
     for r in righe:
         cat, nome = r.get('Categoria',''), r.get('Causale','')
-        causale = cat if not nome or nome==cat else f'{cat} · {nome}'
+        causale = cat if not nome else nome if nome==cat or nome.startswith(cat+' · ') else f'{cat} · {nome}'
         v={'Causale':causale}
         for k,valore in r.items():
             if k in ('Categoria','Causale'): continue
