@@ -762,15 +762,15 @@
         },
         {
           "VOCE": "Netto annuo stimato",
-          "VALORE": "28.689,08 €"
+          "VALORE": "24.031,32 €"
         },
         {
           "VOCE": "Netto/12 medio",
-          "VALORE": "2.390,76 €"
+          "VALORE": "2.002,61 €"
         },
         {
           "VOCE": "Netto/12 senza costi",
-          "VALORE": "3.013,04 €"
+          "VALORE": "2.624,89 €"
         }
       ]
     },
@@ -898,15 +898,15 @@
         },
         {
           "VOCE": "Netto annuo stimato",
-          "VALORE": "28.689,08 €"
+          "VALORE": "24.031,32 €"
         },
         {
           "VOCE": "Netto/12 medio",
-          "VALORE": "2.390,76 €"
+          "VALORE": "2.002,61 €"
         },
         {
           "VOCE": "Netto/12 senza costi",
-          "VALORE": "3.013,04 €"
+          "VALORE": "2.624,89 €"
         }
       ]
     },
@@ -1073,15 +1073,15 @@
         },
         {
           "VOCE": "Netto annuo stimato",
-          "VALORE": "28.689,08 €"
+          "VALORE": "24.031,32 €"
         },
         {
           "VOCE": "Netto/12 medio",
-          "VALORE": "2.390,76 €"
+          "VALORE": "2.002,61 €"
         },
         {
           "VOCE": "Netto/12 senza costi",
-          "VALORE": "3.013,04 €"
+          "VALORE": "2.624,89 €"
         }
       ]
     },
@@ -1203,15 +1203,15 @@
         },
         {
           "VOCE": "Netto annuo stimato",
-          "VALORE": "28.689,08 €"
+          "VALORE": "24.031,32 €"
         },
         {
           "VOCE": "Netto/12 medio",
-          "VALORE": "2.390,76 €"
+          "VALORE": "2.002,61 €"
         },
         {
           "VOCE": "Netto/12 senza costi",
-          "VALORE": "3.013,04 €"
+          "VALORE": "2.624,89 €"
         }
       ]
     },
@@ -1317,7 +1317,7 @@
     {
       "kind": "metric",
       "label": "Fabbisogno fiscale annuo stimato",
-      "value": "9.042,88 €"
+      "value": "13.700,65 €"
     },
     {
       "kind": "metric",
@@ -1327,12 +1327,12 @@
     {
       "kind": "metric",
       "label": "Residuo da accantonare",
-      "value": "4.242,88 €"
+      "value": "8.900,65 €"
     },
     {
       "kind": "metric",
       "label": "Quota indicativa per ciascuno dei 4 mesi restanti",
-      "value": "1.060,72 €"
+      "value": "2.225,16 €"
     },
     {
       "kind": "table",
@@ -1765,15 +1765,15 @@
         },
         {
           "VOCE": "Netto annuo stimato",
-          "VALORE": "28.689,08 €"
+          "VALORE": "24.031,32 €"
         },
         {
           "VOCE": "Netto/12 medio",
-          "VALORE": "2.390,76 €"
+          "VALORE": "2.002,61 €"
         },
         {
           "VOCE": "Netto/12 senza costi",
-          "VALORE": "3.013,04 €"
+          "VALORE": "2.624,89 €"
         }
       ]
     },
@@ -1794,7 +1794,7 @@
         },
         {
           "Voce": "Imponibile IRPEF",
-          "Importo": "26.596,64 €"
+          "Importo": "31.896,64 €"
         },
         {
           "Voce": "Contributi INPS stimati",
@@ -1814,31 +1814,31 @@
         },
         {
           "Voce": "IRPEF + addizionali prima delle detrazioni",
-          "Importo": "6.657,14 €"
+          "Importo": "8.373,39 €"
         },
         {
           "Voce": "Detrazioni utilizzate",
-          "Importo": "2.941,51 €"
+          "Importo": "0,00 €"
         },
         {
           "Voce": "Fondo pensione deducibile",
-          "Importo": "5.300,00 €"
+          "Importo": "0,00 €"
         },
         {
           "Voce": "Netto annuo teorico",
-          "Importo": "28.689,08 €"
+          "Importo": "24.031,32 €"
         },
         {
           "Voce": "Netto teorico / 12",
-          "Importo": "2.390,76 €"
+          "Importo": "2.002,61 €"
         },
         {
           "Voce": "Netto teorico senza costi",
-          "Importo": "36.156,49 €"
+          "Importo": "31.498,72 €"
         },
         {
           "Voce": "Netto teorico senza costi / 12",
-          "Importo": "3.013,04 €"
+          "Importo": "2.624,89 €"
         }
       ]
     }
@@ -1857,15 +1857,15 @@
         },
         {
           "VOCE": "Netto annuo stimato",
-          "VALORE": "28.689,08 €"
+          "VALORE": "24.031,32 €"
         },
         {
           "VOCE": "Netto/12 medio",
-          "VALORE": "2.390,76 €"
+          "VALORE": "2.002,61 €"
         },
         {
           "VOCE": "Netto/12 senza costi",
-          "VALORE": "3.013,04 €"
+          "VALORE": "2.624,89 €"
         }
       ]
     },
@@ -1986,19 +1986,19 @@
         },
         {
           "Voce": "IRPEF",
-          "Importo": "6.117,23 €"
+          "Importo": "7.725,89 €"
         },
         {
           "Voce": "Addizionale Veneto",
-          "Importo": "327,14 €"
+          "Importo": "392,33 €"
         },
         {
           "Voce": "Addizionale Verona",
-          "Importo": "212,77 €"
+          "Importo": "255,17 €"
         },
         {
           "Voce": "Imposte al netto delle detrazioni",
-          "Importo": "3.715,63 €"
+          "Importo": "8.373,39 €"
         }
       ]
     },
@@ -2027,39 +2027,102 @@
         },
         {
           "VOCE": "Netto annuo stimato",
-          "VALORE": "28.689,08 €"
+          "VALORE": "24.031,32 €"
         },
         {
           "VOCE": "Netto/12 medio",
-          "VALORE": "2.390,76 €"
+          "VALORE": "2.002,61 €"
         },
         {
           "VOCE": "Netto/12 senza costi",
-          "VALORE": "3.013,04 €"
+          "VALORE": "2.624,89 €"
         }
       ]
     },
     {
-      "kind": "metric",
-      "label": "Totale unico spese sanitarie inserite",
-      "value": "0,00 €"
-    },
-    {
-      "kind": "metric",
-      "label": "Detrazione sanitaria annua · scenario",
-      "value": "0,00 €"
+      "kind": "table",
+      "records": [
+        {
+          "Categoria": "TOTALE",
+          "Causale": "",
+          "Importo": "",
+          "Importo ammesso": "",
+          "Rate": "",
+          "Anno spesa": "",
+          "N. rata": "",
+          "% detrazione": "",
+          "Importo annuo": "0,00 €"
+        }
+      ]
     },
     {
       "kind": "table",
-      "records": []
-    },
-    {
-      "kind": "download",
-      "file_name": "pensione_2027.csv",
-      "mime": "text/csv",
-      "data": {
-        "base64": ""
-      }
+      "records": [
+        {
+          "Categoria": "Costi",
+          "Causale": "Rate Auto",
+          "Anno": 2027,
+          "Importo": "1.200,00 €",
+          "Quota deducibile": "621,30 €",
+          "Origine": "Costi · Auto · proiezione da mesi"
+        },
+        {
+          "Categoria": "Costi",
+          "Causale": "Carburante",
+          "Anno": 2027,
+          "Importo": "1.200,00 €",
+          "Quota deducibile": "786,89 €",
+          "Origine": "Costi · Auto · proiezione da mesi"
+        },
+        {
+          "Categoria": "Costi",
+          "Causale": "Autostrada",
+          "Anno": 2027,
+          "Importo": "1.200,00 €",
+          "Quota deducibile": "786,89 €",
+          "Origine": "Costi · Auto · proiezione da mesi"
+        },
+        {
+          "Categoria": "Costi",
+          "Causale": "Bollo",
+          "Anno": 2027,
+          "Importo": "340,97 €",
+          "Quota deducibile": "272,78 €",
+          "Origine": "Costi · Stima annuale"
+        },
+        {
+          "Categoria": "Costi",
+          "Causale": "Assicurazione",
+          "Anno": 2027,
+          "Importo": "1.060,86 €",
+          "Quota deducibile": "848,69 €",
+          "Origine": "Costi · Stima annuale"
+        },
+        {
+          "Categoria": "Costi",
+          "Causale": "Manutenzione auto",
+          "Anno": 2027,
+          "Importo": "800,00 €",
+          "Quota deducibile": "524,59 €",
+          "Origine": "Costi · Stima annuale"
+        },
+        {
+          "Categoria": "Costi",
+          "Causale": "Commercialista",
+          "Anno": 2027,
+          "Importo": "3.000,00 €",
+          "Quota deducibile": "2.459,02 €",
+          "Origine": "Costi · Stima annuale"
+        },
+        {
+          "Categoria": "TOTALE",
+          "Causale": "",
+          "Anno": 2027,
+          "Importo": "",
+          "Quota deducibile": "6.300,14 €",
+          "Origine": ""
+        }
+      ]
     }
   ],
   "2027:Ammortamenti": [
@@ -2076,15 +2139,15 @@
         },
         {
           "VOCE": "Netto annuo stimato",
-          "VALORE": "28.689,08 €"
+          "VALORE": "24.031,32 €"
         },
         {
           "VOCE": "Netto/12 medio",
-          "VALORE": "2.390,76 €"
+          "VALORE": "2.002,61 €"
         },
         {
           "VOCE": "Netto/12 senza costi",
-          "VALORE": "3.013,04 €"
+          "VALORE": "2.624,89 €"
         }
       ]
     },

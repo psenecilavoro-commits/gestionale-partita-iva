@@ -32,7 +32,8 @@ def detrazioni_anteprima_foglio()->D:
                 for _nome,importo,rate,_numero,tasso,sanitaria in PROVE),D("0"))
 
 def calcola_conto_foglio(fatturato:D,iva_costi:D,costi_netti:D,costi_deducibili:D,
-                         enasarco:D,contributi_ap:D,fondo:D,detrazioni:D,p:dict[str,D])->dict[str,D]:
+                         enasarco:D,contributi_ap:D,fondo:D,detrazioni:D,p:dict[str,D],
+                         altre_deduzioni:D=D("0"))->dict[str,D]:
     """Riproduce il modello definitivo.
 
     Per il benchmark del foglio la quota INPS fissa è assunta pagata nell'anno
@@ -43,7 +44,7 @@ def calcola_conto_foglio(fatturato:D,iva_costi:D,costi_netti:D,costi_deducibili:
         fatturato=fatturato,costi_netti=costi_netti,costi_deducibili=costi_deducibili,
         enasarco_stimato=enasarco,
         contributi_irpef=contributi_ap+p["inps_fisso_foglio"],
-        pensione_deducibile=fondo,detrazioni=detrazioni,p=p)
+        pensione_deducibile=fondo,detrazioni=detrazioni,p=p,altre_deduzioni=altre_deduzioni)
     return {
       "B1":fatturato,
       "B5":fatturato*D("0.22"),
@@ -105,9 +106,14 @@ def valori_conto_corrente(client:Client,anno:dict,contributi_ap:D,fondo:D)->dict
         raise ValueError("Completa la gestione Enasarco monomandataria prima del prospetto.")
     costi = totali_annui_previsionali(client, anno["id"])
     iva, netto, ded = costi["iva"], costi["netto"], costi["deducibile"]
+    from oneri_annuali import carica_oneri
+    oneri = carica_oneri(client, anno)
+    netto += oneri["quota_beni"]
+    ded += oneri["quota_beni"]
+    fondo = oneri["fondo"]
     return calcola_conto_foglio(
         fatturato,iva,netto,ded,enasarco,contributi_ap,fondo,
-        detrazioni_anteprima_foglio(),p
+        oneri["totale_detrazioni"],p,oneri["altre"]
     )
 
 

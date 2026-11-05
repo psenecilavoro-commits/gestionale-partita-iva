@@ -102,7 +102,7 @@ def _crea_categoria(client, anno_id, codice):
     return r.data[0]
 
 
-def _tabella(categorie, stime, spese, impostazioni, km, *, totali_output=None):
+def _tabella(categorie, stime, spese, impostazioni, km, *, totali_output=None, dettaglio_output=None):
     per_cat = defaultdict(list)
     for spesa in spese:
         per_cat[spesa["category_id"]].append(spesa)
@@ -155,6 +155,22 @@ def _tabella(categorie, stime, spese, impostazioni, km, *, totali_output=None):
                 percentuale = f"{D(str(cat['cost_deductible_rate'])) * 100:g}%"
             else:
                 incompleti.add(codice)
+        elif tipo == "annuale" and righe:
+            # Imported invoices already live in costs: show them without creating
+            # a duplicate deduction. An explicit annual forecast takes precedence.
+            registrato = lordo = sum((D(str(r["gross_amount"])) for r in righe), D("0"))
+            iva = netto = deducibile = D("0")
+            for r in righe:
+                quota_iva, _det, quota_netto, quota_ded = _calcola(
+                    D(str(r["gross_amount"])), r, bool(r["amount_includes_vat"]))
+                iva += quota_iva
+                netto += quota_netto
+                deducibile += quota_ded
+            origine = "Spese registrate / fatture"
+            percentuale = "Da registrazioni"
+        if dettaglio_output is not None:
+            dettaglio_output.append({"codice": codice, "causale": cat["name"] if cat else nome,
+                "importo": lordo, "netto": netto, "deducibile": deducibile, "origine": origine})
         if lordo is not None:
             presenti += 1
             for chiave, importo in (("lordo", lordo), ("iva", iva), ("netto", netto), ("deducibile", deducibile)):
@@ -376,3 +392,10 @@ def mostra_tabella_costi(client: Client, anno: dict) -> None:
                 st.error("Eliminazione non confermata: controlla la tabella prima di riprovare.")
             else:
                 st.rerun()
+
+
+def dettaglio_annuo_previsionale(client, anno_id):
+    categorie, stime, spese, _veicoli, impostazioni, km = _leggi(client, anno_id)
+    righe = []
+    _tabella(categorie, stime, spese, impostazioni, km, dettaglio_output=righe)
+    return [r for r in righe if r["importo"] is not None]

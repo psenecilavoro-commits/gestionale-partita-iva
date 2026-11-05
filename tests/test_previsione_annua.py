@@ -39,7 +39,7 @@ class PrevisioneAnnua(unittest.TestCase):
                 revenues = [dict(principal_id='p',month=1,amount='10000'),dict(principal_id='p',month=2,amount='10000')]
                 with patch('costi_tabella._leggi',return_value=data), patch('conto_economico.leggi_parametri',return_value=params), \
                      patch('conto_economico.elenco_mandanti',return_value=[dict(id='p',name='Mandante',enasarco_relationship='plurimandatario')]), \
-                     patch('conto_economico.leggi_fatturato',return_value=revenues), patch('accantonamenti_confronto.st.session_state',{}):
+                     patch('conto_economico.leggi_fatturato',return_value=revenues), patch('accantonamenti_confronto.st.session_state',{}), patch('oneri_annuali.carica_oneri',return_value={'quota_beni':D('0'),'fondo':D('5300'),'totale_detrazioni':D('0'),'altre':D('0')}):
                     first = valori_conto_corrente(None,annual,D('8000'),D('5300'))
                     self.assertEqual(first['B1'],D('120000'))
                     self.assertEqual(first['COSTI_DEDUCIBILI'],D('2440'))

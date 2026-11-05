@@ -25,7 +25,7 @@ from database import create_fiscal_year, get_fiscal_year
 from gestione_anno import mostra_gestione_anno
 from fatture_acquisto_xml import mostra_importa_xml_acquisti
 from fatture_provvigioni import mostra_carica_fatture
-from sanitarie_unificate import mostra_detrazioni_unificate
+from oneri_annuali import mostra_oneri
 from interfaccia_operativa import (mostra_fatturato, mostra_imposte,
                                   mostra_auto as mostra_riepilogo_auto)
 from iva_anteprima import mostra_anteprima_iva
@@ -259,9 +259,7 @@ if scheda_detrazioni.open:
                 "gestiti nel prospetto forfettario dedicato."
             )
         else:
-            mostra_fondo_pensione_previsionale(fiscal_year)
-            mostra_detrazioni_unificate(client, fiscal_year)
-            mostra_pensione(client, fiscal_year)
+            mostra_oneri(client, fiscal_year)
 
 if scheda_ammortamenti.open:
     with scheda_ammortamenti:

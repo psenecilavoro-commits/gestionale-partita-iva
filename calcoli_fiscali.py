@@ -117,7 +117,8 @@ def parametri_irpef(p: dict[str, D]) -> dict[str, D]:
 
 def conto_previsionale(*, fatturato: D, costi_netti: D, costi_deducibili: D,
                        enasarco_stimato: D, contributi_irpef: D,
-                       pensione_deducibile: D, detrazioni: D, p: dict[str, D]) -> dict[str, D]:
+                       pensione_deducibile: D, detrazioni: D, p: dict[str, D],
+                       altre_deduzioni: D = D("0")) -> dict[str, D]:
     """Conto previsionale coerente con le regole concordate.
 
     Il netto economico sottrae l'INPS stimato e l'Enasarco stimato.
@@ -126,7 +127,7 @@ def conto_previsionale(*, fatturato: D, costi_netti: D, costi_deducibili: D,
     deducibile. Il fondo pensione non viene sottratto di nuovo dal netto.
     """
     _ok(fatturato, costi_netti, costi_deducibili, enasarco_stimato,
-        contributi_irpef, pensione_deducibile, detrazioni)
+        contributi_irpef, pensione_deducibile, detrazioni, altre_deduzioni)
     inps = calcola_inps_previsionale(
         fatturato, costi_deducibili,
         fisso=p["inps_fisso_foglio"], minimale=p["inps_minimale_foglio"],
@@ -136,7 +137,7 @@ def conto_previsionale(*, fatturato: D, costi_netti: D, costi_deducibili: D,
         massimale=p["inps_massimale_foglio"], agenti=parametri_agenti(p),
     )
     base_irpef = (inps["imponibile_inps"] - enasarco_stimato
-                  - contributi_irpef - pensione_deducibile)
+                  - contributi_irpef - pensione_deducibile - altre_deduzioni)
     imposte = calcola_irpef_da_base(base_irpef, **parametri_irpef(p))
     detrazioni_usate = min(detrazioni, imposte["imposte_lorde"])
     imposte_nette = imposte["imposte_lorde"] - detrazioni_usate
