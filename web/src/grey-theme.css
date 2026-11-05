@@ -112,3 +112,6 @@ tbody tr:hover,.revenue-sheet tbody tr:hover{background:#f0f4f5}.revenue-sheet t
 .cost-sheet td:not(.cost-readonly){background:#fcfdfc}.cost-sheet tbody tr:hover td:not(.cost-readonly){background:#f0f4f5}
 
 .auto-sheet tbody tr td.auto-readonly,.auto-sheet tbody tr:hover td.auto-readonly{background:#f2f5f6!important}
+
+/* Match the Fatturato row height without double padding inside editable cells. */
+.tax-sheet .cell-edit{padding:3px 0!important;margin:0;text-align:right;font-size:14px;line-height:1.45}
