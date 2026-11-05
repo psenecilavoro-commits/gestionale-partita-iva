@@ -196,6 +196,7 @@ def mostra_oneri(client,anno):
     righe=_visuale(dati['detrazioni'],{'Importo','Importo ammesso','Importo annuo'})
     righe.append({'Causale':'TOTALE','Importo':'','Importo ammesso':'','Rate':'','Anno spesa':'','N. rata':'','% detrazione':'','Importo annuo':dd._formato(dati['totale_detrazioni'])})
     st.dataframe(righe,hide_index=True,width='stretch',height='content')
+    st.caption('Le rate pluriennali avanzano automaticamente fino alla scadenza. Le spese a rata singola valgono solo nell’anno indicato e vanno reinserite ogni anno.')
     if anno['status']=='open':
         key=f"oneri_add_credit_{anno['id']}"
         if st.button('Aggiungi spesa detraibile',key=key):st.session_state[key+'_open']=True

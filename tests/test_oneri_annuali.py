@@ -16,6 +16,18 @@ class Oneri(unittest.TestCase):
   self.assertFalse(any(r['Importo']==D('5321') for r in rows28))
   self.assertFalse(any(r['Categoria']=='Spese sanitarie' for r in rows28))
   self.assertEqual(next(r for r in rows28 if r['Importo']==D('25815'))['N. rata'],10)
+ def test_installments_follow_calendar_not_page_visits_and_single_year_never_repeats(self):
+  single=dict(description='Mutuo',original_amount='500',credit_rate='.19',installment_count=1,first_fiscal_year=2030,notes=_nota('Mutuo'))
+  multiple=dict(description='Casa',original_amount='10000',credit_rate='.5',installment_count=3,first_fiscal_year=2030,notes=_nota('Casa'))
+  records=[single,multiple]
+  for year,expected in [(2029,[]),(2030,[('Casa',1),('Mutuo',1)]),(2032,[('Casa',3)]),(2033,[])]:
+   rows,_=calcola_detrazioni(records,year)
+   self.assertEqual(sorted((r['Causale'],r['N. rata']) for r in rows),expected)
+  self.assertEqual(len(records),2)
+  self.assertEqual(multiple['first_fiscal_year'],2030)
+  rows,_=calcola_detrazioni(records,2031)
+  self.assertEqual(rows[0]['N. rata'],2)
+
  def test_health_deductible_threshold_once_across_sources(self):
   base=dict(installment_count=1,first_fiscal_year=2030,credit_rate='.19')
   records=[dict(base,description='Visita',original_amount='100',notes=_nota('Spese sanitarie')),dict(base,description='Spese sanitarie · documenti caricati',original_amount='200',notes='')]
