@@ -101,15 +101,7 @@ function Nodes({nodes=[],values,onChange,onClick,onUpload,busy,editTable}){
     const start=nodes.findIndex(n=>n.kind==='subheader'&&n.label==='Registra o modifica le spese');
     const end=start>=0?nodes.findIndex((n,i)=>i>start&&n.kind==='divider'):-1;
     if(start>=0&&end>start){
-      const props={values,onChange,onClick,onUpload,busy,editTable};
-      return <>
-        <Nodes nodes={nodes.slice(0,start)} {...props}/>
-        <details className="auto-fuel-expander" key="auto-fuel-expander">
-          <summary>Registra carburante</summary>
-          <Nodes nodes={nodes.slice(start+1,end)} {...props}/>
-        </details>
-        <Nodes nodes={nodes.slice(end)} {...props}/>
-      </>;
+      nodes=[...nodes.slice(0,start),...nodes.slice(end+1)];
     }
   }
   return nodes.map(n=>{
