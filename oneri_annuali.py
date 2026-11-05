@@ -33,7 +33,7 @@ def categoria(r):
 
 def calcola_detrazioni(crediti, anno):
     righe, sanitario = [], D('0')
-    for r in crediti:
+    for r in sorted(crediti, key=lambda r:(int(metadati(r).get('riga_excel',999)), categoria(r), int(r['first_fiscal_year']), r['description'])):
         rate, primo = int(r['installment_count']), int(r['first_fiscal_year'])
         rata = dd._numero_rata(anno, primo, rate)
         if rata is None: continue
@@ -97,9 +97,18 @@ def carica_oneri(client, anno):
         fondo_presente=any(r['Categoria']=='Fondo pensione' for r in personali))
 
 def _visuale(righe, campi_denaro):
-    return [{k:dd._formato(v) if k in campi_denaro and v is not None else
-             ('—' if v is None else f'{v:g}%' if k=='% detrazione' else v)
-             for k,v in r.items()} for r in righe]
+    vista=[]
+    for r in righe:
+        cat, nome = r.get('Categoria',''), r.get('Causale','')
+        causale = cat if not nome or nome==cat else f'{cat} · {nome}'
+        v={'Causale':causale}
+        for k,valore in r.items():
+            if k in ('Categoria','Causale'): continue
+            v[k] = (dd._formato(valore) if k in campi_denaro and valore is not None else
+                    '—' if valore is None else
+                    format(valore.normalize(),'f').replace('.',',')+'%' if k=='% detrazione' else valore)
+        vista.append(v)
+    return vista
 
 def _nota(cat, **extra): return PREFIX+json.dumps({'categoria':cat,**extra},ensure_ascii=False)
 
@@ -132,6 +141,10 @@ def _form_detrazione(client,anno,record=None):
         percent=st.text_input('Percentuale detrazione (%)',value=str(D(str(r.get('credit_rate','.19')))*100))
         elimina=st.checkbox('Elimina questa detrazione') if r else False
         submit=st.form_submit_button('Salva detrazione')
+        annulla=st.form_submit_button('Annulla') if not r else False
+    if annulla:
+        st.session_state[f"oneri_add_credit_{anno['id']}_open"]=False
+        st.rerun()
     if submit:
         try:
             nome,valore=dd._validazione_voce(nome or cat,importo)
@@ -157,6 +170,10 @@ def _form_deduzione(client,anno,record=None):
         giorno=st.text_input('Data del pagamento (AAAA-MM-GG; facoltativa)',value=str(r.get('payment_date') or ''))
         elimina=st.checkbox('Elimina questa deduzione') if r else False
         submit=st.form_submit_button('Salva deduzione')
+        annulla=st.form_submit_button('Annulla') if not r else False
+    if annulla:
+        st.session_state[f"oneri_add_deduction_{anno['id']}_open"]=False
+        st.rerun()
     if submit:
         try:
             nome,valore=dd._validazione_voce(nome or cat,importo)
@@ -177,7 +194,7 @@ def mostra_oneri(client,anno):
         st.error('Impossibile leggere i registri: '+str(exc));return
     st.subheader('Detrazioni')
     righe=_visuale(dati['detrazioni'],{'Importo','Importo ammesso','Importo annuo'})
-    righe.append({'Categoria':'TOTALE','Causale':'','Importo':'','Importo ammesso':'','Rate':'','Anno spesa':'','N. rata':'','% detrazione':'','Importo annuo':dd._formato(dati['totale_detrazioni'])})
+    righe.append({'Causale':'TOTALE','Importo':'','Importo ammesso':'','Rate':'','Anno spesa':'','N. rata':'','% detrazione':'','Importo annuo':dd._formato(dati['totale_detrazioni'])})
     st.dataframe(righe,hide_index=True,width='stretch',height='content')
     if anno['status']=='open':
         key=f"oneri_add_credit_{anno['id']}"
@@ -201,7 +218,7 @@ def mostra_oneri(client,anno):
     tutte=[*personali,*fonti,*dati['ammortamenti']]
     tot=sum((r['Quota deducibile'] for r in tutte if r['Quota deducibile'] is not None),D('0'))
     vista=_visuale(tutte,{'Importo','Quota deducibile'})
-    vista.append({'Categoria':'TOTALE','Causale':'','Anno':year,'Importo':'','Quota deducibile':'Da completare' if any(r['Quota deducibile'] is None for r in tutte) else dd._formato(tot),'Origine':''})
+    vista.append({'Causale':'TOTALE','Anno':year,'Importo':'','Quota deducibile':'Da completare' if any(r['Quota deducibile'] is None for r in tutte) else dd._formato(tot),'Origine':''})
     st.dataframe(vista,hide_index=True,width='stretch',height='content')
     if anno['status']=='open':
         key=f"oneri_add_deduction_{anno['id']}"
