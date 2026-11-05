@@ -16,12 +16,14 @@ from accantonamenti import leggi_accantonamenti
 from accantonamenti_completi import leggi_provvigioni_nette
 from fatturato import MESI, NOTA_TEST, euro, leggi_fatturato
 from iva_acquisti import leggi_fatture_iva, riepilogo_acquisti_iva
-from iva_anteprima import iva_vendite_foglio
+from accantonamenti_iva import calcola_saldi_mensili, iva_vendite_mensile
 
 D = Decimal
 
 # Le chiavi interne rimangono invariate per compatibilita' con test e import.
 ETICHETTE_UI = {
+    "Provvigioni nette": "Provvigioni nette IVA inclusa",
+    "Differenza IVA · ipotesi (NON dovuta)": "Saldo IVA calcolato",
     "IVA vendite · 22% foglio (SIMULAZIONE)": "IVA vendite · ipotesi 22%",
     "Netto foglio · ipotesi (NON disponibile)": "Netto teorico · NON disponibile",
 }
@@ -58,7 +60,8 @@ def costruisci_quadro(fatturati: list[dict], nette: list[dict],
     provvigioni = _per_mese_unico(nette, "amount")
     riserve = _per_mese_unico(accantonamenti, "reserved_amount")
     acquisti = riepilogo_acquisti_iva(fatture, anno)
-    iva_vendite = iva_vendite_foglio(fatturati)
+    iva_vendite = iva_vendite_mensile(fatturati)
+    saldi_iva = calcola_saldi_mensili(fatturati, fatture, anno)
     prova = {int(r["month"]) for r in fatturati if r.get("notes") == NOTA_TEST}
     righe = []
     controlli = []
@@ -69,7 +72,7 @@ def costruisci_quadro(fatturati: list[dict], nette: list[dict],
         iva_fatturata = iva_vendite.get(mese)
         iva_acquisti = ((documenti["auto"] + documenti["altro"])
                        if documenti is not None else None)
-        differenza_iva = ((iva_fatturata - iva_acquisti)
+        differenza_iva = (saldi_iva[mese]["debito"]
                          if iva_fatturata is not None and iva_acquisti is not None else None)
         simulazione_netto = ((netta - riserva - differenza_iva)
                             if netta is not None and riserva is not None

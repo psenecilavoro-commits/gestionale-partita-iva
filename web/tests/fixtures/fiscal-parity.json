@@ -1221,86 +1221,86 @@
         {
           "Mese": "Gennaio",
           "Fatturato IVA esclusa": "4.500,00 €",
-          "Provvigioni nette · manuale": "3.900,00 €",
+          "Provvigioni nette IVA inclusa": "3.900,00 €",
           "Accantonato · manuale": "600,00 €",
-          "Provv. nette − accantonato · prima IVA": "3.300,00 €"
+          "Provvigioni nette - accantonato": "2.310,00 €"
         },
         {
           "Mese": "Febbraio",
           "Fatturato IVA esclusa": "4.500,00 €",
-          "Provvigioni nette · manuale": "3.900,00 €",
+          "Provvigioni nette IVA inclusa": "3.900,00 €",
           "Accantonato · manuale": "600,00 €",
-          "Provv. nette − accantonato · prima IVA": "3.300,00 €"
+          "Provvigioni nette - accantonato": "2.310,00 €"
         },
         {
           "Mese": "Marzo",
           "Fatturato IVA esclusa": "4.500,00 €",
-          "Provvigioni nette · manuale": "3.900,00 €",
+          "Provvigioni nette IVA inclusa": "3.900,00 €",
           "Accantonato · manuale": "600,00 €",
-          "Provv. nette − accantonato · prima IVA": "3.300,00 €"
+          "Provvigioni nette - accantonato": "2.310,00 €"
         },
         {
           "Mese": "Aprile",
           "Fatturato IVA esclusa": "4.500,00 €",
-          "Provvigioni nette · manuale": "3.900,00 €",
+          "Provvigioni nette IVA inclusa": "3.900,00 €",
           "Accantonato · manuale": "600,00 €",
-          "Provv. nette − accantonato · prima IVA": "3.300,00 €"
+          "Provvigioni nette - accantonato": "2.310,00 €"
         },
         {
           "Mese": "Maggio",
           "Fatturato IVA esclusa": "4.500,00 €",
-          "Provvigioni nette · manuale": "3.900,00 €",
+          "Provvigioni nette IVA inclusa": "3.900,00 €",
           "Accantonato · manuale": "600,00 €",
-          "Provv. nette − accantonato · prima IVA": "3.300,00 €"
+          "Provvigioni nette - accantonato": "2.310,00 €"
         },
         {
           "Mese": "Giugno",
           "Fatturato IVA esclusa": "4.500,00 €",
-          "Provvigioni nette · manuale": "3.900,00 €",
+          "Provvigioni nette IVA inclusa": "3.900,00 €",
           "Accantonato · manuale": "600,00 €",
-          "Provv. nette − accantonato · prima IVA": "3.300,00 €"
+          "Provvigioni nette - accantonato": "2.310,00 €"
         },
         {
           "Mese": "Luglio",
           "Fatturato IVA esclusa": "4.500,00 €",
-          "Provvigioni nette · manuale": "3.900,00 €",
+          "Provvigioni nette IVA inclusa": "3.900,00 €",
           "Accantonato · manuale": "600,00 €",
-          "Provv. nette − accantonato · prima IVA": "3.300,00 €"
+          "Provvigioni nette - accantonato": "2.310,00 €"
         },
         {
           "Mese": "Agosto",
           "Fatturato IVA esclusa": "4.500,00 €",
-          "Provvigioni nette · manuale": "3.900,00 €",
+          "Provvigioni nette IVA inclusa": "3.900,00 €",
           "Accantonato · manuale": "600,00 €",
-          "Provv. nette − accantonato · prima IVA": "3.300,00 €"
+          "Provvigioni nette - accantonato": "2.310,00 €"
         },
         {
           "Mese": "Settembre",
           "Fatturato IVA esclusa": "—",
-          "Provvigioni nette · manuale": "—",
+          "Provvigioni nette IVA inclusa": "—",
           "Accantonato · manuale": "—",
-          "Provv. nette − accantonato · prima IVA": "—"
+          "Provvigioni nette - accantonato": "—"
         },
         {
           "Mese": "Ottobre",
           "Fatturato IVA esclusa": "—",
-          "Provvigioni nette · manuale": "—",
+          "Provvigioni nette IVA inclusa": "—",
           "Accantonato · manuale": "—",
-          "Provv. nette − accantonato · prima IVA": "—"
+          "Provvigioni nette - accantonato": "—"
         },
         {
           "Mese": "Novembre",
           "Fatturato IVA esclusa": "—",
-          "Provvigioni nette · manuale": "—",
+          "Provvigioni nette IVA inclusa": "—",
           "Accantonato · manuale": "—",
-          "Provv. nette − accantonato · prima IVA": "—"
+          "Provvigioni nette - accantonato": "—"
         },
         {
           "Mese": "Dicembre",
           "Fatturato IVA esclusa": "—",
-          "Provvigioni nette · manuale": "—",
+          "Provvigioni nette IVA inclusa": "—",
           "Accantonato · manuale": "—",
-          "Provv. nette − accantonato · prima IVA": "—"
+          "Provvigioni nette - accantonato": "—"
         }
       ]
     },
@@ -1312,7 +1312,7 @@
     {
       "kind": "metric",
       "label": "Netto annuo",
-      "value": "26.400,00 €"
+      "value": "18.480,00 €"
     },
     {
       "kind": "metric",
@@ -1518,121 +1518,121 @@
         {
           "Mese": "Gennaio",
           "Fatturato senza IVA": "4.500,00 €",
-          "Provvigioni nette": "3.900,00 €",
+          "Provvigioni nette IVA inclusa": "3.900,00 €",
           "Accantonato": "600,00 €",
           "IVA vendite · ipotesi 22%": "990,00 €",
           "IVA acquisti registrata (PARZIALE)": "—",
-          "Differenza IVA · ipotesi (NON dovuta)": "—",
+          "Saldo IVA calcolato": "—",
           "Netto teorico · NON disponibile": "—"
         },
         {
           "Mese": "Febbraio",
           "Fatturato senza IVA": "4.500,00 €",
-          "Provvigioni nette": "3.900,00 €",
+          "Provvigioni nette IVA inclusa": "3.900,00 €",
           "Accantonato": "600,00 €",
           "IVA vendite · ipotesi 22%": "990,00 €",
           "IVA acquisti registrata (PARZIALE)": "—",
-          "Differenza IVA · ipotesi (NON dovuta)": "—",
+          "Saldo IVA calcolato": "—",
           "Netto teorico · NON disponibile": "—"
         },
         {
           "Mese": "Marzo",
           "Fatturato senza IVA": "4.500,00 €",
-          "Provvigioni nette": "3.900,00 €",
+          "Provvigioni nette IVA inclusa": "3.900,00 €",
           "Accantonato": "600,00 €",
           "IVA vendite · ipotesi 22%": "990,00 €",
           "IVA acquisti registrata (PARZIALE)": "—",
-          "Differenza IVA · ipotesi (NON dovuta)": "—",
+          "Saldo IVA calcolato": "—",
           "Netto teorico · NON disponibile": "—"
         },
         {
           "Mese": "Aprile",
           "Fatturato senza IVA": "4.500,00 €",
-          "Provvigioni nette": "3.900,00 €",
+          "Provvigioni nette IVA inclusa": "3.900,00 €",
           "Accantonato": "600,00 €",
           "IVA vendite · ipotesi 22%": "990,00 €",
           "IVA acquisti registrata (PARZIALE)": "—",
-          "Differenza IVA · ipotesi (NON dovuta)": "—",
+          "Saldo IVA calcolato": "—",
           "Netto teorico · NON disponibile": "—"
         },
         {
           "Mese": "Maggio",
           "Fatturato senza IVA": "4.500,00 €",
-          "Provvigioni nette": "3.900,00 €",
+          "Provvigioni nette IVA inclusa": "3.900,00 €",
           "Accantonato": "600,00 €",
           "IVA vendite · ipotesi 22%": "990,00 €",
           "IVA acquisti registrata (PARZIALE)": "—",
-          "Differenza IVA · ipotesi (NON dovuta)": "—",
+          "Saldo IVA calcolato": "—",
           "Netto teorico · NON disponibile": "—"
         },
         {
           "Mese": "Giugno",
           "Fatturato senza IVA": "4.500,00 €",
-          "Provvigioni nette": "3.900,00 €",
+          "Provvigioni nette IVA inclusa": "3.900,00 €",
           "Accantonato": "600,00 €",
           "IVA vendite · ipotesi 22%": "990,00 €",
           "IVA acquisti registrata (PARZIALE)": "—",
-          "Differenza IVA · ipotesi (NON dovuta)": "—",
+          "Saldo IVA calcolato": "—",
           "Netto teorico · NON disponibile": "—"
         },
         {
           "Mese": "Luglio",
           "Fatturato senza IVA": "4.500,00 €",
-          "Provvigioni nette": "3.900,00 €",
+          "Provvigioni nette IVA inclusa": "3.900,00 €",
           "Accantonato": "600,00 €",
           "IVA vendite · ipotesi 22%": "990,00 €",
           "IVA acquisti registrata (PARZIALE)": "—",
-          "Differenza IVA · ipotesi (NON dovuta)": "—",
+          "Saldo IVA calcolato": "—",
           "Netto teorico · NON disponibile": "—"
         },
         {
           "Mese": "Agosto",
           "Fatturato senza IVA": "4.500,00 €",
-          "Provvigioni nette": "3.900,00 €",
+          "Provvigioni nette IVA inclusa": "3.900,00 €",
           "Accantonato": "600,00 €",
           "IVA vendite · ipotesi 22%": "990,00 €",
           "IVA acquisti registrata (PARZIALE)": "—",
-          "Differenza IVA · ipotesi (NON dovuta)": "—",
+          "Saldo IVA calcolato": "—",
           "Netto teorico · NON disponibile": "—"
         },
         {
           "Mese": "Settembre",
           "Fatturato senza IVA": "—",
-          "Provvigioni nette": "—",
+          "Provvigioni nette IVA inclusa": "—",
           "Accantonato": "—",
           "IVA vendite · ipotesi 22%": "—",
           "IVA acquisti registrata (PARZIALE)": "—",
-          "Differenza IVA · ipotesi (NON dovuta)": "—",
+          "Saldo IVA calcolato": "—",
           "Netto teorico · NON disponibile": "—"
         },
         {
           "Mese": "Ottobre",
           "Fatturato senza IVA": "—",
-          "Provvigioni nette": "—",
+          "Provvigioni nette IVA inclusa": "—",
           "Accantonato": "—",
           "IVA vendite · ipotesi 22%": "—",
           "IVA acquisti registrata (PARZIALE)": "—",
-          "Differenza IVA · ipotesi (NON dovuta)": "—",
+          "Saldo IVA calcolato": "—",
           "Netto teorico · NON disponibile": "—"
         },
         {
           "Mese": "Novembre",
           "Fatturato senza IVA": "—",
-          "Provvigioni nette": "—",
+          "Provvigioni nette IVA inclusa": "—",
           "Accantonato": "—",
           "IVA vendite · ipotesi 22%": "—",
           "IVA acquisti registrata (PARZIALE)": "—",
-          "Differenza IVA · ipotesi (NON dovuta)": "—",
+          "Saldo IVA calcolato": "—",
           "Netto teorico · NON disponibile": "—"
         },
         {
           "Mese": "Dicembre",
           "Fatturato senza IVA": "—",
-          "Provvigioni nette": "—",
+          "Provvigioni nette IVA inclusa": "—",
           "Accantonato": "—",
           "IVA vendite · ipotesi 22%": "—",
           "IVA acquisti registrata (PARZIALE)": "—",
-          "Differenza IVA · ipotesi (NON dovuta)": "—",
+          "Saldo IVA calcolato": "—",
           "Netto teorico · NON disponibile": "—"
         }
       ]
@@ -1719,7 +1719,7 @@
       "file_name": "quadro_mensile_2027.csv",
       "mime": "text/csv",
       "data": {
-        "base64": "77u/Ik1lc2UiOyJGYXR0dXJhdG8gc2VuemEgSVZBIjsiUHJvdnZpZ2lvbmkgbmV0dGUiOyJBY2NhbnRvbmF0byI7IklWQSB2ZW5kaXRlIMK3IGlwb3Rlc2kgMjIlIjsiSVZBIGFjcXVpc3RpIHJlZ2lzdHJhdGEgKFBBUlpJQUxFKSI7IkRpZmZlcmVuemEgSVZBIMK3IGlwb3Rlc2kgKE5PTiBkb3Z1dGEpIjsiTmV0dG8gdGVvcmljbyDCtyBOT04gZGlzcG9uaWJpbGUiDQoiR2VubmFpbyI7IjQuNTAwLDAwIOKCrCI7IjMuOTAwLDAwIOKCrCI7IjYwMCwwMCDigqwiOyI5OTAsMDAg4oKsIjsi4oCUIjsi4oCUIjsi4oCUIg0KIkZlYmJyYWlvIjsiNC41MDAsMDAg4oKsIjsiMy45MDAsMDAg4oKsIjsiNjAwLDAwIOKCrCI7Ijk5MCwwMCDigqwiOyLigJQiOyLigJQiOyLigJQiDQoiTWFyem8iOyI0LjUwMCwwMCDigqwiOyIzLjkwMCwwMCDigqwiOyI2MDAsMDAg4oKsIjsiOTkwLDAwIOKCrCI7IuKAlCI7IuKAlCI7IuKAlCINCiJBcHJpbGUiOyI0LjUwMCwwMCDigqwiOyIzLjkwMCwwMCDigqwiOyI2MDAsMDAg4oKsIjsiOTkwLDAwIOKCrCI7IuKAlCI7IuKAlCI7IuKAlCINCiJNYWdnaW8iOyI0LjUwMCwwMCDigqwiOyIzLjkwMCwwMCDigqwiOyI2MDAsMDAg4oKsIjsiOTkwLDAwIOKCrCI7IuKAlCI7IuKAlCI7IuKAlCINCiJHaXVnbm8iOyI0LjUwMCwwMCDigqwiOyIzLjkwMCwwMCDigqwiOyI2MDAsMDAg4oKsIjsiOTkwLDAwIOKCrCI7IuKAlCI7IuKAlCI7IuKAlCINCiJMdWdsaW8iOyI0LjUwMCwwMCDigqwiOyIzLjkwMCwwMCDigqwiOyI2MDAsMDAg4oKsIjsiOTkwLDAwIOKCrCI7IuKAlCI7IuKAlCI7IuKAlCINCiJBZ29zdG8iOyI0LjUwMCwwMCDigqwiOyIzLjkwMCwwMCDigqwiOyI2MDAsMDAg4oKsIjsiOTkwLDAwIOKCrCI7IuKAlCI7IuKAlCI7IuKAlCINCiJTZXR0ZW1icmUiOyLigJQiOyLigJQiOyLigJQiOyLigJQiOyLigJQiOyLigJQiOyLigJQiDQoiT3R0b2JyZSI7IuKAlCI7IuKAlCI7IuKAlCI7IuKAlCI7IuKAlCI7IuKAlCI7IuKAlCINCiJOb3ZlbWJyZSI7IuKAlCI7IuKAlCI7IuKAlCI7IuKAlCI7IuKAlCI7IuKAlCI7IuKAlCINCiJEaWNlbWJyZSI7IuKAlCI7IuKAlCI7IuKAlCI7IuKAlCI7IuKAlCI7IuKAlCI7IuKAlCINCg=="
+        "base64": "77u/Ik1lc2UiOyJGYXR0dXJhdG8gc2VuemEgSVZBIjsiUHJvdnZpZ2lvbmkgbmV0dGUgSVZBIGluY2x1c2EiOyJBY2NhbnRvbmF0byI7IklWQSB2ZW5kaXRlIMK3IGlwb3Rlc2kgMjIlIjsiSVZBIGFjcXVpc3RpIHJlZ2lzdHJhdGEgKFBBUlpJQUxFKSI7IlNhbGRvIElWQSBjYWxjb2xhdG8iOyJOZXR0byB0ZW9yaWNvIMK3IE5PTiBkaXNwb25pYmlsZSINCiJHZW5uYWlvIjsiNC41MDAsMDAg4oKsIjsiMy45MDAsMDAg4oKsIjsiNjAwLDAwIOKCrCI7Ijk5MCwwMCDigqwiOyLigJQiOyLigJQiOyLigJQiDQoiRmViYnJhaW8iOyI0LjUwMCwwMCDigqwiOyIzLjkwMCwwMCDigqwiOyI2MDAsMDAg4oKsIjsiOTkwLDAwIOKCrCI7IuKAlCI7IuKAlCI7IuKAlCINCiJNYXJ6byI7IjQuNTAwLDAwIOKCrCI7IjMuOTAwLDAwIOKCrCI7IjYwMCwwMCDigqwiOyI5OTAsMDAg4oKsIjsi4oCUIjsi4oCUIjsi4oCUIg0KIkFwcmlsZSI7IjQuNTAwLDAwIOKCrCI7IjMuOTAwLDAwIOKCrCI7IjYwMCwwMCDigqwiOyI5OTAsMDAg4oKsIjsi4oCUIjsi4oCUIjsi4oCUIg0KIk1hZ2dpbyI7IjQuNTAwLDAwIOKCrCI7IjMuOTAwLDAwIOKCrCI7IjYwMCwwMCDigqwiOyI5OTAsMDAg4oKsIjsi4oCUIjsi4oCUIjsi4oCUIg0KIkdpdWdubyI7IjQuNTAwLDAwIOKCrCI7IjMuOTAwLDAwIOKCrCI7IjYwMCwwMCDigqwiOyI5OTAsMDAg4oKsIjsi4oCUIjsi4oCUIjsi4oCUIg0KIkx1Z2xpbyI7IjQuNTAwLDAwIOKCrCI7IjMuOTAwLDAwIOKCrCI7IjYwMCwwMCDigqwiOyI5OTAsMDAg4oKsIjsi4oCUIjsi4oCUIjsi4oCUIg0KIkFnb3N0byI7IjQuNTAwLDAwIOKCrCI7IjMuOTAwLDAwIOKCrCI7IjYwMCwwMCDigqwiOyI5OTAsMDAg4oKsIjsi4oCUIjsi4oCUIjsi4oCUIg0KIlNldHRlbWJyZSI7IuKAlCI7IuKAlCI7IuKAlCI7IuKAlCI7IuKAlCI7IuKAlCI7IuKAlCINCiJPdHRvYnJlIjsi4oCUIjsi4oCUIjsi4oCUIjsi4oCUIjsi4oCUIjsi4oCUIjsi4oCUIg0KIk5vdmVtYnJlIjsi4oCUIjsi4oCUIjsi4oCUIjsi4oCUIjsi4oCUIjsi4oCUIjsi4oCUIg0KIkRpY2VtYnJlIjsi4oCUIjsi4oCUIjsi4oCUIjsi4oCUIjsi4oCUIjsi4oCUIjsi4oCUIg0K"
       }
     },
     {

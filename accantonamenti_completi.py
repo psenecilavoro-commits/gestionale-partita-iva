@@ -58,7 +58,7 @@ def _ricavi_per_mese(fatturati: list[dict]) -> dict[int, Decimal]:
 
 
 def calcola_tabella_completa(fatturati: list[dict], riserve: list[dict],
-                             nette: list[dict]) -> tuple[list[dict], Decimal, Decimal, Decimal, int]:
+                             nette: list[dict], iva_mensile: dict | None = None) -> tuple[list[dict], Decimal, Decimal, Decimal, int]:
     """Non inventa zeri per mesi privi di registrazioni."""
     ricavi = _ricavi_per_mese(fatturati)
     per_riserva: dict[int, Decimal] = {}
@@ -80,15 +80,20 @@ def calcola_tabella_completa(fatturati: list[dict], riserve: list[dict],
         netta = per_nette.get(mese)
         riserva = per_riserva.get(mese)
         diff = netta - riserva if netta is not None and riserva is not None else None
+        if iva_mensile is not None:
+            saldo = iva_mensile.get(mese, {}).get('debito')
+            if saldo is None: diff = None
+            elif not saldo.is_finite() or saldo < 0: raise ValueError('Saldo IVA mensile non valido.')
+            elif diff is not None: diff -= saldo
         if diff is not None:
             parziale += diff
             completi += 1
         righe.append({
             "Mese": nome,
             "Fatturato IVA esclusa": euro(fatturato) if fatturato is not None else "—",
-            "Provvigioni nette · manuale": euro(netta) if netta is not None else "—",
+            ("Provvigioni nette IVA inclusa" if iva_mensile is not None else "Provvigioni nette · manuale"): euro(netta) if netta is not None else "—",
             "Accantonato · manuale": euro(riserva) if riserva is not None else "—",
-            "Provv. nette − accantonato · prima IVA": euro(diff) if diff is not None else "—",
+            ("Provvigioni nette - accantonato" if iva_mensile is not None else "Provv. nette − accantonato · prima IVA"): euro(diff) if diff is not None else "—",
         })
     return (righe, sum(per_nette.values(), Decimal("0")),
             sum(per_riserva.values(), Decimal("0")), parziale, completi)
@@ -129,9 +134,18 @@ def mostra_accantonamenti(client: Client, anno: dict) -> None:
                      "Non inserire valori finché l'accesso non è ripristinato.")
     if any(r.get("notes") == NOTA_TEST for r in fatturati):
         st.warning("Il Fatturato contiene dati di prova; non sono provvigioni nette reali.")
+    iva_mensile=None
+    if int(anno['fiscal_year']) != 2026:
+        from accantonamenti_iva import calcola_saldi_mensili
+        from iva_acquisti import leggi_fatture_iva
+        try:
+            iva_mensile=calcola_saldi_mensili(fatturati,leggi_fatture_iva(client,anno['id']),int(anno['fiscal_year']))
+        except Exception:
+            iva_mensile={}
+            st.error('Saldo IVA non disponibile: il netto resta da completare finché il registro IVA acquisti non è leggibile.')
     try:
         tabella, totale_nette, totale_riserve, residuo_parziale, completi = calcola_tabella_completa(
-            fatturati, riserve, nette,
+            fatturati, riserve, nette, iva_mensile,
         )
     except (ValueError, ArithmeticError):
         st.error("La tabella contiene mesi duplicati o importi non validi. Nessun dato modificato.")
@@ -151,11 +165,10 @@ def mostra_accantonamenti(client: Client, anno: dict) -> None:
             "non viene costruita una liquidazione IVA ordinaria."
         )
     else:
-        st.caption(f"Mesi con nette e accantonamenti compilati: {completi}/12. "
-                   "La differenza è PRIMA dell'IVA dovuta e non rappresenta il netto disponibile. "
-                   "Un mese vuoto non equivale a zero; annotare un accantonamento non sposta denaro.")
-        st.info("Il netto mensile ipotetico è visibile nel quadro mensile, ma non rappresenta "
-                "il denaro disponibile. Le liquidazioni IVA documentali sono separate e da verificare.")
+        st.caption(f"Mesi con incasso, accantonamento e saldo IVA calcolabili: {completi}/12. "
+                   "Netto = bonifico ricevuto − accantonato − saldo IVA. Le spese restano nel Conto economico.")
+        st.caption("IVA mensile dal fatturato al 22% e dall’IVA detraibile registrata: il credito eccedente resta a riporto, non diventa un incasso. "
+                   "I crediti iniziali, le rettifiche e gli interessi delle liquidazioni restano separati; completa i mesi mancanti per ricostruire i riporti.")
     if anno["status"] != "open":
         st.info("Anno chiuso: dati in sola lettura.")
         return

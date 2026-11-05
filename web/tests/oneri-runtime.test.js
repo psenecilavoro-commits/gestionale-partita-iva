@@ -36,4 +36,6 @@ test('two ledgers save category/year/rates and pension once, persist across page
  tables.fiscal_years.push({...fy,id:'future',fiscal_year:2028,status:'open'});
  r=render({anno_fiscale_selezionato:2028,schede_principali:'Detrazioni e deduzioni'});assert.equal(r.mutations.length,0);
  assert.ok(!JSON.stringify(r.tree).includes('73,70'));
+ assert.ok(!flat(r.tree).some(n=>n.kind==='expander'&&n.label==='Modifica o elimina una detrazione'));
+ assert.equal(tables.tax_credits.length,1);
 });

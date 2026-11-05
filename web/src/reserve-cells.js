@@ -1,14 +1,14 @@
 const MONTHS=['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
 export const RESERVE_LABELS={'Provvigioni nette · manuale':'Provvigioni nette','Accantonato · manuale':'Accantonato','Provv. nette − accantonato · prima IVA':'Provvigioni nette - accantonato'};
 export function reserveCell(records,column,index,tables,year){
- if(records.length!==12||!records.every((r,i)=>r.Mese===MONTHS[i]&&Object.hasOwn(r,'Accantonato · manuale')&&Object.hasOwn(r,'Provvigioni nette · manuale')))return null;
- const type=column==='Accantonato · manuale'?['monthly_reserves','reserved_amount','Accantonato']:column==='Provvigioni nette · manuale'?['monthly_net_commissions','amount','Provvigioni nette']:null;
+ if(records.length!==12||!records.every((r,i)=>r.Mese===MONTHS[i]&&Object.hasOwn(r,'Accantonato · manuale')&&(Object.hasOwn(r,'Provvigioni nette · manuale')||Object.hasOwn(r,'Provvigioni nette IVA inclusa'))))return null;
+ const type=column==='Accantonato · manuale'?['monthly_reserves','reserved_amount','Accantonato']:['Provvigioni nette · manuale','Provvigioni nette IVA inclusa'].includes(column)?['monthly_net_commissions','amount','Provvigioni nette']:null;
  if(!type)return null;
  const years=(tables?.fiscal_years||[]).filter(f=>Number(f.fiscal_year)===Number(year));
  if(years.length!==1||!Array.isArray(tables[type[0]]))return null;
  const fy=years[0],month=index+1,rows=tables[type[0]].filter(r=>r.fiscal_year_id===fy.id&&Number(r.month)===month);
  if(rows.length>1)return null;
- return {kind:'reserve',table:type[0],field:type[1],name:type[2],year:Number(year),yearId:fy.id,month,monthName:MONTHS[index],record:rows[0]||null,editable:fy.status==='open'};
+ return {kind:'reserve',table:type[0],field:type[1],name:type[0]==='monthly_net_commissions'&&Number(year)!==2026?'Provvigioni nette IVA inclusa':type[2],year:Number(year),yearId:fy.id,month,monthName:MONTHS[index],record:rows[0]||null,editable:fy.status==='open'};
 }
 export function reserveMutation(cell,tables,value){
  if(!(tables.fiscal_years||[]).some(f=>f.id===cell.yearId&&f.status==='open'))throw Error('Anno chiuso: importi in sola lettura.');

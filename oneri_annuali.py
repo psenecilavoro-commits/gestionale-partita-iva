@@ -201,7 +201,7 @@ def mostra_oneri(client,anno):
         key=f"oneri_add_credit_{anno['id']}"
         if st.button('Aggiungi spesa detraibile',key=key):st.session_state[key+'_open']=True
         if st.session_state.get(key+'_open'):_form_detrazione(client,anno)
-        modificabili=[r for r in dati['crediti'] if r['description']!=SANITARIE_DOCUMENTI]
+        modificabili=[r for r in dati['crediti'] if r['description']!=SANITARIE_DOCUMENTI and dd._numero_rata(year,int(r['first_fiscal_year']),int(r['installment_count'])) is not None]
         if modificabili:
             with st.expander('Modifica o elimina una detrazione'):
                 opzioni={f"{r['description']} · {r['first_fiscal_year']} · {r['id'][:8]}":r for r in modificabili}
@@ -231,4 +231,4 @@ def mostra_oneri(client,anno):
                 opzioni={f"{r['description']} · {r['id'][:8]}":r for r in modificabili}
                 scelta=st.selectbox('Deduzione da modificare',list(opzioni),key=f'oneri_deduction_choice_{year}')
                 _form_deduzione(client,anno,opzioni[scelta])
-    st.caption('Costi e ammortamenti si aggiornano dalle rispettive schede e dalle fatture importate. Le rate scadute restano nello storico.')
+    st.caption('Costi e ammortamenti si aggiornano dalle rispettive schede e dalle fatture importate.')
