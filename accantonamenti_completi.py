@@ -137,10 +137,9 @@ def mostra_accantonamenti(client: Client, anno: dict) -> None:
         st.error("La tabella contiene mesi duplicati o importi non validi. Nessun dato modificato.")
         return
     st.dataframe(tabella, hide_index=True, width="stretch", height="content")
-    c1, c2, c3 = st.columns(3)
-    c1.metric("Provvigioni nette inserite", euro(totale_nette) if nette_disponibili else "—")
-    c2.metric("Accantonamenti annotati", euro(totale_riserve))
-    c3.metric("Differenza parziale · mesi completi", euro(residuo_parziale) if nette_disponibili and completi else "—")
+    c1, c2 = st.columns(2)
+    c1.metric("Accantonamenti annotati", euro(totale_riserve))
+    c2.metric("Netto annuo", euro(residuo_parziale) if nette_disponibili and completi else "—")
     if int(anno["fiscal_year"]) == 2026:
         st.caption(
             f"Mesi con nette e accantonamenti compilati: {completi}/12. "

@@ -483,17 +483,12 @@
     },
     {
       "kind": "metric",
-      "label": "Provvigioni nette inserite",
-      "value": "31.200,00 €"
-    },
-    {
-      "kind": "metric",
       "label": "Accantonamenti annotati",
       "value": "4.800,00 €"
     },
     {
       "kind": "metric",
-      "label": "Differenza parziale · mesi completi",
+      "label": "Netto annuo",
       "value": "26.400,00 €"
     },
     {
@@ -1311,17 +1306,12 @@
     },
     {
       "kind": "metric",
-      "label": "Provvigioni nette inserite",
-      "value": "31.200,00 €"
-    },
-    {
-      "kind": "metric",
       "label": "Accantonamenti annotati",
       "value": "4.800,00 €"
     },
     {
       "kind": "metric",
-      "label": "Differenza parziale · mesi completi",
+      "label": "Netto annuo",
       "value": "26.400,00 €"
     },
     {
