@@ -141,7 +141,7 @@ def _form_detrazione(client,anno,record=None):
         percent=st.text_input('Percentuale detrazione (%)',value=str(D(str(r.get('credit_rate','.19')))*100))
         elimina=st.checkbox('Elimina questa detrazione') if r else False
         submit=st.form_submit_button('Salva detrazione')
-        annulla=st.form_submit_button('Annulla') if not r else False
+        annulla=st.form_submit_button('Annulla',key=f"oneri_cancel_credit_{anno['id']}") if not r else False
     if annulla:
         st.session_state[f"oneri_add_credit_{anno['id']}_open"]=False
         st.rerun()
@@ -170,7 +170,7 @@ def _form_deduzione(client,anno,record=None):
         giorno=st.text_input('Data del pagamento (AAAA-MM-GG; facoltativa)',value=str(r.get('payment_date') or ''))
         elimina=st.checkbox('Elimina questa deduzione') if r else False
         submit=st.form_submit_button('Salva deduzione')
-        annulla=st.form_submit_button('Annulla') if not r else False
+        annulla=st.form_submit_button('Annulla',key=f"oneri_cancel_deduction_{anno['id']}") if not r else False
     if annulla:
         st.session_state[f"oneri_add_deduction_{anno['id']}_open"]=False
         st.rerun()

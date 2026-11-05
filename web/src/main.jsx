@@ -189,6 +189,8 @@ function App(){
       if(!tables.current)await load();
       const evaluate=()=>new Promise((resolve,reject)=>{const id=++seq.current;pending.current.set(id,{resolve,reject});worker.current.postMessage({id,request:{tables:tables.current,user,event,inputs}});});
       let next=await evaluate();
+      // A ledger cancel changes only Python UI state and requests a fresh view.
+      if(event?.startsWith('oneri_cancel_')){inputs=next.inputs;event=null;next=await evaluate();}
       const forceFuel=async current=>{
         const autoKey=Object.keys(current?.inputs||{}).find(key=>key.startsWith('auto_tipo_'));
         const page=current?.inputs?.schede_principali??inputs?.schede_principali;

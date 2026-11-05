@@ -25,6 +25,11 @@ test('two ledgers save category/year/rates and pension once, persist across page
  assert.ok(r.mutations.some(m=>m.table==='tax_deductions'&&m.payload.amount==='5300'));tables=r.tables;
  r=render({anno_fiscale_selezionato:2027,schede_principali:'Conto economico'});
  assert.ok(JSON.stringify(r.tree).includes('5.300,00'));assert.ok(JSON.stringify(r.tree).includes('73,70'));
+ r=render({anno_fiscale_selezionato:2027,schede_principali:'Detrazioni e deduzioni'});
+ r=render(r.inputs,flat(r.tree).find(n=>n.label==='Aggiungi spesa detraibile').key);
+ const cancel=flat(r.tree).find(n=>n.key?.startsWith('oneri_cancel_credit_'));assert.ok(cancel);
+ r=render(r.inputs,cancel.key);assert.equal(r.mutations.length,0);
+ r=render(r.inputs,null);assert.ok(!flat(r.tree).some(n=>n.key?.startsWith('oneri_cancel_credit_')));assert.ok(flat(r.tree).some(n=>n.label==='Deduzioni'));
  const fy=tables.fiscal_years.find(y=>y.fiscal_year===2027);fy.status='closed';
  r=render({anno_fiscale_selezionato:2027,schede_principali:'Detrazioni e deduzioni'},submit.key);
  assert.equal(r.mutations.length,0);assert.ok(!flat(r.tree).some(n=>n.label==='Aggiungi spesa detraibile'));
