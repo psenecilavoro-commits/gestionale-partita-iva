@@ -121,3 +121,6 @@ tbody tr:hover,.revenue-sheet tbody tr:hover{background:#f0f4f5}.revenue-sheet t
 .table-scroll td.principal-action .icon-button{padding:0;height:20px;min-height:0;width:24px;border:0;vertical-align:middle}
 
 .shell main .table-scroll td{padding:12px 15px;font-size:14px;line-height:1.45}
+
+/* Separate annual ledger totals from individual entries. */
+.table-scroll tr.ledger-total td{background:#e3e9ec;color:#3c5054;font-weight:700;border-top:2px solid #c5cfd4}.table-scroll tr.ledger-total:hover td{background:#dce4e8}

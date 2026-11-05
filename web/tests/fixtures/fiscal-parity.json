@@ -2061,57 +2061,49 @@
           "Causale": "Costi · Rate Auto",
           "Anno": 2027,
           "Importo": "1.200,00 €",
-          "Quota deducibile": "621,30 €",
-          "Origine": "Costi · Auto · proiezione da mesi"
+          "Quota deducibile": "621,30 €"
         },
         {
           "Causale": "Costi · Carburante",
           "Anno": 2027,
           "Importo": "1.200,00 €",
-          "Quota deducibile": "786,89 €",
-          "Origine": "Costi · Auto · proiezione da mesi"
+          "Quota deducibile": "786,89 €"
         },
         {
           "Causale": "Costi · Autostrada",
           "Anno": 2027,
           "Importo": "1.200,00 €",
-          "Quota deducibile": "786,89 €",
-          "Origine": "Costi · Auto · proiezione da mesi"
+          "Quota deducibile": "786,89 €"
         },
         {
           "Causale": "Costi · Bollo",
           "Anno": 2027,
           "Importo": "340,97 €",
-          "Quota deducibile": "272,78 €",
-          "Origine": "Costi · Stima annuale"
+          "Quota deducibile": "272,78 €"
         },
         {
           "Causale": "Costi · Assicurazione",
           "Anno": 2027,
           "Importo": "1.060,86 €",
-          "Quota deducibile": "848,69 €",
-          "Origine": "Costi · Stima annuale"
+          "Quota deducibile": "848,69 €"
         },
         {
           "Causale": "Costi · Manutenzione auto",
           "Anno": 2027,
           "Importo": "800,00 €",
-          "Quota deducibile": "524,59 €",
-          "Origine": "Costi · Stima annuale"
+          "Quota deducibile": "524,59 €"
         },
         {
           "Causale": "Costi · Commercialista",
           "Anno": 2027,
           "Importo": "3.000,00 €",
-          "Quota deducibile": "2.459,02 €",
-          "Origine": "Costi · Stima annuale"
+          "Quota deducibile": "2.459,02 €"
         },
         {
           "Causale": "TOTALE",
           "Anno": 2027,
           "Importo": "",
-          "Quota deducibile": "6.300,14 €",
-          "Origine": ""
+          "Quota deducibile": "6.300,14 €"
         }
       ]
     }

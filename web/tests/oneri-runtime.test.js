@@ -38,4 +38,17 @@ test('two ledgers save category/year/rates and pension once, persist across page
  assert.ok(!JSON.stringify(r.tree).includes('73,70'));
  assert.ok(!flat(r.tree).some(n=>n.kind==='expander'&&n.label==='Modifica o elimina una detrazione'));
  assert.equal(tables.tax_credits.length,1);
+ tables.depreciable_assets.push({id:'asset-carry',user_id:'demo-owner',fiscal_year_id:fy.id,description:'Computer pluriennale',purchase_date:'2027-01-01',gross_amount:'12200',deductible_vat:'2200',depreciation_rate:'.2',first_fiscal_year:2027,is_planned:false});
+ for(const [year,quota] of [[2027,'1.000,00'],[2028,'2.000,00'],[2032,'1.000,00'],[2040,null]]){
+  if(!tables.fiscal_years.some(y=>y.fiscal_year===year))tables.fiscal_years.push({...fy,id:`future-${year}`,fiscal_year:year,status:'open'});
+  for(const page of ['Ammortamenti','Detrazioni e deduzioni']){
+   r=render({anno_fiscale_selezionato:year,schede_principali:page});
+   const frames=flat(r.tree).filter(n=>n.kind==='table');
+   const assetRows=frames.flatMap(n=>n.records||[]).filter(row=>JSON.stringify(row).includes('Computer pluriennale'));
+   assert.equal(assetRows.length,quota?1:0,`${page} ${year}`);
+   if(quota)assert.ok(JSON.stringify(assetRows).includes(quota),`${page} ${year}: ${JSON.stringify(assetRows)}`);
+   assert.equal(r.mutations.length,0);
+  }
+ }
+ assert.equal(tables.depreciable_assets.filter(a=>a.id==='asset-carry').length,1);
 });

@@ -7,7 +7,8 @@ from unittest.mock import patch
 
 from conto_economico import valori_conto_corrente
 from accantonamenti_confronto import _obiettivo_ordinario, ripartisci_residuo
-from oneri_annuali import _nota
+from oneri_annuali import _nota, carica_oneri
+from ammortamenti import calcola_bene
 
 
 class Sinergia(TestCase):
@@ -45,3 +46,23 @@ class Sinergia(TestCase):
             records['tax_credits'].clear()
             _, after_delete = calculate()
             self.assertEqual(after_delete - target_deduction, D('500'))
+            asset = dict(description='Computer', gross_amount='12200', deductible_vat='2200',
+                         first_fiscal_year=2027, depreciation_rate='.2', is_planned=False)
+            records['depreciable_assets'].append(asset)
+            for fiscal_year, expected in [(2027, '1000'), (2028, '2000'), (2032, '1000'), (2033, '0'), (2040, '0')]:
+                with self.subTest(year=fiscal_year):
+                    year['fiscal_year'] = fiscal_year
+                    quota = D(expected)
+                    ledger = carica_oneri(None, year)
+                    forecast, _ = calculate()
+                    self.assertEqual(calcola_bene(asset, fiscal_year)['quota'], quota)
+                    self.assertEqual(ledger['quota_beni'], quota)
+                    self.assertEqual(forecast['COSTI_DEDUCIBILI'], D('10000') + quota)
+                    self.assertEqual(forecast['B13'], D('10000') + quota)
+                    self.assertEqual(forecast['B15'], D('0'))
+                    self.assertEqual(len(ledger['ammortamenti']), int(quota > 0))
+            year['fiscal_year'] = 2027
+            asset['depreciation_rate'] = '.4'
+            self.assertEqual(calculate()[0]['COSTI_DEDUCIBILI'], D('12000'))
+            records['depreciable_assets'].clear()
+            self.assertEqual(calculate()[0]['COSTI_DEDUCIBILI'], D('10000'))

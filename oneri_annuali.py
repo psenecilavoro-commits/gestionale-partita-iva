@@ -218,8 +218,8 @@ def mostra_oneri(client,anno):
         'Quota deducibile':r['deducibile'],'Origine':'Costi · '+r['origine']} for r in costi]
     tutte=[*personali,*fonti,*dati['ammortamenti']]
     tot=sum((r['Quota deducibile'] for r in tutte if r['Quota deducibile'] is not None),D('0'))
-    vista=_visuale(tutte,{'Importo','Quota deducibile'})
-    vista.append({'Causale':'TOTALE','Anno':year,'Importo':'','Quota deducibile':'Da completare' if any(r['Quota deducibile'] is None for r in tutte) else dd._formato(tot),'Origine':''})
+    vista=_visuale([{k:v for k,v in r.items() if k!='Origine'} for r in tutte],{'Importo','Quota deducibile'})
+    vista.append({'Causale':'TOTALE','Anno':year,'Importo':'','Quota deducibile':'Da completare' if any(r['Quota deducibile'] is None for r in tutte) else dd._formato(tot)})
     st.dataframe(vista,hide_index=True,width='stretch',height='content')
     if anno['status']=='open':
         key=f"oneri_add_deduction_{anno['id']}"
