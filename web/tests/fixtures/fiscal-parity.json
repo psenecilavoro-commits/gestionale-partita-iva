@@ -697,11 +697,6 @@
       "kind": "metric",
       "label": "Di cui INPS anni precedenti",
       "value": "0,00 €"
-    },
-    {
-      "kind": "metric",
-      "label": "Enasarco documentato nell'anno",
-      "value": "0,00 €"
     }
   ],
   "2026:Detrazioni e deduzioni": [
@@ -2025,11 +2020,6 @@
     {
       "kind": "metric",
       "label": "Di cui INPS anni precedenti",
-      "value": "0,00 €"
-    },
-    {
-      "kind": "metric",
-      "label": "Enasarco documentato nell'anno",
       "value": "0,00 €"
     }
   ],

@@ -108,15 +108,13 @@ def _elimina(client: Client, anno: dict, record: dict) -> None:
 def mostra_contributi_versati(client: Client, anno: dict) -> None:
     anno_num = int(anno["fiscal_year"])
     st.divider()
-    st.markdown(f"### 4 · Contributi versati o trattenuti · {anno_num}")
-    st.caption("Registra solo pagamenti INPS realmente eseguiti o trattenute Enasarco documentate. "
+    st.markdown(f"### Contributi INPS versati · {anno_num}")
+    st.caption("Registra i pagamenti INPS realmente eseguiti. "
                "L'anno di competenza può essere precedente all'anno del pagamento.")
-    st.warning("Queste sono registrazioni dichiarate, NON deduzioni fiscali approvate. "
-               "Alimentano soltanto lo scenario a cassa del Conto economico; "
-               "non si sommano alle altre deduzioni della scheda.")
     try:
         righe = _leggi(client, anno)
-        arricchite = [(r, *dati_contributo(r)) for r in righe]
+        arricchite = [(r, *dati_contributo(r)) for r in righe
+                      if dati_contributo(r)[0] == "INPS"]
     except ValueError as exc:
         st.error(str(exc))
         return
@@ -124,13 +122,11 @@ def mostra_contributi_versati(client: Client, anno: dict) -> None:
         st.error("Impossibile leggere i contributi. Nessun dato modificato.")
         return
     inps = sum((D(str(r["amount"])) for r, tipo, _ in arricchite if tipo == "INPS"), D("0"))
-    enasarco = sum((D(str(r["amount"])) for r, tipo, _ in arricchite if tipo == "ENASARCO"), D("0"))
     precedenti = sum((D(str(r["amount"])) for r, tipo, competenza in arricchite
                      if tipo == "INPS" and competenza < anno_num), D("0"))
-    c1, c2, c3 = st.columns(3)
+    c1, c2 = st.columns(2)
     c1.metric("INPS documentato nell'anno", euro(inps))
     c2.metric("Di cui INPS anni precedenti", euro(precedenti))
-    c3.metric("Enasarco documentato nell'anno", euro(enasarco))
     if arricchite:
         st.dataframe([{
             "Tipo": TIPI[tipo], "Competenza": competenza,
@@ -142,16 +138,16 @@ def mostra_contributi_versati(client: Client, anno: dict) -> None:
     if anno["status"] != "open":
         st.info("Anno fiscale chiuso: registro in sola lettura.")
         return
-    with st.expander("➕ Registra un versamento o una trattenuta documentata"):
+    with st.expander("➕ Registra un versamento INPS documentato"):
         with st.form(f"contributo_new_{anno_num}", clear_on_submit=True):
-            tipo = st.selectbox("Tipo", list(TIPI), format_func=lambda k: TIPI[k])
+            tipo = "INPS"
             competenza = st.number_input("Anno di competenza", min_value=2000,
                                          max_value=anno_num, value=anno_num, step=1)
-            pagamento = st.date_input("Data del pagamento o della trattenuta documentata",
+            pagamento = st.date_input("Data del pagamento documentato",
                                       value=date(anno_num, 1, 1), format="DD/MM/YYYY")
             causale = st.text_input("Causale (es. INPS saldo 2026)")
             importo = st.text_input("Importo (€)", placeholder="es. 4611,64")
-            conferma = st.checkbox("Confermo che il versamento o la trattenuta è già avvenuto ed è documentato")
+            conferma = st.checkbox("Confermo che il versamento è già avvenuto ed è documentato")
             salva = st.form_submit_button("Salva contributo")
         if salva:
             try:
@@ -174,11 +170,10 @@ def mostra_contributi_versati(client: Client, anno: dict) -> None:
                              key=f"contributo_scelto_{anno_num}")
         r, tipo_attuale, anno_comp = opzioni[scelto]
         with st.form(f"contributo_edit_{scelto}"):
-            tipo = st.selectbox("Tipo", list(TIPI), index=list(TIPI).index(tipo_attuale),
-                                format_func=lambda k: TIPI[k])
+            tipo = "INPS"
             competenza = st.number_input("Anno di competenza", min_value=2000,
                                          max_value=anno_num, value=anno_comp, step=1)
-            pagamento = st.date_input("Data del pagamento o della trattenuta",
+            pagamento = st.date_input("Data del pagamento",
                                       value=date.fromisoformat(str(r["payment_date"])), format="DD/MM/YYYY")
             causale = st.text_input("Causale", value=r["description"])
             importo = st.text_input("Importo (€)", value=str(r["amount"]).replace(".", ","))
