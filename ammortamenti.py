@@ -170,16 +170,11 @@ def mostra_ammortamenti(client, anno: dict) -> None:
                 placeholder="es. 20; lascia vuoto sotto soglia",
             )
             note = st.text_input("Note facoltative", max_chars=500)
-            ok = st.checkbox(
-                "Confermo importi, IVA, classificazione e coefficiente quando necessario"
-            )
             salva = st.form_submit_button("Salva bene", type="primary")
 
         if salva:
             try:
                 anno_aperto(client, anno)
-                if not ok:
-                    raise ValueError("Conferma prima i dati del bene.")
                 nome = " ".join(descr.split())
                 if not nome or len(nome) > 200:
                     raise ValueError("Inserisci una descrizione valida.")
