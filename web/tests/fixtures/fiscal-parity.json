@@ -1,31 +1,6 @@
 {
   "2026:Fatturato": [
     {
-      "kind": "table",
-      "records": [
-        {
-          "VOCE": "Fatturato",
-          "VALORE": "49.500,00 €"
-        },
-        {
-          "VOCE": "Costi annui",
-          "VALORE": "8.001,83 €"
-        },
-        {
-          "VOCE": "Netto annuo stimato",
-          "VALORE": "29.836,38 €"
-        },
-        {
-          "VOCE": "Netto/12 medio",
-          "VALORE": "2.486,37 €"
-        },
-        {
-          "VOCE": "Netto/12 senza costi",
-          "VALORE": "3.153,18 €"
-        }
-      ]
-    },
-    {
       "kind": "metric",
       "label": "Fatturato registrato",
       "value": "36.000,00 €"
@@ -143,31 +118,6 @@
       "kind": "table",
       "records": [
         {
-          "VOCE": "Fatturato",
-          "VALORE": "49.500,00 €"
-        },
-        {
-          "VOCE": "Costi annui",
-          "VALORE": "8.001,83 €"
-        },
-        {
-          "VOCE": "Netto annuo stimato",
-          "VALORE": "29.836,38 €"
-        },
-        {
-          "VOCE": "Netto/12 medio",
-          "VALORE": "2.486,37 €"
-        },
-        {
-          "VOCE": "Netto/12 senza costi",
-          "VALORE": "3.153,18 €"
-        }
-      ]
-    },
-    {
-      "kind": "table",
-      "records": [
-        {
           "Voce": "Assicurazione",
           "Registrato": "—",
           "Stima annua / valore file": "1.060,86 €"
@@ -237,31 +187,6 @@
     }
   ],
   "2026:Auto": [
-    {
-      "kind": "table",
-      "records": [
-        {
-          "VOCE": "Fatturato",
-          "VALORE": "49.500,00 €"
-        },
-        {
-          "VOCE": "Costi annui",
-          "VALORE": "8.001,83 €"
-        },
-        {
-          "VOCE": "Netto annuo stimato",
-          "VALORE": "29.836,38 €"
-        },
-        {
-          "VOCE": "Netto/12 medio",
-          "VALORE": "2.486,37 €"
-        },
-        {
-          "VOCE": "Netto/12 senza costi",
-          "VALORE": "3.153,18 €"
-        }
-      ]
-    },
     {
       "kind": "table",
       "records": [
@@ -367,31 +292,6 @@
     }
   ],
   "2026:Accantonamenti": [
-    {
-      "kind": "table",
-      "records": [
-        {
-          "VOCE": "Fatturato",
-          "VALORE": "49.500,00 €"
-        },
-        {
-          "VOCE": "Costi annui",
-          "VALORE": "8.001,83 €"
-        },
-        {
-          "VOCE": "Netto annuo stimato",
-          "VALORE": "29.836,38 €"
-        },
-        {
-          "VOCE": "Netto/12 medio",
-          "VALORE": "2.486,37 €"
-        },
-        {
-          "VOCE": "Netto/12 senza costi",
-          "VALORE": "3.153,18 €"
-        }
-      ]
-    },
     {
       "kind": "table",
       "records": [
@@ -517,31 +417,6 @@
       "kind": "table",
       "records": [
         {
-          "VOCE": "Fatturato",
-          "VALORE": "49.500,00 €"
-        },
-        {
-          "VOCE": "Costi annui",
-          "VALORE": "8.001,83 €"
-        },
-        {
-          "VOCE": "Netto annuo stimato",
-          "VALORE": "29.836,38 €"
-        },
-        {
-          "VOCE": "Netto/12 medio",
-          "VALORE": "2.486,37 €"
-        },
-        {
-          "VOCE": "Netto/12 senza costi",
-          "VALORE": "3.153,18 €"
-        }
-      ]
-    },
-    {
-      "kind": "table",
-      "records": [
-        {
           "Voce": "Fatturato registrato",
           "Importo": "36.000,00 €"
         },
@@ -601,31 +476,6 @@
     }
   ],
   "2026:Imposte": [
-    {
-      "kind": "table",
-      "records": [
-        {
-          "VOCE": "Fatturato",
-          "VALORE": "49.500,00 €"
-        },
-        {
-          "VOCE": "Costi annui",
-          "VALORE": "8.001,83 €"
-        },
-        {
-          "VOCE": "Netto annuo stimato",
-          "VALORE": "29.836,38 €"
-        },
-        {
-          "VOCE": "Netto/12 medio",
-          "VALORE": "2.486,37 €"
-        },
-        {
-          "VOCE": "Netto/12 senza costi",
-          "VALORE": "3.153,18 €"
-        }
-      ]
-    },
     {
       "kind": "table",
       "records": [
@@ -694,86 +544,9 @@
       "value": "0,00 €"
     }
   ],
-  "2026:Detrazioni e deduzioni": [
-    {
-      "kind": "table",
-      "records": [
-        {
-          "VOCE": "Fatturato",
-          "VALORE": "49.500,00 €"
-        },
-        {
-          "VOCE": "Costi annui",
-          "VALORE": "8.001,83 €"
-        },
-        {
-          "VOCE": "Netto annuo stimato",
-          "VALORE": "29.836,38 €"
-        },
-        {
-          "VOCE": "Netto/12 medio",
-          "VALORE": "2.486,37 €"
-        },
-        {
-          "VOCE": "Netto/12 senza costi",
-          "VALORE": "3.153,18 €"
-        }
-      ]
-    }
-  ],
-  "2026:Ammortamenti": [
-    {
-      "kind": "table",
-      "records": [
-        {
-          "VOCE": "Fatturato",
-          "VALORE": "49.500,00 €"
-        },
-        {
-          "VOCE": "Costi annui",
-          "VALORE": "8.001,83 €"
-        },
-        {
-          "VOCE": "Netto annuo stimato",
-          "VALORE": "29.836,38 €"
-        },
-        {
-          "VOCE": "Netto/12 medio",
-          "VALORE": "2.486,37 €"
-        },
-        {
-          "VOCE": "Netto/12 senza costi",
-          "VALORE": "3.153,18 €"
-        }
-      ]
-    }
-  ],
+  "2026:Detrazioni e deduzioni": [],
+  "2026:Ammortamenti": [],
   "2027:Fatturato": [
-    {
-      "kind": "table",
-      "records": [
-        {
-          "VOCE": "Fatturato",
-          "VALORE": "54.000,00 €"
-        },
-        {
-          "VOCE": "Costi annui",
-          "VALORE": "7.467,40 €"
-        },
-        {
-          "VOCE": "Netto annuo stimato",
-          "VALORE": "24.031,32 €"
-        },
-        {
-          "VOCE": "Netto/12 medio",
-          "VALORE": "2.002,61 €"
-        },
-        {
-          "VOCE": "Netto/12 senza costi",
-          "VALORE": "2.624,89 €"
-        }
-      ]
-    },
     {
       "kind": "metric",
       "label": "Fatturato registrato",
@@ -885,31 +658,6 @@
     }
   ],
   "2027:Costi": [
-    {
-      "kind": "table",
-      "records": [
-        {
-          "VOCE": "Fatturato",
-          "VALORE": "54.000,00 €"
-        },
-        {
-          "VOCE": "Costi annui",
-          "VALORE": "7.467,40 €"
-        },
-        {
-          "VOCE": "Netto annuo stimato",
-          "VALORE": "24.031,32 €"
-        },
-        {
-          "VOCE": "Netto/12 medio",
-          "VALORE": "2.002,61 €"
-        },
-        {
-          "VOCE": "Netto/12 senza costi",
-          "VALORE": "2.624,89 €"
-        }
-      ]
-    },
     {
       "kind": "table",
       "records": [
@@ -1064,31 +812,6 @@
       "kind": "table",
       "records": [
         {
-          "VOCE": "Fatturato",
-          "VALORE": "54.000,00 €"
-        },
-        {
-          "VOCE": "Costi annui",
-          "VALORE": "7.467,40 €"
-        },
-        {
-          "VOCE": "Netto annuo stimato",
-          "VALORE": "24.031,32 €"
-        },
-        {
-          "VOCE": "Netto/12 medio",
-          "VALORE": "2.002,61 €"
-        },
-        {
-          "VOCE": "Netto/12 senza costi",
-          "VALORE": "2.624,89 €"
-        }
-      ]
-    },
-    {
-      "kind": "table",
-      "records": [
-        {
           "Mese": "Gennaio",
           "Percorrenza": "—",
           "Carburante": "100,00 €",
@@ -1190,31 +913,6 @@
     }
   ],
   "2027:Accantonamenti": [
-    {
-      "kind": "table",
-      "records": [
-        {
-          "VOCE": "Fatturato",
-          "VALORE": "54.000,00 €"
-        },
-        {
-          "VOCE": "Costi annui",
-          "VALORE": "7.467,40 €"
-        },
-        {
-          "VOCE": "Netto annuo stimato",
-          "VALORE": "24.031,32 €"
-        },
-        {
-          "VOCE": "Netto/12 medio",
-          "VALORE": "2.002,61 €"
-        },
-        {
-          "VOCE": "Netto/12 senza costi",
-          "VALORE": "2.624,89 €"
-        }
-      ]
-    },
     {
       "kind": "table",
       "records": [
@@ -1756,31 +1454,6 @@
       "kind": "table",
       "records": [
         {
-          "VOCE": "Fatturato",
-          "VALORE": "54.000,00 €"
-        },
-        {
-          "VOCE": "Costi annui",
-          "VALORE": "7.467,40 €"
-        },
-        {
-          "VOCE": "Netto annuo stimato",
-          "VALORE": "24.031,32 €"
-        },
-        {
-          "VOCE": "Netto/12 medio",
-          "VALORE": "2.002,61 €"
-        },
-        {
-          "VOCE": "Netto/12 senza costi",
-          "VALORE": "2.624,89 €"
-        }
-      ]
-    },
-    {
-      "kind": "table",
-      "records": [
-        {
           "Voce": "Fatturato stimato integrale",
           "Importo": "54.000,00 €"
         },
@@ -1844,31 +1517,6 @@
     }
   ],
   "2027:Imposte": [
-    {
-      "kind": "table",
-      "records": [
-        {
-          "VOCE": "Fatturato",
-          "VALORE": "54.000,00 €"
-        },
-        {
-          "VOCE": "Costi annui",
-          "VALORE": "7.467,40 €"
-        },
-        {
-          "VOCE": "Netto annuo stimato",
-          "VALORE": "24.031,32 €"
-        },
-        {
-          "VOCE": "Netto/12 medio",
-          "VALORE": "2.002,61 €"
-        },
-        {
-          "VOCE": "Netto/12 senza costi",
-          "VALORE": "2.624,89 €"
-        }
-      ]
-    },
     {
       "kind": "table",
       "records": [
@@ -2018,31 +1666,6 @@
       "kind": "table",
       "records": [
         {
-          "VOCE": "Fatturato",
-          "VALORE": "54.000,00 €"
-        },
-        {
-          "VOCE": "Costi annui",
-          "VALORE": "7.467,40 €"
-        },
-        {
-          "VOCE": "Netto annuo stimato",
-          "VALORE": "24.031,32 €"
-        },
-        {
-          "VOCE": "Netto/12 medio",
-          "VALORE": "2.002,61 €"
-        },
-        {
-          "VOCE": "Netto/12 senza costi",
-          "VALORE": "2.624,89 €"
-        }
-      ]
-    },
-    {
-      "kind": "table",
-      "records": [
-        {
           "Causale": "TOTALE",
           "Importo": "",
           "Importo ammesso": "",
@@ -2109,31 +1732,6 @@
     }
   ],
   "2027:Ammortamenti": [
-    {
-      "kind": "table",
-      "records": [
-        {
-          "VOCE": "Fatturato",
-          "VALORE": "54.000,00 €"
-        },
-        {
-          "VOCE": "Costi annui",
-          "VALORE": "7.467,40 €"
-        },
-        {
-          "VOCE": "Netto annuo stimato",
-          "VALORE": "24.031,32 €"
-        },
-        {
-          "VOCE": "Netto/12 medio",
-          "VALORE": "2.002,61 €"
-        },
-        {
-          "VOCE": "Netto/12 senza costi",
-          "VALORE": "2.624,89 €"
-        }
-      ]
-    },
     {
       "kind": "metric",
       "label": "Quota fiscalmente deducibile · beni acquistati",

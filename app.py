@@ -33,7 +33,6 @@ from mandanti import aggiungi_mandante, elenco_mandanti
 from quadro_mensile import mostra_quadro_mensile
 from registrazioni_reali import mostra_costi_reali
 from registri import avvia_cache_letture
-from riepilogo_laterale import mostra_base
 from stile import applica_stile
 from struttura_ui import (mostra_vendite, mostra_periodi_iva, mostra_pensione,
                           mostra_riconciliazione)
@@ -78,8 +77,6 @@ with st.sidebar:
     if st.button("Esci"):
         sign_out()
         st.rerun()
-    st.divider()
-    conto_slot = st.empty()
 
 st.subheader("Anno fiscale")
 anni = list(range(2026, 2051))
@@ -271,10 +268,6 @@ if scheda_ammortamenti.open:
         else:
             mostra_ammortamenti(client, fiscal_year)
 
-
-# Il riepilogo usa gli stessi input/calcoli della scheda Conto economico.
-# Il placeholder mantiene la tabella nella parte alta della sidebar.
-mostra_base(client, fiscal_year, conto_slot)
 
 # Controlli finali nella sidebar: vengono renderizzati in fondo alla colonna sinistra.
 mostra_gestione_anno(client, fiscal_year)
