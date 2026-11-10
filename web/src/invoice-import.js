@@ -60,7 +60,9 @@ export function suggestCategory(invoice,categories){
  return categories.find(c=>hints.some(([code,re])=>c.code===code&&re.test(text)))?.id||'';
 }
 export function planInvoice(invoice,options,tables,today=todayISO()){
- const d=validDate(invoice.invoiceDate,today),payment=validDate(options.paymentDate||d,today);
+ const d=validDate(invoice.invoiceDate,today);
+ const waiting=options.direction==='emessa'&&options.pendingReceipt===true;
+ const payment=waiting?null:validDate(options.paymentDate||d,today);
  const ordinary=Number(d.slice(0,4))!==2026;
  if(!invoice.number.trim()||invoice.number.length>100)throw Error('Inserisci il numero della fattura.');
  if(invoice.special)throw Error('La fattura contiene bollo, cassa previdenziale o sconti: usa i registri completi per questo documento.');
@@ -75,23 +77,28 @@ export function planInvoice(invoice,options,tables,today=todayISO()){
  }
  const total=cents(invoice.total);if(total!==base+vat||total<=0n)throw Error('Il totale deve coincidere con imponibili più IVA. Controlla eventuali trattenute o spese particolari.');
  const fy=date=>{const matches=(tables.fiscal_years||[]).filter(f=>Number(f.fiscal_year)===Number(date.slice(0,4)));if(matches.length!==1)throw Error(`Crea prima l’anno fiscale ${date.slice(0,4)} dalle altre schede.`);if(matches[0].status!=='open')throw Error(`L’anno ${date.slice(0,4)} è chiuso: nessuna registrazione consentita.`);return matches[0];};
- const economic=fy(payment),documentYear=fy(d);
+ const economic=payment?fy(payment):null,documentYear=fy(d);
  const subject=options.direction==='emessa'?invoice.customer:invoice.supplier;
  if(!subject.name.trim()||subject.name.length>200)throw Error('Completa la denominazione del soggetto.');
  const key=[options.direction,subject.taxId||subject.name.toLowerCase().trim(),invoice.number.toLowerCase().trim(),d].join('|');
  if((tables.invoice_imports||[]).some(r=>r.document_key===key))throw Error('Questa fattura è già stata importata.');
- const payload={direction:options.direction,document_key:key,invoice_number:invoice.number.trim(),invoice_date:d,payment_date:payment,subject:subject.name.trim(),tax_id:subject.taxId||'',total:money(total),base:money(base),vat:money(vat),economic_year_id:economic.id,document_year_id:documentYear.id,groups:invoice.groups.map(g=>({...g,base:money(cents(g.base)),vat:money(cents(g.vat))}))};
+ const payload={direction:options.direction,document_key:key,invoice_number:invoice.number.trim(),invoice_date:d,payment_date:payment,subject:subject.name.trim(),tax_id:subject.taxId||'',total:money(total),base:money(base),vat:money(vat),pending_receipt:waiting,economic_year_id:economic?.id??null,document_year_id:documentYear.id,groups:invoice.groups.map(g=>({...g,base:money(cents(g.base)),vat:money(cents(g.vat))}))};
  const destinations=[];
  if(options.direction==='emessa'){
   if(ordinary&&invoice.groups.some(g=>Number(g.rate)!==22))throw Error('Per le fatture emesse ordinarie sono supportate le provvigioni con IVA al 22%.');
   if(!ordinary&&vat!==0n)throw Error('Il modello 2026 è forfettario: controlla l’IVA della fattura emessa.');
-  if((Number(payment.slice(0,4))===2026)!==(!ordinary))throw Error('Incasso a cavallo del cambio di regime: serve una verifica prima di usare i registri manuali.');
+  if(payment&&(Number(payment.slice(0,4))===2026)!==(!ordinary))throw Error('Incasso a cavallo del cambio di regime: serve una verifica prima di usare i registri manuali.');
   const principal=(tables.principals||[]).find(p=>p.id===options.principalId);if(!principal)throw Error('Seleziona la mandante.');
   if((tables.sales_vat_invoices||[]).some(r=>r.principal_id===principal.id&&r.invoice_number.toLowerCase().trim()===payload.invoice_number.toLowerCase()&&r.invoice_date===d))throw Error('Fattura già presente nel registro IVA vendite.');
-  const monthly=(tables.monthly_revenues||[]).filter(r=>r.fiscal_year_id===economic.id&&r.principal_id===principal.id&&Number(r.month)===Number(payment.slice(5,7)));
-  if(monthly.length>1)throw Error('Più registrazioni mensili: controlla prima il Fatturato.');
-  payload.principal_id=principal.id;payload.previous_amount=monthly[0]?.amount??null;
-  destinations.push(`Fatturato · ${principal.name} · ${payment.slice(0,7)}: ${money(base)} € da aggiungere (totale ${money(cents(monthly[0]?.amount??0)+base)} €)`);
+  payload.principal_id=principal.id;
+  if(waiting){
+   destinations.push('Fatture in attesa di incasso');
+  }else{
+   const monthly=(tables.monthly_revenues||[]).filter(r=>r.fiscal_year_id===economic.id&&r.principal_id===principal.id&&Number(r.month)===Number(payment.slice(5,7)));
+   if(monthly.length>1)throw Error('Più registrazioni mensili: controlla prima il Fatturato.');
+   payload.previous_amount=monthly[0]?.amount??null;
+   destinations.push(`Fatturato · ${principal.name} · ${payment.slice(0,7)}: ${money(base)} € da aggiungere (totale ${money(cents(monthly[0]?.amount??0)+base)} €)`);
+  }
   if(ordinary)destinations.push(`IVA vendite · ${d.slice(0,7)}: ${money(vat)} €`);
  }else if(options.direction==='ricevuta'){
   const asset=options.purchaseKind==='asset';
@@ -129,5 +136,5 @@ export function planInvoice(invoice,options,tables,today=todayISO()){
   }else destinations.push(`Costi${auto?' e Auto':''} · ${category.name} · ${payment.slice(0,7)}: ${money(total)} €`);
   if(Number(vatYear.fiscal_year)!==2026)destinations.push(`IVA acquisti · ${registered.slice(0,7)}: ${payload.deductible_vat} € detraibili`);
  }else throw Error('Scegli fattura emessa o ricevuta.');
- return {payload,destinations,assumedPayment:!options.paymentDate,key};
+ return {payload,destinations,assumedPayment:!waiting&&!options.paymentDate,key};
 }

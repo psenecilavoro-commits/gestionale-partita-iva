@@ -24,3 +24,15 @@ test('asset year follows purchase rather than payment and planned assets do not 
 
 test('PDF supplier and customer blocks are read separately, including VAT identifiers',()=>{const i=parseInvoiceText('FORNITORE\nVolkswagen Bank GMBH\nP.IVA: IT12513730155\nC.F.: 12513730155\nSTABILE ORGANIZZAZIONE\nVia esempio\nCLIENTE\nCliente esempio\nP.IVA: IT12345678901\nPRODOTTI E SERVIZI');assert.deepEqual(i.supplier,{name:'Volkswagen Bank GMBH',taxId:'IT12513730155'});assert.deepEqual(i.customer,{name:'Cliente esempio',taxId:'IT12345678901'});});
 test('ambiguous PDF party columns remain blank rather than using customer VAT',()=>{const i=parseInvoiceText('FORNITORE CLIENTE\nBanca Cliente\nP.IVA: IT12513730155 P.IVA: IT12345678901');assert.deepEqual(i.supplier,{name:'',taxId:''});const merged=parseInvoiceText('FORNITORE\nBanca Cliente\nP.IVA: IT12513730155 P.IVA: IT12345678901');assert.equal(merged.supplier.taxId,'');});
+
+test('pending issued invoice records VAT without an assumed cash receipt',()=>{
+ const i=parsed();
+ i.groups=[{base:'100',vat:'22',rate:'22',nature:'',payability:'I'}];
+ i.total='122';
+ const p=planInvoice(i,{direction:'emessa',principalId:'pr',pendingReceipt:true},tables(),'2028-10-08');
+ assert.equal(p.payload.payment_date,null);
+ assert.equal(p.payload.economic_year_id,null);
+ assert.equal(p.payload.document_year_id,'y27');
+ assert.equal(p.assumedPayment,false);
+ assert.deepEqual(p.destinations,['Fatture in attesa di incasso','IVA vendite · 2027-09: 22.00 €']);
+});

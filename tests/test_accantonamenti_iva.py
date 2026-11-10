@@ -54,4 +54,11 @@ class NettoIVA(unittest.TestCase):
   self.assertEqual(iva_vendite_ibrida([incasso], [importazione], [documento], "2028"), {1: D("0")})
 
 
+ def test_pending_sale_has_documentary_vat_without_cash_revenue(self):
+  pending = dict(direction="emessa", economic_year_id=None, document_year_id="y",
+                 record_ids={"sale": "s", "revenue": None})
+  sale = dict(id="s", taxable_amount="1000", vat_amount="220", vat_month=1)
+  self.assertEqual(iva_vendite_ibrida([], [pending], [sale], "y"), {1: D("220")})
+
+
 if __name__=='__main__':unittest.main()

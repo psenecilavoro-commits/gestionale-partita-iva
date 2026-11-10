@@ -37,7 +37,7 @@ def iva_vendite_ibrida(fatturati, importazioni, documenti, anno_id):
             continue
         ids = r["record_ids"]
         fattura = documenti_per_id.get(ids.get("sale"))
-        if not fattura or not ids.get("revenue") or fattura["id"] in fatture_viste:
+        if not fattura or (anno_incasso and not ids.get("revenue")) or fattura["id"] in fatture_viste:
             raise ValueError("Collegamento fattura e incasso non valido.")
         fatture_viste.add(fattura["id"])
         if anno_incasso:

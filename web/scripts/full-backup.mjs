@@ -10,7 +10,9 @@ for(const name of paths){
  if(/(^|\/)(\.env(?:\.|$)|secrets\.toml$|\.git\/|node_modules\/|\.venv\/)/i.test(name)||/\.(png|jpg|xlsx|csv|pdf)$/i.test(name))continue;
  zip.file('sorgenti/'+name,await readFile('../'+name));
 }
-zip.file('sorgenti/migration/recovery-schema.sql',await readFile('../migration/recovery-schema.sql'));
+const recoverySchema=await readFile('../migration/recovery-schema.sql','utf8');
+const pendingReceiptsMigration=await readFile('../migration/invoice-pending-receipts.sql','utf8');
+zip.file('sorgenti/migration/recovery-schema.sql',recoverySchema+'\n'+pendingReceiptsMigration);
 await writeFile('dist/restore-source.zip',await zip.generateAsync({type:'nodebuffer',compression:'DEFLATE'}));
 const files=[];
 async function walk(dir){for(const name of await readdir('dist/'+dir)){const path=dir+name,s=await stat('dist/'+path);if(s.isDirectory())await walk(path+'/');else if(!['backup-manifest.json','_headers','_redirects'].includes(path)){const bytes=await readFile('dist/'+path);files.push({path,size:bytes.length,sha256:createHash('sha256').update(bytes).digest('hex')});}}}

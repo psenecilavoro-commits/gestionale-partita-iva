@@ -2,15 +2,20 @@ import React,{useState,useRef} from 'react';
 import {prepareDocument} from './documents.js';
 import {parseInvoiceXML,parseInvoiceText,planInvoice,suggestCategory,cents,money,todayISO} from './invoice-import.js';
 
-export default function InvoiceImport({tables={},inspect,onSave,onRefresh,disabled}){
+export default function InvoiceImport({tables={},inspect,onSave,onReceive,onRefresh,disabled}){
  const [direction,setDirection]=useState('ricevuta'),[paymentDate,setPaymentDate]=useState(''),[invoice,setInvoice]=useState(null),[fileName,setFileName]=useState(''),[error,setError]=useState(''),[reading,setReading]=useState(false),[saved,setSaved]=useState(''),[confirmed,setConfirmed]=useState(false);
  const [categoryId,setCategoryId]=useState(''),[principalId,setPrincipalId]=useState(''),[receivedDate,setReceivedDate]=useState(''),[registeredDate,setRegisteredDate]=useState(todayISO()),[deductibleVat,setDeductibleVat]=useState('');
+ const [pendingReceipt,setPendingReceipt]=useState(false);
+ const [receiving,setReceiving]=useState(null),[receiptDate,setReceiptDate]=useState('');
+ const waiting=direction==='emessa'&&pendingReceipt;
+ const pendingInvoices=(tables.invoice_imports||[]).filter(row=>row.direction==='emessa'&&!row.payment_date)
+  .sort((a,b)=>a.invoice_date.localeCompare(b.invoice_date));
  const input=useRef(),generation=useRef(0);
  const [purchaseKind,setPurchaseKind]=useState('expense'),[assetDescription,setAssetDescription]=useState(''),[assetPurchaseDate,setAssetPurchaseDate]=useState(''),[assetRate,setAssetRate]=useState(''),[assetVatCategory,setAssetVatCategory]=useState('altro');
  const date=paymentDate||invoice?.invoiceDate||todayISO(),year=(tables.fiscal_years||[]).find(y=>Number(y.fiscal_year)===Number(date.slice(0,4)));
  const categories=(tables.cost_categories||[]).filter(c=>c.fiscal_year_id===year?.id);
  const subjectKey=direction==='ricevuta'?'supplier':'customer';
- const options={direction,paymentDate,categoryId,principalId,receivedDate,registeredDate,deductibleVat,purchaseKind,assetDescription,assetPurchaseDate,assetRate,assetVatCategory};
+ const options={direction,paymentDate,pendingReceipt:waiting,categoryId,principalId,receivedDate,registeredDate,deductibleVat,purchaseKind,assetDescription,assetPurchaseDate,assetRate,assetVatCategory};
  let plan=null,problem='';if(invoice){try{plan=planInvoice(invoice,options,tables);}catch(e){problem=e.message;}}
  const reset=()=>{generation.current++;setInvoice(null);setConfirmed(false);setError('');setFileName('');if(input.current)input.current.value='';};
  const edit=(key,value)=>{setConfirmed(false);setInvoice(old=>({...old,[key]:value}));};
@@ -37,10 +42,22 @@ export default function InvoiceImport({tables={},inspect,onSave,onRefresh,disabl
  }
  function category(value){setCategoryId(value);setConfirmed(false);const selected=categories.find(c=>c.id===value);try{const vat=(invoice?.groups||[]).reduce((sum,g)=>sum+cents(g.vat),0n);setDeductibleVat(money((vat*BigInt(Math.round(Number(selected?.vat_deductible_rate||0)*10000))+5000n)/10000n));}catch{setDeductibleVat('');}}
  async function save(e){e.preventDefault();if(!plan||!confirmed||reading)return;setReading(true);setError('');try{await onSave(plan.payload);setSaved(`Fattura ${invoice.number} importata. Le registrazioni e i riepiloghi sono aggiornati.`);reset();}catch(e){setError(e.message);}finally{setReading(false);}}
+ async function receive(e){
+  e.preventDefault();
+  if(reading||disabled||!receiving||!receiptDate)return;
+  setReading(true);setError('');setSaved('');
+  try{
+   await onReceive(receiving.id,receiptDate);
+   setSaved(`Incasso della fattura ${receiving.invoice_number} registrato.`);
+   setReceiving(null);
+  }catch(e){setError(e.message);}
+  finally{setReading(false);}
+ }
  const busy=reading||disabled;
  return <section className="card invoice-import"><h2>Carica fattura</h2><p className="caption">Seleziona un documento, controlla l’anteprima e conferma. Il file viene letto sul tuo dispositivo; il documento non viene conservato.</p>
-  <div className="invoice-grid"><label>Tipo di fattura<select value={direction} disabled={busy} onChange={e=>{setDirection(e.target.value);setConfirmed(false);}}><option value="ricevuta">Ricevuta</option><option value="emessa">Emessa</option></select></label><label>Data di pagamento / incasso (facoltativa)<input type="date" max={todayISO()} value={paymentDate} disabled={busy} onChange={e=>{setPaymentDate(e.target.value);setCategoryId('');setConfirmed(false);}}/></label></div>
-  <p className="caption">Se la data è vuota, assumiamo pagamento o incasso alla data di emissione. Per ora è prevista una fattura interamente pagata, senza pagamenti parziali.</p>
+  <div className="invoice-grid"><label>Tipo di fattura<select value={direction} disabled={busy} onChange={e=>{setDirection(e.target.value);setConfirmed(false);}}><option value="ricevuta">Ricevuta</option><option value="emessa">Emessa</option></select></label><label>Data di pagamento / incasso (facoltativa)<input type="date" max={todayISO()} value={waiting?'':paymentDate} disabled={busy||waiting} onChange={e=>{setPaymentDate(e.target.value);setCategoryId('');setConfirmed(false);}}/></label></div>
+  {direction==='emessa'&&<label className="check"><input type="checkbox" checked={pendingReceipt} disabled={busy} onChange={e=>{setPendingReceipt(e.target.checked);setConfirmed(false);}}/>In attesa di incasso</label>}
+  <p className="caption">{waiting?'L’imponibile entrerà nel Fatturato quando registri l’incasso.':'Se la data è vuota, il gestionale usa la data di emissione.'}</p>
   <label>Fattura XML, PDF o immagine<input ref={input} type="file" accept=".xml,.pdf,.png,.jpg,.jpeg" disabled={busy} onChange={e=>read(e.target.files[0])}/></label>
   {reading&&<p role="status">{invoice?'Registrazione…':'Lettura del documento…'}</p>}{error&&<p role="alert" className="notice error">{error}</p>}{saved&&<p role="status" className="notice success">{saved}</p>}
   {invoice&&<form onSubmit={save}><h3>Anteprima · {fileName}</h3><p className="notice info">{invoice.source==='XML'?'Dati letti dall’XML: verifica categoria, date e trattamento IVA.':'Lettura assistita del documento: completa e controlla tutti i dati prima di confermare. Il 22% eventualmente proposto va verificato sulla fattura.'}</p>
@@ -55,5 +72,23 @@ export default function InvoiceImport({tables={},inspect,onSave,onRefresh,disabl
    <div className="dialog-actions"><button type="button" disabled={busy} onClick={reset}>Annulla</button><button type="submit" className="primary" disabled={busy||!plan||!confirmed}>Conferma importazione</button></div>
   </form>}
   <button type="button" disabled={busy} onClick={onRefresh}>Aggiorna dati</button>
+  <h3>Fatture in attesa di incasso</h3>
+  {pendingInvoices.length===0?<p className="caption">Nessuna fattura in attesa.</p>:
+   <div className="table-scroll"><table>
+    <thead><tr><th>Fattura</th><th>Mandante</th><th>Emissione</th><th>Totale documento</th><th>Azioni</th></tr></thead>
+    <tbody>{pendingInvoices.map(row=><tr key={row.id}>
+     <td>{row.invoice_number}</td><td>{row.subject}</td><td>{row.invoice_date.split('-').reverse().join('/')}</td>
+     <td>{new Intl.NumberFormat('it-IT',{style:'currency',currency:'EUR'}).format(Number(row.total))}</td>
+     <td><button type="button" disabled={busy} onClick={()=>{setReceiving(row);setReceiptDate(todayISO());setError('');}}>Incassata</button></td>
+    </tr>)}</tbody>
+   </table></div>}
+  {receiving&&<form className="form" onSubmit={receive}>
+   <h3>Incasso fattura {receiving.invoice_number} · {receiving.subject}</h3>
+   <label>Data di incasso<input type="date" required min={receiving.invoice_date} max={todayISO()} value={receiptDate} disabled={busy} onChange={e=>setReceiptDate(e.target.value)}/></label>
+   <div className="dialog-actions">
+    <button type="button" disabled={busy} onClick={()=>setReceiving(null)}>Annulla</button>
+    <button type="submit" className="primary" disabled={busy||!receiptDate}>Registra incasso</button>
+   </div>
+  </form>}
  </section>;
 }
