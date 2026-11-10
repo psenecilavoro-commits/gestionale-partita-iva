@@ -1,7 +1,7 @@
 {
   "accantonamenti.py": "e4a9c7f375fba067d736489f241de1e427980e5b251af9480badaf53a14855ec",
   "accantonamenti_completi.py": "6feaf7ca84f61670aa8c40e3ce7cad8a893306dcd3b5327e5b97105edbe76e54",
-  "accantonamenti_confronto.py": "acc094c9c51ee968ec5511dd049b659a0438c6e1dc027464f930e3329747401b",
+  "accantonamenti_confronto.py": "6e188ff6b8481b0a90d59c4c359abc0765eab9b3803960dea19e97639d8635db",
   "accantonamenti_iva.py": "9a5cc024e33c4723d01d9bcde94fb19c5fd6310001e6551baff0786345c140cc",
   "accantonamenti_riporto.py": "3eef1307e012b41a154e740132b6d187c2bfe5cee74ee673fde89f32eb526390",
   "ammortamenti.py": "c44070a16aba08151d24a5643b68e24dc2a77fd2f9e1a45108748b4fe2649179",
@@ -27,7 +27,7 @@
   "fatturato.py": "c7696b0989bb64246104c00c297d1e252f6e6e40a22ab3c1e8ddafaa848f0fb8",
   "fatture_acquisto_xml.py": "e722f4e1804b869ddace46deb8754343523a00e7b876820189b3e3d16eae44da",
   "fatture_provvigioni.py": "3b3ffd729008211ee4d22f34ef04498b6c1a657470e14c073e38ac837f5a0e34",
-  "forfettario_2026.py": "cfbb8773ae22bcb1e61e136ce24c0752a640a0cbd2f4eff2230dea3d26340a82",
+  "forfettario_2026.py": "8866fc294c9833631db4b08e906ae547bd1b23c3b249ad0917ecab527e6b15f3",
   "gestione_anno.py": "f0b96bdf2e39ec14b5fe919144a56364241e272d149b06796bb643940a63441a",
   "imposte_enasarco.py": "a72609857faceb1d11d3385c2dc298260e3c80988c5796dda6bc21f5c3bdbed6",
   "imposte_inps.py": "ece2bdc3accf56dbd2a54ff1516f98e80a9e975b484dfb79b0f1ea37e63445f6",

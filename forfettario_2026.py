@@ -288,10 +288,6 @@ def valori_conto_2026(client, anno: dict) -> dict[str, D]:
 
 def mostra_conto_economico(client, anno: dict) -> None:
     st.subheader("Conto economico · regime forfettario 2026")
-    st.caption(
-        "Replica il modello del file Excel 2026: redditività al 62%, imposta sostitutiva "
-        "e costi economici separati dal reddito forfettario."
-    )
     try:
         valori = valori_conto_2026(client, anno)
         mesi_proiezione = valori["_mesi_proiezione"]
@@ -365,7 +361,3 @@ def mostra_imposte(client, anno: dict) -> None:
                 valore = f"{numero:g}"
         righe.append({"Parametro": nome, "Valore importato": valore})
     st.dataframe(righe, hide_index=True, width="stretch", height="content")
-    st.caption(
-        "I parametri sono quelli del file 2026 caricato dall'utente. "
-        "Il prospetto serve a replicare e monitorare quel modello."
-    )

@@ -94,7 +94,8 @@ function Nodes({nodes=[],values,onChange,onClick,onUpload,busy,editTable}){
     const uploadStart=nodes.findIndex(n=>n.label==='#### Carica fatture → provvigioni nette');
     if(uploadStart>=0){
       const uploadEnd=nodes.findIndex((n,i)=>i>uploadStart&&(n.kind==='subheader'||n.kind==='markdown'&&n.label?.startsWith('#### ')));
-      nodes=nodes.filter((n,i)=>i<uploadStart||(uploadEnd>=0&&i>=uploadEnd));
+      const hiddenStart=nodes[uploadStart-1]?.kind==='divider'?uploadStart-1:uploadStart;
+      nodes=nodes.filter((n,i)=>i<hiddenStart||(uploadEnd>=0&&i>=uploadEnd));
     }
   }
   if(values.schede_principali==='Auto'){

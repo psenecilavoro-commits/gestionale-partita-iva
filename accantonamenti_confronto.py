@@ -177,9 +177,3 @@ def mostra_confronto_accantonamenti(client: Client, anno: dict) -> None:
             f"{ripartizione['mesi_restanti']} mesi. "
             f"Mesi ancora senza accantonamento: {', '.join(mesi_vuoti)}."
         )
-
-    st.caption(
-        "È un riparto previsionale: se cambiano fatturato, costi, imposte o "
-        "accantonamenti registrati, la quota viene ricalcolata automaticamente."
-    )
-
