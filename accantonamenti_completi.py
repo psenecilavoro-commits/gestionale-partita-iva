@@ -159,11 +159,6 @@ def mostra_accantonamenti(client: Client, anno: dict) -> None:
             "Per il 2026 in regime forfettario gli accantonamenti sono un controllo di cassa; "
             "non viene costruita una liquidazione IVA ordinaria."
         )
-    else:
-        st.caption(f"Mesi con incasso, accantonamento e saldo IVA calcolabili: {completi}/12. "
-                   "Netto = bonifico ricevuto − accantonato − saldo IVA. Le spese restano nel Conto economico.")
-        st.caption("IVA mensile dal fatturato al 22% e dall’IVA detraibile registrata: il credito eccedente resta a riporto, non diventa un incasso. "
-                   "I crediti iniziali, le rettifiche e gli interessi delle liquidazioni restano separati; completa i mesi mancanti per ricostruire i riporti.")
     if anno["status"] != "open":
         st.info("Anno chiuso: dati in sola lettura.")
         return
