@@ -22,6 +22,8 @@ D = Decimal
 def mostra_fatturato(client, anno: dict, mandanti: list[dict]) -> None:
     st.divider()
     st.subheader(f"Fatturato registrato · {anno['fiscal_year']}")
+    if int(anno["fiscal_year"]) != 2026:
+        st.caption("Per inserire il fatturato a mano, clicca su una cella e inserisci l’importo IVA compresa, prima delle trattenute Enasarco e della ritenuta d’acconto.")
     if not mandanti:
         st.info("Aggiungi prima una mandante nella sezione Mandanti.")
         return
