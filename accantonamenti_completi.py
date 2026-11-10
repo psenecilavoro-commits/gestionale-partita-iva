@@ -155,11 +155,6 @@ def mostra_accantonamenti(client: Client, anno: dict) -> None:
     c1.metric("Accantonamenti annotati", euro(totale_riserve))
     c2.metric("Netto annuo", euro(residuo_parziale) if nette_disponibili and completi else "—")
     if int(anno["fiscal_year"]) == 2026:
-        st.caption(
-            f"Mesi con nette e accantonamenti compilati: {completi}/12. "
-            "La differenza non rappresenta il netto disponibile: contributi, Enasarco, "
-            "imposta sostitutiva e costi restano separati. Un mese vuoto non equivale a zero."
-        )
         st.info(
             "Per il 2026 in regime forfettario gli accantonamenti sono un controllo di cassa; "
             "non viene costruita una liquidazione IVA ordinaria."

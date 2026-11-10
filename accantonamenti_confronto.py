@@ -113,10 +113,6 @@ def mostra_confronto_accantonamenti(client: Client, anno: dict) -> None:
     """Mostra il residuo reale da accantonare e la quota sui mesi ancora vuoti."""
     st.divider()
     st.subheader("Residuo da accantonare")
-    st.caption(
-        "Il calcolo usa gli stessi valori previsionali del Conto economico e gli "
-        "accantonamenti già registrati. Non modifica automaticamente nessun mese."
-    )
 
     try:
         riserve = leggi_accantonamenti(client, anno["id"])
