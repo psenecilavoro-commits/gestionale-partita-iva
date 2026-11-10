@@ -198,11 +198,6 @@ def mostra_soglie_fatturato(client, anno: dict) -> None:
 
 def mostra_costi(client, anno: dict) -> None:
     st.subheader("Costi · regime forfettario 2026")
-    st.caption(
-        "Questi importi servono a misurare le uscite economiche e il netto di cassa. "
-        "Nel modello forfettario il reddito imponibile non viene determinato sottraendo "
-        "analiticamente queste spese."
-    )
     try:
         righe, totale = costi_forfettario(client, anno["id"])
         stime = leggi_tutti(client, "annual_cost_estimates", fiscal_year_id=anno["id"])

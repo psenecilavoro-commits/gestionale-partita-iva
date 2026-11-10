@@ -22,7 +22,6 @@ D = Decimal
 def mostra_fatturato(client, anno: dict, mandanti: list[dict]) -> None:
     st.divider()
     st.subheader(f"Fatturato registrato · {anno['fiscal_year']}")
-    st.caption("Importi fatturati IVA esclusa. La stima usa soltanto i mesi compilati; un mese mancante non equivale a zero.")
     if not mandanti:
         st.info("Aggiungi prima una mandante nella sezione Mandanti.")
         return
@@ -70,8 +69,6 @@ def mostra_fatturato(client, anno: dict, mandanti: list[dict]) -> None:
     mese_nome = st.selectbox("Mese", MESI, key="fatturato_mese")
     mese = MESI.index(mese_nome) + 1
     presente = indice.get((nomi[nome], mese))
-    if presente:
-        st.caption("Il mese è già registrato: salvando ne sostituisci l'importo.")
     with st.form("salva_fatturato"):
         testo = st.text_input("Importo fatturato (IVA esclusa)",
             value=str(presente["amount"]).replace(".", ",") if presente else "",
@@ -146,7 +143,6 @@ def mostra_auto(client, anno: dict) -> None:
             or (impostazioni and str(impostazioni.get("notes") or "").startswith("DATI DI PROVA"))):
         st.warning("Sono ancora presenti registrazioni auto dimostrative. Verifica la pulizia del database.")
     st.table(vista)
-    st.caption("Le spese dello stesso mese vengono sommate. Stima annua = totale dei mesi compilati ÷ mesi compilati × 12.")
     st.subheader("Limite chilometrico e penale")
     st.write(" · ".join(f"**{nome}:** {valore}" for nome, valore in limite_penale.items()))
     st.caption("La penale è una stima contrattuale, non una spesa pagata.")

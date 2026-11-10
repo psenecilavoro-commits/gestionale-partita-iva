@@ -15,10 +15,6 @@ def mostra_gestione_anno(client, anno: dict) -> None:
         st.markdown("### Gestione anno fiscale")
 
         if stato == "open":
-            st.caption(
-                "La chiusura blocca le modifiche dell'anno selezionato. "
-                "I dati restano consultabili."
-            )
             conferma = st.checkbox(
                 f"Confermo la chiusura dell'anno {anno_num}",
                 key=f"chiusura_anno_conferma_{anno_num}",
