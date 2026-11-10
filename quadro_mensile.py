@@ -16,7 +16,7 @@ from accantonamenti import leggi_accantonamenti
 from accantonamenti_completi import leggi_provvigioni_nette
 from fatturato import MESI, NOTA_TEST, euro, leggi_fatturato
 from iva_acquisti import leggi_fatture_iva, riepilogo_acquisti_iva
-from accantonamenti_iva import calcola_saldi_mensili, iva_vendite_mensile
+from accantonamenti_iva import calcola_saldi_mensili, leggi_iva_vendite_ibrida
 
 D = Decimal
 
@@ -24,7 +24,7 @@ D = Decimal
 ETICHETTE_UI = {
     "Provvigioni nette": "Provvigioni nette IVA inclusa",
     "Differenza IVA · ipotesi (NON dovuta)": "Saldo IVA calcolato",
-    "IVA vendite · 22% foglio (SIMULAZIONE)": "IVA vendite · ipotesi 22%",
+    "IVA vendite · 22% foglio (SIMULAZIONE)": "IVA vendite · documentata e stimata",
     "Netto foglio · ipotesi (NON disponibile)": "Netto teorico · NON disponibile",
 }
 
@@ -54,14 +54,13 @@ def _fatturato_mensile(righe: list[dict]) -> dict[int, D]:
 
 def costruisci_quadro(fatturati: list[dict], nette: list[dict],
                       accantonamenti: list[dict], fatture: list[dict],
-                      anno: int) -> tuple[list[dict], list[dict]]:
+                      anno: int, *, vendite=None) -> tuple[list[dict], list[dict]]:
     """Compatibilita' interna invariata; non presentare IVA parziale come dovuta."""
     ricavi = _fatturato_mensile(fatturati)
     provvigioni = _per_mese_unico(nette, "amount")
     riserve = _per_mese_unico(accantonamenti, "reserved_amount")
     acquisti = riepilogo_acquisti_iva(fatture, anno)
-    iva_vendite = iva_vendite_mensile(fatturati)
-    saldi_iva = calcola_saldi_mensili(fatturati, fatture, anno)
+    saldi_iva = calcola_saldi_mensili(fatturati, fatture, anno, vendite=vendite)
     prova = {int(r["month"]) for r in fatturati if r.get("notes") == NOTA_TEST}
     righe = []
     controlli = []
@@ -69,7 +68,7 @@ def costruisci_quadro(fatturati: list[dict], nette: list[dict],
         documenti = acquisti.get(mese)
         netta = provvigioni.get(mese)
         riserva = riserve.get(mese)
-        iva_fatturata = iva_vendite.get(mese)
+        iva_fatturata = saldi_iva[mese]["vendite"]
         iva_acquisti = ((documenti["auto"] + documenti["altro"])
                        if documenti is not None else None)
         differenza_iva = (saldi_iva[mese]["debito"]
@@ -138,8 +137,10 @@ def mostra_quadro_mensile(client: Client, anno: dict) -> None:
         nette = leggi_provvigioni_nette(client, anno["id"])
         riserve = leggi_accantonamenti(client, anno["id"])
         acquisti = leggi_fatture_iva(client, anno["id"])
-        tabella, controlli = costruisci_quadro(fatturati, nette, riserve, acquisti,
-                                               int(anno["fiscal_year"]))
+        vendite = leggi_iva_vendite_ibrida(client, fatturati, anno["id"])
+        tabella, controlli = costruisci_quadro(
+            fatturati, nette, riserve, acquisti, int(anno["fiscal_year"]), vendite=vendite,
+        )
     except Exception:
         st.warning("Quadro integrato non disponibile: controlla che siano presenti e "
                    "accessibili le tabelle delle provvigioni nette e dell'IVA acquisti.")

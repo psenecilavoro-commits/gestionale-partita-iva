@@ -1,6 +1,6 @@
 import unittest
 from decimal import Decimal as D
-from accantonamenti_iva import calcola_saldi_mensili,iva_vendite_mensile
+from accantonamenti_iva import calcola_saldi_mensili,iva_vendite_mensile,iva_vendite_ibrida
 from accantonamenti_completi import calcola_tabella_completa
 
 class NettoIVA(unittest.TestCase):
@@ -32,5 +32,26 @@ class NettoIVA(unittest.TestCase):
  def test_gross_metadata_retains_original_cent_and_is_not_resplit_from_bank_receipt(self):
   sales=[dict(month=1,amount='.84',notes='\n[PIVA_GROSS_22_V1]1.03')]
   self.assertEqual(iva_vendite_mensile(sales)[1],D('.19'))
+
+ def test_hybrid_vat_uses_document_month_and_only_the_manual_remainder(self):
+  importazione = dict(direction="emessa", economic_year_id="y", document_year_id="y",
+                      record_ids={"sale": "s", "revenue": "r"})
+  documento = dict(id="s", taxable_amount="1000", vat_amount="220.01", vat_month=1)
+  incasso = dict(id="r", month=2, amount="1500")
+  vendite = iva_vendite_ibrida([incasso], [importazione], [documento], "y")
+  self.assertEqual(vendite, {1: D("220.01"), 2: D("110")})
+  saldi = calcola_saldi_mensili([incasso], [self.invoice(1,"250")], 2027, vendite=vendite)
+  self.assertEqual(saldi[2]["debito"], D("80.01"))
+  with self.assertRaisesRegex(ValueError, "inferiore"):
+   iva_vendite_ibrida([{**incasso, "amount": "999"}], [importazione], [documento], "y")
+
+ def test_hybrid_vat_handles_invoice_and_receipt_in_different_years(self):
+  importazione = dict(direction="emessa", economic_year_id="2028", document_year_id="2027",
+                      record_ids={"sale": "s", "revenue": "r"})
+  documento = dict(id="s", taxable_amount="1000", vat_amount="220", vat_month=12)
+  incasso = dict(id="r", month=1, amount="1000")
+  self.assertEqual(iva_vendite_ibrida([], [importazione], [documento], "2027"), {12: D("220")})
+  self.assertEqual(iva_vendite_ibrida([incasso], [importazione], [documento], "2028"), {1: D("0")})
+
 
 if __name__=='__main__':unittest.main()

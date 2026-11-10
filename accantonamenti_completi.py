@@ -136,13 +136,20 @@ def mostra_accantonamenti(client: Client, anno: dict) -> None:
         st.warning("Il Fatturato contiene dati di prova; non sono provvigioni nette reali.")
     iva_mensile=None
     if int(anno['fiscal_year']) != 2026:
-        from accantonamenti_iva import calcola_saldi_mensili
+        from accantonamenti_iva import calcola_saldi_mensili, leggi_iva_vendite_ibrida
         from iva_acquisti import leggi_fatture_iva
         try:
-            iva_mensile=calcola_saldi_mensili(fatturati,leggi_fatture_iva(client,anno['id']),int(anno['fiscal_year']))
+            vendite = leggi_iva_vendite_ibrida(client, fatturati, anno["id"])
+            iva_mensile = calcola_saldi_mensili(
+                fatturati, leggi_fatture_iva(client, anno["id"]), int(anno["fiscal_year"]),
+                vendite=vendite,
+            )
+        except ValueError as exc:
+            iva_mensile = {}
+            st.error(f"Saldo IVA non disponibile: {exc}")
         except Exception:
-            iva_mensile={}
-            st.error('Saldo IVA non disponibile: il netto resta da completare finché il registro IVA acquisti non è leggibile.')
+            iva_mensile = {}
+            st.error("Saldo IVA non disponibile: controlla i registri IVA e le fatture importate.")
     try:
         tabella, totale_nette, totale_riserve, residuo_parziale, completi = calcola_tabella_completa(
             fatturati, riserve, nette, iva_mensile,
