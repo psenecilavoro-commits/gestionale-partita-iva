@@ -228,7 +228,7 @@ function App(){
   function editTable(records,column,index,open=false){
     if(OFFLINE||busy)return null;
     const page=values.schede_principali||'Fatturato';
-    const cell=page==='Fatturato'?revenueCell(records,column,index,tables.current,values.anno_fiscale_selezionato):page==='Costi'?costCell(records,column,index,tables.current,values.anno_fiscale_selezionato):page==='Accantonamenti'?reserveCell(records,column,index,tables.current,values.anno_fiscale_selezionato):page==='Imposte'?taxCell(records,column,index,tables.current,values.anno_fiscale_selezionato):page==='Auto'?autoCell(records,column,index,tables.current,values.anno_fiscale_selezionato):null;
+    const cell=page==='Fatturato'?revenueCell(records,column,index,tables.current,values.anno_fiscale_selezionato):page==='Costi'?costCell(records,column,index,tables.current,values.anno_fiscale_selezionato):page==='Accantonamenti'?reserveCell(records,column,index,tables.current,values.anno_fiscale_selezionato):page==='Imposte'?taxCell(records,column,index,tables.current,values.anno_fiscale_selezionato):page==='Auto'?(autoCell(records,column,index,tables.current,values.anno_fiscale_selezionato)??taxCell(records,column,index,tables.current,values.anno_fiscale_selezionato)):null;
     if(open&&cell?.editable)openRevenue(cell);
     return cell;
   }

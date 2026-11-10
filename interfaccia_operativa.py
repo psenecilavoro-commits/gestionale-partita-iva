@@ -145,6 +145,9 @@ def mostra_auto(client, anno: dict) -> None:
             or (impostazioni and str(impostazioni.get("notes") or "").startswith("DATI DI PROVA"))):
         st.warning("Sono ancora presenti registrazioni auto dimostrative. Verifica la pulizia del database.")
     st.table(vista)
+    if int(anno["fiscal_year"]) >= 2027:
+        from auto_rate import mostra_parametri_leasing
+        mostra_parametri_leasing(client, anno["id"])
     st.subheader("Limite chilometrico e penale")
     st.write(" · ".join(f"**{nome}:** {valore}" for nome, valore in limite_penale.items()))
     st.caption("La penale è una stima contrattuale, non una spesa pagata.")

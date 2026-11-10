@@ -910,6 +910,27 @@
           "Rate auto": "1.200,00 €"
         }
       ]
+    },
+    {
+      "kind": "table",
+      "records": [
+        {
+          "Parametro": "Costo auto IVA compresa",
+          "Valore": "—"
+        },
+        {
+          "Parametro": "Massimale di deduzione",
+          "Valore": "25.822,84 €"
+        },
+        {
+          "Parametro": "Percentuale di deduzione",
+          "Valore": "80%"
+        },
+        {
+          "Parametro": "Percentuale di deduzione effettiva",
+          "Valore": "—"
+        }
+      ]
     }
   ],
   "2027:Accantonamenti": [

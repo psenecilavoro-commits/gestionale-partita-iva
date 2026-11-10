@@ -9,7 +9,7 @@ import streamlit as st
 from supabase import Client
 
 from costi_tabella import (VOCI, CONFIG, _leggi, _tabella, _nuova, _modifica,
-                          _elimina, _euro)
+                          _elimina, _euro, aliquota_leasing_per_spese)
 
 SOLO_AUTO = frozenset({"rate_auto", "carburante", "autostrada"})
 
@@ -23,7 +23,9 @@ def mostra_tabella_costi(client: Client, anno: dict) -> None:
     st.subheader("Costi")
     try:
         categorie, stime, spese, _veicoli, impostazioni, km = _leggi(client, anno["id"])
-        tabella, incompleti, origini = _tabella(categorie, stime, spese, impostazioni, km)
+        tabella, incompleti, origini = _tabella(
+            categorie, stime, spese, impostazioni, km,
+            aliquota_leasing=aliquota_leasing_per_spese(client, anno["id"], categorie, spese))
     except Exception:
         st.error("Impossibile leggere la tabella dei costi. Nessun dato modificato.")
         return

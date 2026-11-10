@@ -9,7 +9,7 @@ from decimal import Decimal, InvalidOperation
 import streamlit as st
 from supabase import Client
 
-from auto_rate import quota_deducibile_test
+from auto_rate import parametri_leasing, quota_deducibile_test
 from costi import _calcola, _euro_arrotondato, NOTA_CATEGORIA_TEST
 
 D = Decimal
@@ -102,7 +102,15 @@ def _crea_categoria(client, anno_id, codice):
     return r.data[0]
 
 
-def _tabella(categorie, stime, spese, impostazioni, km, *, totali_output=None, dettaglio_output=None):
+def aliquota_leasing_per_spese(client, anno_id, categorie, spese):
+    categoria = categorie.get("rate_auto")
+    if categoria and any(r["category_id"] == categoria["id"] for r in spese):
+        return parametri_leasing(client, anno_id)[2]
+    return None
+
+
+def _tabella(categorie, stime, spese, impostazioni, km, *, aliquota_leasing=None,
+             totali_output=None, dettaglio_output=None):
     per_cat = defaultdict(list)
     for spesa in spese:
         per_cat[spesa["category_id"]].append(spesa)
@@ -131,7 +139,14 @@ def _tabella(categorie, stime, spese, impostazioni, km, *, totali_output=None, d
             registrato, lordo = _proietta(righe)
             origine = "Auto · proiezione da mesi"
             origini.update("TEST" if str(r.get("notes") or "").startswith("DATI DI PROVA") else "MANUALE" for r in righe)
-            if (cat and all(r["amount_includes_vat"] and
+            if codice == "rate_auto" and aliquota_leasing is not None:
+                # Proietta separatamente l'IVA e il costo netto di ciascuna rata.
+                importi = [(r, _calcola(D(str(r["gross_amount"])), r, r["amount_includes_vat"])) for r in righe]
+                _, iva = _proietta([{**r, "gross_amount": valori[0]} for r, valori in importi])
+                _, netto = _proietta([{**r, "gross_amount": valori[2]} for r, valori in importi])
+                deducibile = netto * aliquota_leasing
+                percentuale = f"{aliquota_leasing * 100:.2f}%".replace(".", ",")
+            elif (cat and all(r["amount_includes_vat"] and
                             all(D(str(r[k])) == D(str(cat[k])) for k in
                                 ("vat_rate", "vat_deductible_rate", "cost_deductible_rate")) for r in righe)):
                 iva, _detraibile, netto, deducibile = _calcola(lordo, cat, True)
@@ -202,7 +217,8 @@ def totali_annui_previsionali(client, anno_id):
     categorie, stime, spese, _veicoli, impostazioni, km = _leggi(client, anno_id)
     totali = {}
     tabella, incompleti, _origini = _tabella(
-        categorie, stime, spese, impostazioni, km, totali_output=totali)
+        categorie, stime, spese, impostazioni, km, totali_output=totali,
+        aliquota_leasing=aliquota_leasing_per_spese(client, anno_id, categorie, spese))
     if not any(r["Voce"] == "TOTALE SPESE" for r in tabella):
         raise ValueError("Inserisci le stime annuali nella scheda Costi per costruire la previsione.")
     if incompleti:
@@ -278,7 +294,9 @@ def mostra_tabella_costi(client: Client, anno: dict) -> None:
                "Le stime annuali NON sono fatture pagate; i valori delle spese mensili sono proiettati su 12 mesi.")
     try:
         categorie, stime, spese, veicoli, impostazioni, km = _leggi(client, anno["id"])
-        tabella, incompleti, origini = _tabella(categorie, stime, spese, impostazioni, km)
+        tabella, incompleti, origini = _tabella(
+            categorie, stime, spese, impostazioni, km,
+            aliquota_leasing=aliquota_leasing_per_spese(client, anno["id"], categorie, spese))
     except Exception:
         st.error("Impossibile leggere la tabella dei costi. Nessun dato modificato.")
         return
@@ -397,5 +415,6 @@ def mostra_tabella_costi(client: Client, anno: dict) -> None:
 def dettaglio_annuo_previsionale(client, anno_id):
     categorie, stime, spese, _veicoli, impostazioni, km = _leggi(client, anno_id)
     righe = []
-    _tabella(categorie, stime, spese, impostazioni, km, dettaglio_output=righe)
+    _tabella(categorie, stime, spese, impostazioni, km, dettaglio_output=righe,
+             aliquota_leasing=aliquota_leasing_per_spese(client, anno_id, categorie, spese))
     return [r for r in righe if r["importo"] is not None]

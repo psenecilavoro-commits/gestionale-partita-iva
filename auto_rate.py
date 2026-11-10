@@ -21,6 +21,37 @@ IVA_TEST = Decimal("0.22")
 DEDUCIBILITA_TEST = Decimal("0.8")
 
 
+ALIQUOTA_LEASING = Decimal("0.80")
+MASSIMALE_LEASING = Decimal("25822.84")
+
+
+def parametri_leasing(client, anno_id):
+    from imposte_parametri import _leggi
+
+    parametri = _leggi(client, anno_id)
+    costo = Decimal(str(parametri.get("leasing_costo_lordo", {}).get("value", 0)))
+    massimale = Decimal(str(parametri.get("leasing_massimale", {}).get("value", MASSIMALE_LEASING)))
+    effettiva = (
+        ALIQUOTA_LEASING * min(Decimal("1"), massimale / (costo / Decimal("1.22")))
+        if costo > 0 else None
+    )
+    return costo, massimale, effettiva
+
+
+def mostra_parametri_leasing(client, anno_id):
+    from imposte_parametri import _formato
+
+    costo, massimale, effettiva = parametri_leasing(client, anno_id)
+    with st.expander("Parametri leasing"):
+        st.caption("Inserisci il costo del veicolo per il concedente indicato nel contratto, IVA compresa al 22%.")
+        st.table([
+            {"Parametro": "Costo auto IVA compresa", "Valore": _formato(costo, "EUR") if costo else "—"},
+            {"Parametro": "Massimale di deduzione", "Valore": _formato(massimale, "EUR")},
+            {"Parametro": "Percentuale di deduzione", "Valore": _formato(ALIQUOTA_LEASING, "RATE")},
+            {"Parametro": "Percentuale di deduzione effettiva", "Valore": _formato(effettiva, "RATE") if effettiva is not None else "—"},
+        ])
+
+
 def quota_deducibile_test(lordo_annuo: Decimal) -> Decimal:
     """Ricalca Costi!E2 e F2, senza arrotondamenti intermedi."""
     netto_auto = COSTO_AUTO_TEST / (1 + IVA_TEST)

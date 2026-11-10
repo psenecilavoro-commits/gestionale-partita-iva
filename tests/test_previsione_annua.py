@@ -56,6 +56,21 @@ class PrevisioneAnnua(unittest.TestCase):
                     goal3,_ = _obiettivo_ordinario(None,annual)
                     self.assertGreater(goal3,goal2)
 
+    def test_leasing_rate_applies_to_net_manual_and_imported_expenses(self):
+        data = self.fixtures(2027)
+        data[0]["rate_auto"] = {**data[0]["carburante"], "id": "r", "name": "Rate auto"}
+        data[2].extend([
+            {**data[2][0], "category_id": "r", "gross_amount": "1220"},
+            {**data[2][0], "category_id": "r", "gross_amount": "100", "vat_rate": "0"},
+        ])
+        parameters = {"leasing_costo_lordo": {"value": "39900"}}
+        with patch("costi_tabella._leggi", return_value=data), patch("imposte_parametri._leggi", return_value=parameters):
+            totals = totali_annui_previsionali(None, "y")
+            expected = D("2440") + D("13200") * D(".8") * (D("25822.84") / (D("39900") / D("1.22")))
+            self.assertEqual(totals["deducibile"].quantize(D(".01")), expected.quantize(D(".01")))
+            parameters["leasing_costo_lordo"]["value"] = "24400"
+            self.assertEqual(totali_annui_previsionali(None, "y")["deducibile"], D("13000"))
+
     def test_missing_or_unverified_deductions_never_become_zero(self):
         with patch('costi_tabella._leggi',return_value=({}, {}, [], [], [], [])):
             with self.assertRaisesRegex(ValueError,'Inserisci le stime'):
@@ -63,7 +78,7 @@ class PrevisioneAnnua(unittest.TestCase):
         data = self.fixtures(2027)
         data[0]['rate_auto'] = {**data[0]['carburante'],'id':'r','name':'Rate auto'}
         data[2].append({**data[2][0],'category_id':'r'})
-        with patch('costi_tabella._leggi',return_value=data):
+        with patch('costi_tabella._leggi',return_value=data), patch('costi_tabella.parametri_leasing',return_value=(D(0), D('25822.84'), None)):
             with self.assertRaisesRegex(ValueError,'rate_auto'):
                 totali_annui_previsionali(None,'y')
 
