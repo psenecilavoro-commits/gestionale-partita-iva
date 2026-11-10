@@ -100,10 +100,11 @@ def mostra_costi_reali(client, anno):
     except Exception:
         st.error("Registro costi non disponibile.")
         return
-    st.dataframe([{
-        "Data": r["expense_date"], "Descrizione": r["description"],
-        "Importo": r["gross_amount"], "IVA compresa": r["amount_includes_vat"],
-    } for r in costi], hide_index=True)
+    if costi:
+        st.dataframe([{
+            "Data": r["expense_date"], "Descrizione": r["description"],
+            "Importo": r["gross_amount"], "IVA compresa": r["amount_includes_vat"],
+        } for r in costi], hide_index=True)
     from quadro_mensile import _csv_bytes
     st.download_button("Esporta spese registrate CSV",
                        _csv_bytes([{**r, "notes": _origine(r)} for r in costi]),

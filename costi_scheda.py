@@ -21,10 +21,6 @@ def voci_modificabili() -> list[tuple]:
 
 def mostra_tabella_costi(client: Client, anno: dict) -> None:
     st.subheader("Costi")
-    st.caption("Riepilogo di tutte le spese. Carburante, autostrada e rate auto si "
-               "registrano e modificano nella scheda Auto; qui restano visibili "
-               "il registrato e la stima annua. Le altre voci sono stime annuali, "
-               "non necessariamente spese sostenute.")
     try:
         categorie, stime, spese, _veicoli, impostazioni, km = _leggi(client, anno["id"])
         tabella, incompleti, origini = _tabella(categorie, stime, spese, impostazioni, km)
@@ -39,8 +35,6 @@ def mostra_tabella_costi(client: Client, anno: dict) -> None:
     if incompleti:
         st.caption("I totali fiscali sono sospesi per voci da verificare: "
                    + ", ".join(sorted(incompleti)) + ".")
-    st.caption("* Rate auto: la quota fiscalmente deducibile richiede la verifica del contratto "
-               "e dei relativi limiti. Assicurazione: premio senza IVA.")
     if anno["status"] != "open":
         st.info("Anno chiuso: costi in sola lettura.")
         return
