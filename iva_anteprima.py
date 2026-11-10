@@ -78,9 +78,6 @@ def mostra_anteprima_iva(client: Client, anno: dict) -> None:
         "Altra IVA detraibile · registrata": euro(acquisti[mese]["altro"]) if mese in acquisti else "—",
         "IVA dovuta": "— · non determinata",
     } for mese, nome in enumerate(MESI, 1)], hide_index=True, width="stretch")
-    st.caption("Un mese privo di documenti non equivale a zero. IVA sulle vendite = "
-               "simulazione dal fatturato, IVA sugli acquisti = quote documentate e "
-               "confermate. Non sottrarre i due valori come liquidazione effettiva.")
     with st.expander("Verifica il periodo di una fattura d'acquisto · senza salvataggio"):
         st.caption("Solo fattura ordinaria con IVA effettivamente detraibile e liquidazione mensile. "
                    "La detrazione per il mese dell'operazione è una possibilità, non un obbligo. "
