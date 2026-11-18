@@ -23,8 +23,8 @@ const EnasarcoContext=createContext([]);
 const PrincipalContext=createContext(null);
 const TableDataContext=createContext({});
 
-const NAV=['Fatturato','Costi','Auto','Accantonamenti','Conto economico','Imposte','Detrazioni e deduzioni','Ammortamenti'];
-const NAV_ICONS=[TrendingUp,Receipt,Car,Wallet,ChartNoAxesCombined,Landmark,BadgePercent,Layers];
+const NAV=['Fatturato','Auto','Costi','Accantonamenti','Conto economico','Imposte','Detrazioni e deduzioni','Ammortamenti'];
+const NAV_ICONS=[TrendingUp,Car,Receipt,Wallet,ChartNoAxesCombined,Landmark,BadgePercent,Layers];
 function Markdown({text=''}){
  const inline=line=>line.split(/(\*\*.*?\*\*)/g).map((part,i)=>part.startsWith('**')?<strong key={i}>{part.slice(2,-2)}</strong>:part);
  return <div className="prose">{String(text).split('\n').map((line,i)=>{const heading=line.match(/^(#{1,4})\s+(.+)$/);if(heading){const Tag=heading[1].length<3?'h2':'h3';return <Tag key={i}>{inline(heading[2])}</Tag>;}return line.trim()?<p key={i}>{inline(line)}</p>:null;})}</div>;
