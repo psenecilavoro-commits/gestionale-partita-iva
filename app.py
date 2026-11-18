@@ -23,12 +23,10 @@ from forfettario_2026 import (
 from regime_fiscale import e_forfettario, etichetta_regime
 from database import create_fiscal_year, get_fiscal_year
 from gestione_anno import mostra_gestione_anno
-from fatture_acquisto_xml import mostra_importa_xml_acquisti
-from fatture_provvigioni import mostra_carica_fatture
 from oneri_annuali import mostra_oneri
 from interfaccia_operativa import (mostra_fatturato, mostra_imposte,
                                   mostra_auto as mostra_riepilogo_auto)
-from iva_anteprima import mostra_anteprima_iva
+from iva_anteprima import mostra_riepilogo_iva
 from mandanti import aggiungi_mandante, elenco_mandanti
 from quadro_mensile import mostra_quadro_mensile
 from registrazioni_reali import mostra_costi_reali
@@ -218,17 +216,21 @@ if scheda_accantonamenti.open:
     with scheda_accantonamenti:
         mostra_accantonamenti(client, fiscal_year)
         mostra_confronto_accantonamenti(client, fiscal_year)
-        mostra_carica_fatture(client, fiscal_year)
         if forfettario:
             st.info(
                 "Anno 2026 in regime forfettario: i prospetti IVA ordinari sono "
                 "disattivati per questa annualità."
             )
         else:
-            mostra_anteprima_iva(client, fiscal_year)
-            mostra_importa_xml_acquisti(client, fiscal_year)
-            mostra_quadro_mensile(client, fiscal_year)
-            mostra_periodi_iva(client, fiscal_year)
+            mostra_riepilogo_iva(client, fiscal_year)
+            with st.expander("Registro IVA acquisti · consulta e modifica"):
+                from iva_acquisti import mostra_registro_iva_acquisti
+                mostra_registro_iva_acquisti(client, fiscal_year)
+            with st.expander("Liquidazioni e versamenti IVA · dettagli"):
+                st.caption("Questo registro usa le fatture documentate. Credito iniziale, rettifiche, interessi e versamenti annotati qui restano separati dal saldo mensile sopra.")
+                mostra_periodi_iva(client, fiscal_year)
+            with st.expander("Controlli ed esportazioni"):
+                mostra_quadro_mensile(client, fiscal_year)
 
 if scheda_conto_economico.open:
     with scheda_conto_economico:

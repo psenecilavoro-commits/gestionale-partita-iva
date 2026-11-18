@@ -18,6 +18,15 @@ test('browser Python runtime renders both regimes with original formulas',async(
     const result=JSON.parse(py.runPython('react_bridge.render(json.loads(request))'));
     assert.ok(result.tree.length,`${year} ${page}`);
     assert.equal(result.mutations.length,0);
+    if(year===2027&&page==='Accantonamenti'){
+      const expanded=nodes=>nodes.flatMap(n=>n.kind==='expander'?[]:[n,...expanded(n.children||[])]);
+      const visible=expanded(result.tree);
+      assert.deepEqual(visible.filter(n=>n.label!=='Anno fiscale'&&n.kind==='subheader').map(n=>n.label),
+        ['Tabella accantonamenti','Residuo da accantonare','Riepilogo IVA mensile']);
+      const iva=visible.find(n=>n.kind==='table'&&n.records[0]?.['Saldo IVA da accantonare']!==undefined);
+      assert.equal(iva.records[0]['Saldo IVA da accantonare'],'990,00 €');
+    }
+
     assert.deepEqual([...project(result.sidebar),...project(result.tree)],oracle[`${year}:${page}`],`${year} ${page}: CPython/Pyodide fiscal parity`);
   }
   assert.equal(py.runPython("from decimal import Decimal as D\nfrom accantonamenti_confronto import ripartisci_residuo\nstr(ripartisci_residuo(D('11000'),D('4800'),8)['quota_mensile'])"),'1550');

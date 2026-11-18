@@ -107,3 +107,32 @@ def mostra_anteprima_iva(client: Client, anno: dict) -> None:
         st.caption("In assenza di una fattura reale e della verifica di detraibilità, "
                    "questo controllo non determina un credito IVA.")
     mostra_registro_iva_acquisti(client, anno)
+
+
+def mostra_riepilogo_iva(client: Client, anno: dict) -> None:
+    from accantonamenti_iva import calcola_saldi_mensili, leggi_iva_vendite_ibrida
+    from iva_acquisti import leggi_fatture_iva
+
+    st.subheader("Riepilogo IVA mensile")
+    try:
+        fatturati = leggi_fatturato(client, anno["id"])
+        vendite = leggi_iva_vendite_ibrida(client, fatturati, anno["id"])
+        saldi = calcola_saldi_mensili(
+            fatturati, leggi_fatture_iva(client, anno["id"]),
+            int(anno["fiscal_year"]), vendite=vendite,
+        )
+    except Exception as exc:
+        st.error(f"Riepilogo IVA non disponibile: {exc}")
+        return
+
+    def valore(v):
+        return euro(v) if v is not None else "—"
+
+    st.dataframe([{
+        "Mese": nome,
+        "IVA vendite": valore(saldi[mese]["vendite"]),
+        "IVA acquisti detraibile": valore(saldi[mese]["detraibile"]),
+        "Saldo IVA da accantonare": valore(saldi[mese]["debito"]),
+        "Credito da riportare": valore(saldi[mese]["credito"]),
+    } for mese, nome in enumerate(MESI, 1)], hide_index=True, width="stretch", height="content")
+    st.caption("Il saldo IVA è già sottratto dal netto nella tabella sopra. L’accantonamento per imposte e contributi si registra separatamente.")
