@@ -200,10 +200,12 @@ if scheda_costi.open:
     with scheda_costi:
         if forfettario:
             mostra_costi_forfettario(client, fiscal_year)
-            mostra_costi_reali(client, fiscal_year)
+            with st.expander("Registro delle spese effettive", expanded=False):
+                mostra_costi_reali(client, fiscal_year)
         else:
             mostra_tabella_costi(client, fiscal_year)
-            mostra_costi_reali(client, fiscal_year)
+            with st.expander("Registro delle spese effettive", expanded=False):
+                mostra_costi_reali(client, fiscal_year)
             mostra_riconciliazione(client, fiscal_year)
 
 if scheda_auto.open:
