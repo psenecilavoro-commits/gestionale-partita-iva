@@ -141,7 +141,10 @@ def mostra_confronto_accantonamenti(client: Client, anno: dict) -> None:
         st.error("Impossibile calcolare il residuo degli accantonamenti.")
         return
 
-    c1, c2, c3 = st.columns(3)
+    mostra_eccedenza = ripartizione["eccedenza"] > 0
+    mostra_quota = ripartizione["residuo"] > 0 and ripartizione["mesi_restanti"] > 0
+    colonne = st.columns(4 if mostra_eccedenza or mostra_quota else 3)
+    c1, c2, c3 = colonne[:3]
     c1.metric("Fabbisogno fiscale annuo stimato", _fmt(max(obiettivo, D("0"))))
     if avanzo > 0:
         st.metric("Avanzo riportato dall’anno precedente", _fmt(avanzo))
@@ -158,12 +161,11 @@ def mostra_confronto_accantonamenti(client: Client, anno: dict) -> None:
 
     if ripartizione["mesi_restanti"] == 0:
         st.info("Tutti i 12 mesi hanno già un accantonamento registrato.")
-    elif ripartizione["residuo"] == 0:
-        if ripartizione["eccedenza"] > 0:
-            st.metric("Eccedenza rispetto al fabbisogno stimato",
-                      _fmt(ripartizione["eccedenza"]))
-    else:
-        st.metric(
+    if mostra_eccedenza:
+        colonne[3].metric("Eccedenza rispetto al fabbisogno stimato",
+                          _fmt(ripartizione["eccedenza"]))
+    elif mostra_quota:
+        colonne[3].metric(
             f"Quota indicativa per ciascuno dei {ripartizione['mesi_restanti']} mesi restanti",
             _fmt(quota),
         )
