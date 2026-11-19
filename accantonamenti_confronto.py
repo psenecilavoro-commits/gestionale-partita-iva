@@ -149,7 +149,6 @@ def mostra_confronto_accantonamenti(client: Client, anno: dict) -> None:
     c2.metric("Già accantonato", _fmt(gia_accantonato))
     c3.metric("Residuo da accantonare", _fmt(ripartizione["residuo"]))
 
-    st.caption(f"Composizione del fabbisogno: {descrizione}.")
 
     mesi_vuoti = [
         nome for numero, nome in enumerate(MESI, start=1)
@@ -160,10 +159,6 @@ def mostra_confronto_accantonamenti(client: Client, anno: dict) -> None:
     if ripartizione["mesi_restanti"] == 0:
         st.info("Tutti i 12 mesi hanno già un accantonamento registrato.")
     elif ripartizione["residuo"] == 0:
-        st.success(
-            "Il fabbisogno fiscale stimato risulta già coperto dagli accantonamenti "
-            "registrati: al momento non occorre aumentare la quota dei mesi successivi."
-        )
         if ripartizione["eccedenza"] > 0:
             st.metric("Eccedenza rispetto al fabbisogno stimato",
                       _fmt(ripartizione["eccedenza"]))
