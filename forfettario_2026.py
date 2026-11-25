@@ -147,7 +147,14 @@ def costi_forfettario(client, anno_id: str) -> tuple[list[dict], D]:
             if elenco else None
         )
         stima_record = stime_per_cat.get(cid)
-        if stima_record is not None:
+        mesi_registrati = {int(r["expense_date"][5:7]) for r in elenco}
+        auto_completa = (
+            categoria.get("code") in ("carburante", "autostrada", "rate_auto")
+            and mesi_registrati == set(range(1, 13))
+        )
+        if auto_completa:
+            stima = registrato
+        elif stima_record is not None:
             # Nel 2026 il file contiene già una stima annua per le voci Auto:
             # la conserviamo come riferimento, anche quando sono presenti mesi reali.
             stima = D(str(stima_record["estimated_gross_amount"]))

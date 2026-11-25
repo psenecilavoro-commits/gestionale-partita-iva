@@ -61,3 +61,20 @@ class TestRipartizioneSpese(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class CostiForfettarioCompleti(unittest.TestCase):
+    def test_twelve_distinct_months_replace_imported_estimate(self):
+        from forfettario_2026 import costi_forfettario
+        from unittest.mock import patch
+        categorie = [dict(id='r', code='rate_auto', name='Auto rate')]
+        stime = [dict(category_id='r', estimated_gross_amount='6388.42')]
+        spese = [dict(category_id='r', gross_amount='100', expense_date=f'2026-{m:02d}-01') for m in range(1,13)]
+        def read(client, table, **kwargs):
+            return {'cost_categories': categorie, 'annual_cost_estimates': stime, 'costs': spese}[table]
+        with patch('forfettario_2026.leggi_tutti', side_effect=read):
+            rows, total = costi_forfettario(None, 'year')
+            self.assertEqual(total, 1200)
+            self.assertEqual(rows[0]['Registrato'], rows[0]['Stima annua / valore file'])
+            spese.pop()
+            self.assertEqual(str(costi_forfettario(None,'year')[1]), '6388.42')
