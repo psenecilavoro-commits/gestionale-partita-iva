@@ -66,3 +66,6 @@ class Sinergia(TestCase):
             self.assertEqual(calculate()[0]['COSTI_DEDUCIBILI'], D('12000'))
             records['depreciable_assets'].clear()
             self.assertEqual(calculate()[0]['COSTI_DEDUCIBILI'], D('10000'))
+            params['contributi_ap_pagati'] = {'value': '12000'}
+            before_saved = deducted['B9']
+            self.assertEqual(calculate()[0]['B9'], before_saved - D('4000'))

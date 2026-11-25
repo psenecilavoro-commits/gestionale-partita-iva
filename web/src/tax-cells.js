@@ -1,4 +1,7 @@
 import defaults from './tax-defaults.json' with {type:'json'};
+const contributionParameters = [
+ ['contributi_ap_pagati', 'Contributi anni precedenti effettivamente pagati nell’anno', '8000', 'EUR'],
+];
 const leasingParameters = [
  ['leasing_costo_lordo', 'Costo auto IVA compresa', null, 'EUR'],
  ['leasing_massimale', 'Massimale di deduzione', '25822.84', 'EUR'],
@@ -8,7 +11,7 @@ const leasingParameters = [
 
 export function taxCell(records,column,index,tables,year){
  if(column!=='Valore')return null;
- const group=[...defaults, leasingParameters].find(g=>g.length===records.length&&g.every((v,i)=>records[i].Parametro===v[1]));
+ const group=[...defaults, leasingParameters, contributionParameters].find(g=>g.length===records.length&&g.every((v,i)=>records[i].Parametro===v[1]));
  const years=(tables.fiscal_years||[]).filter(y=>Number(y.fiscal_year)===Number(year));
  if(!group||years.length!==1||Number(year)===2026)return null;
  const fy=years[0],[code,name,value,unit]=group[index];

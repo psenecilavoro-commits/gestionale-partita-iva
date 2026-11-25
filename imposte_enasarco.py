@@ -36,7 +36,7 @@ def calcola_confronto(mandanti: list[dict], ricavi: list[dict], aliquota: Decima
         else:
             quota = min(previsione, massimale) * aliquota
             totale += quota
-            stato = "STOP" if registrato > massimale else "VAI"
+            stato = "STOP" if registrato >= massimale else "VAI"
         dettagli.append({
             "Mandante": mandante["name"],
             "Provvigioni registrate": euro(registrato) if risultato["mesi"] else "—",

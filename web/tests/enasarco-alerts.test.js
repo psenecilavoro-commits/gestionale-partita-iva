@@ -31,3 +31,16 @@ test('missing/duplicate parameters, unknown relationships and ambiguous records 
   const u=fixture();u.monthly_revenues=[{fiscal_year_id:'y26',principal_id:'a',month:1,amount:'100'},{fiscal_year_id:'y26',principal_id:'a',month:1,amount:'200'}];assert.equal(enasarcoAlerts(u,2026)[0].status,'invalid');
   u.principals[1].enasarco_relationship='unknown';assert.equal(enasarcoAlerts(u,2026)[1].status,'missing');
 });
+
+test('ordinary future years use the same default caps as the tax calculation until edited',()=>{
+ for(const year of [2027,2028,2035,2040]){
+  const t=fixture();
+  t.fiscal_years=[{id:'future',fiscal_year:year,status:'open'}];
+  t.fiscal_parameters=[];
+  t.monthly_revenues=[{fiscal_year_id:'future',principal_id:'a',month:1,amount:'40000'}];
+  const alert=enasarcoAlerts(t,year)[0];
+  assert.equal(alert.status,'stop');
+  t.fiscal_parameters=[{fiscal_year_id:'future',code:'enasarco_massimale_pluri',value:'50000'}];
+  assert.equal(enasarcoAlerts(t,year)[0].status,'go');
+ }
+});

@@ -247,7 +247,7 @@ if scheda_imposte.open:
         if forfettario:
             mostra_imposte_forfettario(client, fiscal_year)
         else:
-            mostra_contributi_ap_previsionali(fiscal_year)
+            mostra_contributi_ap_previsionali(client, fiscal_year)
             mostra_imposte(client, fiscal_year)
         mostra_contributi_versati(client, fiscal_year)
 

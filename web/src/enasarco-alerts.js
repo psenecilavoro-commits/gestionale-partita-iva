@@ -1,3 +1,4 @@
+import defaults from './tax-defaults.json' with {type:'json'};
 function cents(value){
   const match=/^(\d+)(?:\.(\d{1,2}))?$/.exec(String(value));
   if(!match)throw Error('Importo non valido');
@@ -27,6 +28,10 @@ export function enasarcoAlerts(tables,year){
     const base={name:principal.name};
     const suffix={plurimandatario:'pluri',monomandatario:'mono'}[principal.enasarco_relationship];
     const parameters=(tables.fiscal_parameters||[]).filter(p=>p.fiscal_year_id===fy.id&&p.code===`enasarco_massimale_${suffix}`);
+    if(suffix&&parameters.length===0&&Number(year)>=2027){
+      const fallback=defaults.flat().find(row=>row[0]===`enasarco_massimale_${suffix}`);
+      if(fallback)parameters.push({value:fallback[2],is_provisional:false});
+    }
     if(!suffix||parameters.length!==1)return {...base,status:'missing'};
     try{
       const limit=cents(parameters[0].value);

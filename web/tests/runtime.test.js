@@ -12,9 +12,10 @@ test('browser Python runtime renders both regimes with original formulas',async(
   py.FS.mkdir('/app');
   for(const [p,s] of Object.entries(source))py.FS.writeFile(`/app/${p}`,s);
   py.runPython("import sys,json\nsys.path.insert(0,'/app')\nimport react_bridge");
-  for(const year of [2026,2027])for(const page of ['Fatturato','Costi','Auto','Accantonamenti','Conto economico','Imposte','Detrazioni e deduzioni','Ammortamenti']){
+  for(const year of [2026,2027,2028,2040])for(const page of ['Fatturato','Costi','Auto','Accantonamenti','Conto economico','Imposte','Detrazioni e deduzioni','Ammortamenti']){
+    const yearTables=year>2027?JSON.parse(JSON.stringify(tables).replaceAll('2027',String(year))):tables;
     py.runPython('react_bridge.clear_session()');
-    py.globals.set('request',JSON.stringify({tables,user:{id:'demo-owner',email:'demo@example.invalid'},inputs:{anno_fiscale_selezionato:year,schede_principali:page}}));
+    py.globals.set('request',JSON.stringify({tables:yearTables,user:{id:'demo-owner',email:'demo@example.invalid'},inputs:{anno_fiscale_selezionato:year,schede_principali:page}}));
     const result=JSON.parse(py.runPython('react_bridge.render(json.loads(request))'));
     assert.ok(result.tree.length,`${year} ${page}`);
     assert.equal(result.mutations.length,0);
@@ -27,7 +28,14 @@ test('browser Python runtime renders both regimes with original formulas',async(
       assert.equal(iva.records[0]['Saldo IVA da accantonare'],'990,00 €');
     }
 
-    assert.deepEqual([...project(result.sidebar),...project(result.tree)],oracle[`${year}:${page}`],`${year} ${page}: CPython/Pyodide fiscal parity`);
+    const expected=year>2027?JSON.parse(JSON.stringify(oracle[`2027:${page}`]).replaceAll('2027',String(year))):oracle[`${year}:${page}`];
+    if(year>2027)for(const node of expected){
+      if(node.kind==='download'&&node.data?.base64){
+        const text=Buffer.from(node.data.base64,'base64').toString('utf8').replaceAll('2027',String(year));
+        node.data.base64=Buffer.from(text).toString('base64');
+      }
+    }
+    assert.deepEqual([...project(result.sidebar),...project(result.tree)],expected,`${year} ${page}: CPython/Pyodide fiscal parity`);
   }
   assert.equal(py.runPython("from decimal import Decimal as D\nfrom accantonamenti_confronto import ripartisci_residuo\nstr(ripartisci_residuo(D('11000'),D('4800'),8)['quota_mensile'])"),'1550');
 });

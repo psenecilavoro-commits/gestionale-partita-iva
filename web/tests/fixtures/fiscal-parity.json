@@ -667,7 +667,7 @@
           "Totale annuo stimato": "1.200,00 €",
           "IVA scorporata": "216,39 €",
           "Costo netto": "983,61 €",
-          "% deducibilità": "63,31%*",
+          "% deducibilità": "63.17%",
           "Da dedurre": "621,30 €"
         },
         {
@@ -1538,6 +1538,15 @@
     }
   ],
   "2027:Imposte": [
+    {
+      "kind": "table",
+      "records": [
+        {
+          "Parametro": "Contributi anni precedenti effettivamente pagati nell’anno",
+          "Valore": "8.000,00 €"
+        }
+      ]
+    },
     {
       "kind": "table",
       "records": [

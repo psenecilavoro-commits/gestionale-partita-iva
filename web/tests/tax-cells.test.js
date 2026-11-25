@@ -19,3 +19,15 @@ test('annual parameters edit percentages and money, preserving other years and g
  for(const bad of ['','-1','NaN','2.00000001'])assert.throws(()=>taxValue(bad,'RATE'));
  assert.throws(()=>taxValue('101','RATE'));assert.equal(taxCell(records,'Parametro',0,tables,2030),null);
 });
+
+test('prior-year contributions use annual saved parameters and survive a fresh editor',()=>{
+ const tables={fiscal_years:[{id:'y',fiscal_year:2040,status:'open'}],fiscal_parameters:[]};
+ const rows=[{Parametro:'Contributi anni precedenti effettivamente pagati nell’anno',Valore:'8.000,00 €'}];
+ const cell=taxCell(rows,'Valore',0,tables,2040);
+ const mutation=taxMutation(cell,tables,taxValue('12000','EUR'));
+ assert.equal(mutation.payload.code,'contributi_ap_pagati');
+ tables.fiscal_parameters=[{id:'saved',...mutation.payload}];
+ assert.equal(taxCell(rows,'Valore',0,tables,2040).displayValue,'12000.000000');
+ tables.fiscal_years[0].status='closed';
+ assert.equal(taxCell(rows,'Valore',0,tables,2040).editable,false);
+});

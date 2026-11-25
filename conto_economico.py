@@ -99,6 +99,8 @@ def valori_conto_corrente(client:Client,anno:dict,contributi_ap:D,fondo:D)->dict
     if fatturato is None or any(x["mesi"]==0 for x in dati):
         raise ValueError("Completa almeno un mese per ogni mandante.")
     p={k:D(str(presenti[k]["value"])) for k in RICHIESTI}
+    if "contributi_ap_pagati" in presenti:
+        contributi_ap = D(str(presenti["contributi_ap_pagati"]["value"]))
     _,enasarco,mono=calcola_confronto(
         mandanti,ricavi,p["enasarco_tasso_foglio"],p["enasarco_massimale_pluri"]
     )
@@ -117,12 +119,14 @@ def valori_conto_corrente(client:Client,anno:dict,contributi_ap:D,fondo:D)->dict
     )
 
 
-def mostra_contributi_ap_previsionali(anno):
-    st.number_input(
-        "Contributi anni precedenti effettivamente pagati nell'anno (€)",
-        min_value=0.0, value=float(DEFAULT_CONTRIBUTI_AP), step=100.0,
-        key=f"conto_contributi_ap_{anno['id']}", disabled=anno["status"] != "open",
-    )
+def mostra_contributi_ap_previsionali(client, anno):
+    presenti = leggi_parametri(client, anno["id"])
+    valore = presenti.get("contributi_ap_pagati", {}).get("value",
+        st.session_state.get(f"conto_contributi_ap_{anno['id']}", DEFAULT_CONTRIBUTI_AP))
+    st.table([{
+        "Parametro": "Contributi anni precedenti effettivamente pagati nell’anno",
+        "Valore": _valuta(D(str(valore))),
+    }])
 
 
 def mostra_fondo_pensione_previsionale(anno):

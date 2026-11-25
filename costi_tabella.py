@@ -58,14 +58,15 @@ def _leggi(client, anno_id):
 
 
 def _proietta(righe):
-    per_veicolo = defaultdict(lambda: defaultdict(lambda: D("0")))
-    registrato = D("0")
+    per_mese = defaultdict(lambda: D("0"))
     for r in righe:
+        mese = int(r["expense_date"][5:7])
         importo = D(str(r["gross_amount"]))
-        registrato += importo
-        per_veicolo[r.get("vehicle_id")][int(r["expense_date"][5:7])] += importo
-    stima = sum((sum(mesi.values(), D("0")) / len(mesi) * 12
-                 for mesi in per_veicolo.values()), D("0")) if righe else None
+        if mese not in range(1, 13) or not importo.is_finite() or importo < 0:
+            raise ValueError("Mese o importo della proiezione costi non valido.")
+        per_mese[mese] += importo
+    registrato = sum(per_mese.values(), D("0"))
+    stima = registrato / len(per_mese) * 12 if per_mese else None
     return registrato, stima
 
 
@@ -139,37 +140,39 @@ def _tabella(categorie, stime, spese, impostazioni, km, *, aliquota_leasing=None
             registrato, lordo = _proietta(righe)
             origine = "Auto · proiezione da mesi"
             origini.update("TEST" if str(r.get("notes") or "").startswith("DATI DI PROVA") else "MANUALE" for r in righe)
-            if codice == "rate_auto" and aliquota_leasing is not None:
-                # Proietta separatamente l'IVA e il costo netto di ciascuna rata.
-                importi = [(r, _calcola(D(str(r["gross_amount"])), r, r["amount_includes_vat"])) for r in righe]
-                _, iva = _proietta([{**r, "gross_amount": valori[0]} for r, valori in importi])
-                _, netto = _proietta([{**r, "gross_amount": valori[2]} for r, valori in importi])
-                deducibile = netto * aliquota_leasing
-                percentuale = f"{aliquota_leasing * 100:.2f}%".replace(".", ",")
-            elif (cat and all(r["amount_includes_vat"] and
-                            all(D(str(r[k])) == D(str(cat[k])) for k in
-                                ("vat_rate", "vat_deductible_rate", "cost_deductible_rate")) for r in righe)):
-                iva, _detraibile, netto, deducibile = _calcola(lordo, cat, True)
+            # Le fatture importate possono avere aliquote o quote IVA diverse
+            # nella stessa categoria: usa il trattamento salvato su ogni riga.
+            importi = [
+                (r, _calcola(D(str(r["gross_amount"])), r, r["amount_includes_vat"]))
+                for r in righe
+            ]
+            _, iva = _proietta([{**r, "gross_amount": valori[0]} for r, valori in importi])
+            _, netto = _proietta([{**r, "gross_amount": valori[2]} for r, valori in importi])
+            _, deducibile = _proietta([{**r, "gross_amount": valori[3]} for r, valori in importi])
+            percentuale = "Da registrazioni"
+            if cat and all(D(str(r["cost_deductible_rate"])) == D(str(cat["cost_deductible_rate"])) for r in righe):
                 percentuale = f"{D(str(cat['cost_deductible_rate'])) * 100:g}%"
-                if codice == "rate_auto":
-                    if (cat.get("notes") == NOTA_CATEGORIA_TEST and
-                        all(str(r.get("notes") or "").startswith("DATI DI PROVA") for r in righe)):
-                        deducibile = quota_deducibile_test(lordo)
-                        percentuale = "63,31%*"
-                    else:
-                        deducibile = None
-                        percentuale = "Da verificare*"
-            else:
-                incompleti.add(codice)
+            if codice == "rate_auto":
+                if aliquota_leasing is not None:
+                    deducibile = netto * aliquota_leasing
+                    percentuale = f"{aliquota_leasing * 100:.2f}%".replace(".", ",")
+                elif (cat and cat.get("notes") == NOTA_CATEGORIA_TEST and
+                      all(str(r.get("notes") or "").startswith("DATI DI PROVA") for r in righe)):
+                    deducibile = quota_deducibile_test(lordo)
+                    percentuale = f"{deducibile / netto * 100:.2f}%" if netto else "—"
+                else:
+                    deducibile = None
+                    percentuale = "Da verificare*"
+            if cat and cat.get("deductible_limit") is not None and deducibile is not None:
+                deducibile = min(deducibile, D(str(cat["deductible_limit"])))
         elif tipo == "annuale" and stima:
             lordo = D(str(stima["estimated_gross_amount"]))
             origine = "Stima annuale"
             origini.add("TEST" if str(stima.get("notes") or "").startswith("DATI DI PROVA") else "MANUALE")
-            if stima["amount_includes_vat"]:
-                iva, _detraibile, netto, deducibile = _calcola(lordo, cat, True)
-                percentuale = f"{D(str(cat['cost_deductible_rate'])) * 100:g}%"
-            else:
-                incompleti.add(codice)
+            if righe:
+                registrato = sum((D(str(r["gross_amount"])) for r in righe), D("0"))
+            iva, _detraibile, netto, deducibile = _calcola(lordo, cat, bool(stima["amount_includes_vat"]))
+            percentuale = f"{D(str(cat['cost_deductible_rate'])) * 100:g}%"
         elif tipo == "annuale" and righe:
             # Imported invoices already live in costs: show them without creating
             # a duplicate deduction. An explicit annual forecast takes precedence.

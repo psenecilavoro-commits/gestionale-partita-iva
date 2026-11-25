@@ -12,7 +12,8 @@ for(const name of paths){
 }
 const recoverySchema=await readFile('../migration/recovery-schema.sql','utf8');
 const pendingReceiptsMigration=await readFile('../migration/invoice-pending-receipts.sql','utf8');
-zip.file('sorgenti/migration/recovery-schema.sql',recoverySchema+'\n'+pendingReceiptsMigration);
+const vehicleCategoriesMigration=await readFile('../SQL_CATEGORIE_AUTO_ANNUALI.sql','utf8');
+zip.file('sorgenti/migration/recovery-schema.sql',recoverySchema+'\n'+pendingReceiptsMigration+'\n'+vehicleCategoriesMigration);
 await writeFile('dist/restore-source.zip',await zip.generateAsync({type:'nodebuffer',compression:'DEFLATE'}));
 const files=[];
 async function walk(dir){for(const name of await readdir('dist/'+dir)){const path=dir+name,s=await stat('dist/'+path);if(s.isDirectory())await walk(path+'/');else if(!['backup-manifest.json','_headers','_redirects'].includes(path)){const bytes=await readFile('dist/'+path);files.push({path,size:bytes.length,sha256:createHash('sha256').update(bytes).digest('hex')});}}}

@@ -87,7 +87,7 @@ class ReactEngine(unittest.TestCase):
         planned=self.render(2027,'Ammortamenti',inputs=values)
         nodes=flatten(planned['tree'])
         values=planned['inputs']
-        fields={'Descrizione bene':'SYNTHETIC FORM RESET', 'Esborso lordo previsto (€)':'1000', 'Coefficiente ammortamento (%) · solo se costo fiscale > 516,46 €':'20', 'Confermo importi, IVA, classificazione e coefficiente quando necessario':True}
+        fields={'Descrizione bene':'SYNTHETIC FORM RESET', 'Esborso lordo previsto (€)':'1000', 'Coefficiente ammortamento (%) · solo se costo fiscale > 516,46 €':'20'}
         keys={}
         for label,value in fields.items():
             item=next(n for n in nodes if n.get('label')==label)
@@ -106,7 +106,7 @@ class ReactEngine(unittest.TestCase):
         self.assertEqual(next_view['mutations'],[])
         next_nodes=flatten(next_view['tree'])
         self.assertEqual(next(n['value'] for n in next_nodes if n.get('label')=='Descrizione bene'),'')
-        self.assertFalse(next(n['value'] for n in next_nodes if n.get('label')=='Confermo importi, IVA, classificazione e coefficiente quando necessario'))
+        self.assertFalse(any(n.get('label')=='Confermo importi, IVA, classificazione e coefficiente quando necessario' for n in next_nodes))
 
     def test_state_cleared_when_owner_changes(self):
         self.render(2026,'Fatturato')

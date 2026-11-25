@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {gunzipSync} from 'node:zlib';
 import {loadPyodide} from 'pyodide';
+import {taxCell,taxMutation,taxValue} from '../src/tax-cells.js';
 test('annual forecast uses shared moved fields, no duplicate cash forms, parameters default without writes',async()=>{
  const py=await loadPyodide(),tables=JSON.parse(await readFile('public/demo.json','utf8'));
  py.FS.mkdir('/app');for(const [name,code] of Object.entries(JSON.parse(gunzipSync(await readFile('public/engine.json.gz')))))py.FS.writeFile('/app/'+name,code);
@@ -10,9 +11,14 @@ test('annual forecast uses shared moved fields, no duplicate cash forms, paramet
  const render=inputs=>{py.globals.set('request',JSON.stringify({tables,user:{id:'demo-owner',email:'demo@example.invalid'},inputs}));return JSON.parse(py.runPython('react_bridge.render(json.loads(request))'));};
  const flat=nodes=>(nodes||[]).flatMap(n=>[n,...flat(n.children)]);
  let r=render({anno_fiscale_selezionato:2027,schede_principali:'Imposte'});
- const ap=flat(r.tree).find(n=>n.key?.startsWith('conto_contributi_ap_'));assert.ok(ap);
+ const ap=flat(r.tree).find(n=>n.kind==='table'&&n.records.some(row=>row.Parametro?.startsWith('Contributi anni precedenti')));assert.ok(ap);
+ const fy=tables.fiscal_years.find(y=>y.fiscal_year===2027);
+ const editor=taxCell(ap.records,'Valore',0,tables,2027);
+ const mutation=taxMutation(editor,tables,taxValue('4000','EUR'));
+ tables.fiscal_parameters.push({id:'prior-contributions',...mutation.payload});
  assert.equal(r.mutations.length,0);assert.ok(!flat(r.tree).some(n=>/^(Modifica parametro|Inserisci parametro mancante)/.test(n.label||'')));assert.ok(!JSON.stringify(r.tree).includes('Valore configurato'));assert.ok(JSON.stringify(r.tree).includes('\"Valore\"'));
- r=render({...r.inputs,[ap.key]:4000});
+ py.runPython('react_bridge.clear_session()');
+ r=render({anno_fiscale_selezionato:2027,schede_principali:'Imposte'});
  r=render({...r.inputs,schede_principali:'Detrazioni e deduzioni'});
  assert.ok(JSON.stringify(r.tree).includes('Deduzioni'));
  assert.ok(!flat(r.tree).some(n=>n.key?.startsWith('conto_fondo_pensione_')));
@@ -21,7 +27,7 @@ test('annual forecast uses shared moved fields, no duplicate cash forms, paramet
  const nodes=flat(r.tree);assert.ok(!nodes.some(n=>n.key?.startsWith('cassa_')));
  assert.ok(!nodes.some(n=>n.kind==='number_input'&&/Fondo pensione|Contributi anni/.test(n.label)));
  const dump=JSON.stringify(r.tree);assert.ok(dump.includes('Costi deducibili annui stimati'));assert.ok(dump.includes('1.000,00'));
- r=render({...r.inputs,schede_principali:'Imposte'});assert.equal(r.inputs[ap.key],4000);
+ r=render({...r.inputs,schede_principali:'Imposte'});assert.ok(JSON.stringify(r.tree).includes('4.000,00'));
  r=render({...r.inputs,schede_principali:'Detrazioni e deduzioni'});assert.ok(JSON.stringify(r.tree).includes('1.000,00'));
  // Missing annual parameters render populated defaults, without generating DB mutations.
  tables.fiscal_parameters=tables.fiscal_parameters.filter(p=>p.fiscal_year_id!==tables.fiscal_years.find(y=>y.fiscal_year===2027).id);
