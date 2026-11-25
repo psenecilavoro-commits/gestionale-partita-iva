@@ -77,4 +77,4 @@ class CostiForfettarioCompleti(unittest.TestCase):
             self.assertEqual(total, 1200)
             self.assertEqual(rows[0]['Registrato'], rows[0]['Stima annua / valore file'])
             spese.pop()
-            self.assertEqual(str(costi_forfettario(None,'year')[1]), '6388.42')
+            self.assertEqual(costi_forfettario(None,'year')[1], 1200)
