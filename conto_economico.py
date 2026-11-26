@@ -150,5 +150,9 @@ def mostra_conto_economico(client:Client,anno:dict,sidebar_slot=None)->None:
         st.info(str(exc)); return
     except Exception:
         st.error("Impossibile costruire il conto economico."); return
-    st.dataframe([{"Voce":nome,"Importo":_valuta(valori[codice])} for codice,nome in VOCI_CONTO],hide_index=True,width="stretch")
+    _, registrato, _ = riepilogo(elenco_mandanti(client), leggi_fatturato(client, anno["id"]))
+    c1, c2 = st.columns(2)
+    c1.metric("Fatturato registrato", _valuta(registrato))
+    c2.metric("Stima a fine anno", _valuta(valori["B1"]))
+    st.dataframe([{"Voce":nome,"Importo":_valuta(valori[codice])} for codice,nome in VOCI_CONTO if codice != "B1"],hide_index=True,width="stretch")
     st.caption("Deduzioni e fondo pensione incidono sulla base IRPEF e non vengono sottratti una seconda volta dal netto.")

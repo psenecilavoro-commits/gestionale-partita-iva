@@ -414,36 +414,38 @@
   ],
   "2026:Conto economico": [
     {
+      "kind": "metric",
+      "label": "Fatturato registrato",
+      "value": "36.000,00 €"
+    },
+    {
+      "kind": "metric",
+      "label": "Stima a fine anno",
+      "value": "54.000,00 €"
+    },
+    {
+      "kind": "metric",
+      "label": "Reddito forfettario · coefficiente 62%",
+      "value": "30.690,00 €"
+    },
+    {
+      "kind": "metric",
+      "label": "INPS eccedente prima della riduzione",
+      "value": "2.908,71 €"
+    },
+    {
+      "kind": "metric",
+      "label": "INPS eccedente con riduzione 35%",
+      "value": "1.890,66 €"
+    },
+    {
+      "kind": "metric",
+      "label": "INPS totale stimato · riduzione 35% attiva",
+      "value": "4.922,42 €"
+    },
+    {
       "kind": "table",
       "records": [
-        {
-          "Voce": "Fatturato registrato",
-          "Importo": "36.000,00 €"
-        },
-        {
-          "Voce": "Proiezione annualizzata 12 mesi",
-          "Importo": "54.000,00 €"
-        },
-        {
-          "Voce": "Fatturato stimato file · 11 mesi",
-          "Importo": "49.500,00 €"
-        },
-        {
-          "Voce": "Reddito forfettario · coefficiente 62%",
-          "Importo": "30.690,00 €"
-        },
-        {
-          "Voce": "INPS eccedente prima della riduzione",
-          "Importo": "2.908,71 €"
-        },
-        {
-          "Voce": "INPS eccedente con riduzione 35%",
-          "Importo": "1.890,66 €"
-        },
-        {
-          "Voce": "INPS totale stimato · riduzione 35% attiva",
-          "Importo": "4.922,42 €"
-        },
         {
           "Voce": "Enasarco stimato",
           "Importo": "2.590,63 €"
@@ -1472,12 +1474,18 @@
   ],
   "2027:Conto economico": [
     {
+      "kind": "metric",
+      "label": "Fatturato registrato",
+      "value": "36.000,00 €"
+    },
+    {
+      "kind": "metric",
+      "label": "Stima a fine anno",
+      "value": "54.000,00 €"
+    },
+    {
       "kind": "table",
       "records": [
-        {
-          "Voce": "Fatturato stimato integrale",
-          "Importo": "54.000,00 €"
-        },
         {
           "Voce": "Deduzione forfettaria agenti",
           "Importo": "600,95 €"
