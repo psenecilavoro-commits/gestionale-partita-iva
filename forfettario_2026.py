@@ -310,13 +310,10 @@ def mostra_conto_economico(client, anno: dict) -> None:
     t1, t2 = st.columns(2)
     t1.metric("Costi economici annui", _fmt(valori["costi_annui"]))
     t2.metric("Imposta forfettaria", _fmt(valori["imposta_sostitutiva"]))
-    st.dataframe([
-        {"Voce": "Netto annuo stimato · regime INPS -35%", "Importo": _fmt(valori["netto"])},
-        {"Voce": "Netto medio / 12 · regime INPS -35%", "Importo": _fmt(valori["netto_mese"])},
-        {"Voce": "Netto / 12 senza costi · regime INPS -35%", "Importo": _fmt(valori["netto_no_costi_mese"])},
-        {"Voce": "Netto annuo senza riduzione sulla quota eccedente · confronto",
-         "Importo": _fmt(valori["netto_senza_riduzione_eccedente"])},
-    ], hide_index=True, width="stretch", height="content")
+    n1, n2, n3 = st.columns(3)
+    n1.metric("Netto annuo stimato · regime INPS -35%", _fmt(valori["netto"]))
+    n2.metric("Netto medio / 12 · regime INPS -35%", _fmt(valori["netto_mese"]))
+    n3.metric("Netto / 12 senza costi · regime INPS -35%", _fmt(valori["netto_no_costi_mese"]))
     st.info(
         "Per il 2026 il gestionale considera attiva la riduzione INPS del 35%, "
         "come da scelta già effettuata. La quota fissa di 3.031,76 € del file è "

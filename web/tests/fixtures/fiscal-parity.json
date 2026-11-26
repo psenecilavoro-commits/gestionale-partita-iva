@@ -459,25 +459,19 @@
       "value": "4.148,74 €"
     },
     {
-      "kind": "table",
-      "records": [
-        {
-          "Voce": "Netto annuo stimato · regime INPS -35%",
-          "Importo": "29.836,38 €"
-        },
-        {
-          "Voce": "Netto medio / 12 · regime INPS -35%",
-          "Importo": "2.486,37 €"
-        },
-        {
-          "Voce": "Netto / 12 senza costi · regime INPS -35%",
-          "Importo": "3.153,18 €"
-        },
-        {
-          "Voce": "Netto annuo senza riduzione sulla quota eccedente · confronto",
-          "Importo": "28.818,33 €"
-        }
-      ]
+      "kind": "metric",
+      "label": "Netto annuo stimato · regime INPS -35%",
+      "value": "29.836,38 €"
+    },
+    {
+      "kind": "metric",
+      "label": "Netto medio / 12 · regime INPS -35%",
+      "value": "2.486,37 €"
+    },
+    {
+      "kind": "metric",
+      "label": "Netto / 12 senza costi · regime INPS -35%",
+      "value": "3.153,18 €"
     }
   ],
   "2026:Imposte": [
@@ -1531,24 +1525,23 @@
         {
           "Voce": "Fondo pensione deducibile",
           "Importo": "0,00 €"
-        },
-        {
-          "Voce": "Netto annuo teorico",
-          "Importo": "24.031,32 €"
-        },
-        {
-          "Voce": "Netto teorico / 12",
-          "Importo": "2.002,61 €"
-        },
-        {
-          "Voce": "Netto teorico senza costi",
-          "Importo": "31.498,72 €"
-        },
-        {
-          "Voce": "Netto teorico senza costi / 12",
-          "Importo": "2.624,89 €"
         }
       ]
+    },
+    {
+      "kind": "metric",
+      "label": "Netto annuo teorico",
+      "value": "24.031,32 €"
+    },
+    {
+      "kind": "metric",
+      "label": "Netto teorico / 12",
+      "value": "2.002,61 €"
+    },
+    {
+      "kind": "metric",
+      "label": "Netto teorico senza costi / 12",
+      "value": "2.624,89 €"
     }
   ],
   "2027:Imposte": [
