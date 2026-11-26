@@ -430,6 +430,11 @@
     },
     {
       "kind": "metric",
+      "label": "Enasarco stimato",
+      "value": "2.590,63 €"
+    },
+    {
+      "kind": "metric",
       "label": "INPS eccedente prima della riduzione",
       "value": "2.908,71 €"
     },
@@ -446,10 +451,6 @@
     {
       "kind": "table",
       "records": [
-        {
-          "Voce": "Enasarco stimato",
-          "Importo": "2.590,63 €"
-        },
         {
           "Voce": "Costi economici annui",
           "Importo": "8.001,83 €"
@@ -1484,6 +1485,11 @@
       "value": "54.000,00 €"
     },
     {
+      "kind": "metric",
+      "label": "Enasarco stimato",
+      "value": "2.590,63 €"
+    },
+    {
       "kind": "table",
       "records": [
         {
@@ -1501,10 +1507,6 @@
         {
           "Voce": "Contributi INPS stimati",
           "Importo": "11.537,25 €"
-        },
-        {
-          "Voce": "Enasarco stimato",
-          "Importo": "2.590,63 €"
         },
         {
           "Voce": "Costi netti stimati",

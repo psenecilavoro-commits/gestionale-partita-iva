@@ -180,7 +180,7 @@ def mostra_soglie_fatturato(client, anno: dict) -> None:
         return
 
     st.markdown("#### Controllo regime forfettario 2026")
-    c1, c2, c3 = st.columns(3)
+    c1, c2, c3, c4 = st.columns(4)
     c1.metric("Fatturato registrato", _fmt(totale))
     c2.metric(
         f"Proiezione file · {int(p['forfettario_mesi_proiezione'])} mesi",
@@ -298,16 +298,16 @@ def mostra_conto_economico(client, anno: dict) -> None:
         st.error("Impossibile costruire il conto economico 2026.")
         return
 
-    c1, c2, c3 = st.columns(3)
+    c1, c2, c3, c4 = st.columns(4)
     c1.metric("Fatturato registrato", _fmt(valori["fatturato_registrato"]))
     c2.metric("Stima a fine anno", _fmt(valori["proiezione_12_mesi"]))
     c3.metric("Reddito forfettario · coefficiente 62%", _fmt(valori["redditivita"]))
+    c4.metric("Enasarco stimato", _fmt(valori["enasarco"]))
     i1, i2, i3 = st.columns(3)
     i1.metric("INPS eccedente prima della riduzione", _fmt(valori["inps_eccedente"]))
     i2.metric("INPS eccedente con riduzione 35%", _fmt(valori["inps_eccedente_agevolato"]))
     i3.metric("INPS totale stimato · riduzione 35% attiva", _fmt(valori["inps_totale"]))
     st.dataframe([
-        {"Voce": "Enasarco stimato", "Importo": _fmt(valori["enasarco"])},
         {"Voce": "Costi economici annui", "Importo": _fmt(valori["costi_annui"])},
         {"Voce": "Imposta sostitutiva · modello file", "Importo": _fmt(valori["imposta_sostitutiva"])},
         {"Voce": "Netto annuo stimato · regime INPS -35%", "Importo": _fmt(valori["netto"])},
