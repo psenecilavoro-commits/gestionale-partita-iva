@@ -4,7 +4,7 @@ import JSZip from 'jszip';
 import {completeBackup,digest,snapshot} from '../src/full-backup.js';
 import {requireOnline} from '../src/offline-mode.js';
 
-const tables={fiscal_years:[{fiscal_year:2026},{fiscal_year:2027},{fiscal_year:2030}],monthly_revenues:[{amount:'0.00',notes:null}],invoice_imports:[]};
+const tables={fiscal_years:[{fiscal_year:2026},{fiscal_year:2027},{fiscal_year:2030}],monthly_revenues:[{amount:'0.00',notes:null}],invoice_imports:[],company_profiles:[{id:"company",user_id:"owner",data:{name:"Azienda di prova",iban:"test"}}]};
 async function fixture(){
  const source=new JSZip();source.file('sorgenti/migration/recovery-schema.sql','CREATE TABLE example();');
  const files={'index.html':'<html><head></head></html>','engine.json.gz':'engine','runtime/pyodide.mjs':'runtime','restore-source.zip':await source.generateAsync({type:'uint8array'})};
