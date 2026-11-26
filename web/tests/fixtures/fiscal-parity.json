@@ -449,16 +449,18 @@
       "value": "4.922,42 €"
     },
     {
+      "kind": "metric",
+      "label": "Costi economici annui",
+      "value": "8.001,83 €"
+    },
+    {
+      "kind": "metric",
+      "label": "Imposta forfettaria",
+      "value": "4.148,74 €"
+    },
+    {
       "kind": "table",
       "records": [
-        {
-          "Voce": "Costi economici annui",
-          "Importo": "8.001,83 €"
-        },
-        {
-          "Voce": "Imposta sostitutiva · modello file",
-          "Importo": "4.148,74 €"
-        },
         {
           "Voce": "Netto annuo stimato · regime INPS -35%",
           "Importo": "29.836,38 €"
@@ -1490,6 +1492,16 @@
       "value": "2.590,63 €"
     },
     {
+      "kind": "metric",
+      "label": "Costi netti stimati",
+      "value": "7.467,40 €"
+    },
+    {
+      "kind": "metric",
+      "label": "IRPEF + addizionali prima delle detrazioni",
+      "value": "8.373,39 €"
+    },
+    {
       "kind": "table",
       "records": [
         {
@@ -1509,16 +1521,8 @@
           "Importo": "11.537,25 €"
         },
         {
-          "Voce": "Costi netti stimati",
-          "Importo": "7.467,40 €"
-        },
-        {
           "Voce": "Costi deducibili annui stimati",
           "Importo": "6.300,14 €"
-        },
-        {
-          "Voce": "IRPEF + addizionali prima delle detrazioni",
-          "Importo": "8.373,39 €"
         },
         {
           "Voce": "Detrazioni utilizzate",

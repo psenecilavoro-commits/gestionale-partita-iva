@@ -307,9 +307,10 @@ def mostra_conto_economico(client, anno: dict) -> None:
     i1.metric("INPS eccedente prima della riduzione", _fmt(valori["inps_eccedente"]))
     i2.metric("INPS eccedente con riduzione 35%", _fmt(valori["inps_eccedente_agevolato"]))
     i3.metric("INPS totale stimato · riduzione 35% attiva", _fmt(valori["inps_totale"]))
+    t1, t2 = st.columns(2)
+    t1.metric("Costi economici annui", _fmt(valori["costi_annui"]))
+    t2.metric("Imposta forfettaria", _fmt(valori["imposta_sostitutiva"]))
     st.dataframe([
-        {"Voce": "Costi economici annui", "Importo": _fmt(valori["costi_annui"])},
-        {"Voce": "Imposta sostitutiva · modello file", "Importo": _fmt(valori["imposta_sostitutiva"])},
         {"Voce": "Netto annuo stimato · regime INPS -35%", "Importo": _fmt(valori["netto"])},
         {"Voce": "Netto medio / 12 · regime INPS -35%", "Importo": _fmt(valori["netto_mese"])},
         {"Voce": "Netto / 12 senza costi · regime INPS -35%", "Importo": _fmt(valori["netto_no_costi_mese"])},
